@@ -2,7 +2,7 @@
 
 A beautiful, performant, and responsive web portal built with **Google Apps Script** for handling student result checking, registered candidate payment submission logs, and automated PDF Admit Card generation with email verification.
 
-## 🚀 Features
+## Features
 1. **Dynamic Navigation Router:** Server-side evaluation shows/hides individual panels or lands onto a multi-utility dashboard depending on admin configuration.
 2. **Beautiful Bengali Typography & UI:** Sleek styling tailored with *Noto Sans Bengali*, custom theme schemes, animations, and micro-interactions.
 3. **Candidate Verification & Duplicate Lockout:** Ensures only registered candidates can submit payment credentials, and locks users from double-submitting details.
@@ -11,7 +11,7 @@ A beautiful, performant, and responsive web portal built with **Google Apps Scri
 
 ---
 
-## 🛠️ Step-by-Step Installation Guide
+## Step-by-Step Installation Guide
 
 Follow these steps to set up the system from scratch:
 

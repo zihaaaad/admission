@@ -186,9 +186,9 @@ function doPost(formObject) {
  */
 function onOpen() {
   SpreadsheetApp.getUi()
-      .createMenu('⚙️ অটোমেশন')
-      .addItem('📊 ড্যাশবোর্ড আপডেট করুন', 'updateDashboardSheet')
-      .addItem('✅ সকল অনুমোদিত পেমেন্ট প্রসেস করুন', 'processAllApprovedManually')
+      .createMenu('অটোমেশন')
+      .addItem('ড্যাশবোর্ড আপডেট করুন', 'updateDashboardSheet')
+      .addItem('সকল অনুমোদিত পেমেন্ট প্রসেস করুন', 'processAllApprovedManually')
       .addToUi();
 }
 
