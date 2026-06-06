@@ -73,7 +73,7 @@ function searchStudentData(searchKey) {
 
   } catch (e) {
     // Catch any unexpected errors during execution (e.g., permissions issues, invalid sheet ID).
-    Logger.log("FATAL ERROR in searchStudentData: " + e.toString() + "\nStack: " + e.stack);
+    logErrorToSheet("searchStudentData", e);
     return { status: 'error', message: 'একটি অপ্রত্যাশিত সার্ভার ত্রুটি ঘটেছে। অনুগ্রহ করে আবার চেষ্টা করুন।' };
   }
 }
