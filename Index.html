@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Favicon for brand identity in the browser tab -->
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/RZ4wD83V/skill-color-logo-32x32.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Improved Bengali font for better readability and number rendering -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================
+           GLOBAL STYLES & UI KIT
+           ================================================ */
+        :root {
+            --primary-color: #00684A;
+            --secondary-color: #3498DB;
+            --success-color: #27AE60;
+            --warning-color: #F39C12;
+            --danger-color: #C0392B;
+            --purple-color: #8E44AD;
+            --bg-color: #F4F7F9;
+            --text-dark: #2C3E50;
+            --card-bg: #FFFFFF;
+            --border-color: #E0E4E8;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            padding: 1.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border-top: 5px solid var(--primary-color);
+        }
+        .header {
+            text-align: center;
+            padding: 2.5rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #FCFCFC;
+        }
+        .header img { max-width: 250px; margin-bottom: 1rem; }
+        .header h3 { font-size: 1.6rem; font-weight: 700; color: var(--primary-color); }
+        .view {
+            display: none; /* All views hidden by default */
+            padding: 2rem 2.5rem;
+            animation: fadeIn 0.4s ease-out;
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        /* --- Improved UI Kit --- */
+        .app-input, .app-select {
+            width: 100%; padding: 0.8rem 1rem; font-size: 1rem;
+            border-radius: 8px; border: 1px solid var(--border-color);
+            transition: all 0.3s ease; font-family: 'Noto Sans Bengali', sans-serif;
+            background-color: #FAFAFA;
+        }
+        .app-input:focus, .app-select:focus {
+            outline: none; border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0,104,74,0.15);
+        }
+        .app-button {
+            width: 100%; margin-top: 1rem; padding: 0.9rem; font-size: 1.1rem;
+            font-weight: 600; color: white; border: none;
+            border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+        }
+        .app-button:hover:not(:disabled) {
+            filter: brightness(110%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .app-button:disabled { background-color: #bdc3c7; cursor: not-allowed; transform: none; }
+        
+        .loader {
+            display: none; border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid var(--primary-color);
+            width: 24px; height: 24px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .back-button {
+            display: inline-block; margin-bottom: 20px; font-weight: 600;
+            color: #555; cursor: pointer; text-decoration: none;
+        }
+        .status-text { font-weight: 500; margin-top: 8px; min-height: 20px; }
+        .text-success { color: var(--success-color); }
+        .text-danger { color: var(--danger-color); }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        
+        /* ================================================
+           SPECIFIC VIEW STYLES
+           ================================================ */
+
+        /* --- Landing Page --- */
+        #landingView { text-align: center; }
+        .nav-button { padding: 18px; font-size: 1.2rem; font-weight: 700; }
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-secondary { background-color: var(--secondary-color); }
+        .btn-purple { background-color: var(--purple-color); }
+        
+        /* --- Universal Cards --- */
+        .info-card { margin-top: 2rem; padding: 1.5rem; border-radius: 12px; border-left: 5px solid; }
+        .info-card h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .status-final { border-color: var(--success-color); background-color: #E8F8F5; }
+        .status-final h3 { color: var(--success-color); }
+        .status-viva, .status-waiting { border-color: var(--secondary-color); background-color: #EBF5FB; }
+        .status-viva h3, .status-waiting h3 { color: var(--secondary-color); }
+        .status-not-selected { border-color: var(--danger-color); background-color: #F9EBEA; }
+        .status-not-selected h3 { color: var(--danger-color); }
+        .info-grid { margin-top: 1.5rem; border-top: 1px dashed #B0BEC5; padding-top: 1rem; }
+        .info-item { display: flex; justify-content: space-between; padding: 0.6rem 0; font-size: 1rem; }
+        .info-item .label { font-weight: 500; color: #546E7A; }
+
+        /* --- Payment Form --- */
+        .instructions-box { background: #fffaf0; border-left: 4px solid var(--warning-color); padding: 15px; margin-bottom: 20px; border-radius: 8px; }
+        .details-box { background-color: #e6f7f2; padding: 20px; border-radius: 8px; border-left: 4px solid var(--success-color); margin-top: 1rem; }
+        #successMessage { text-align:center; padding: 40px 20px; }
+        #successMessage h4 { font-size: 1.8rem; color: var(--success-color); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img id="logo" src="" alt="Institute Logo">
+            <h3 id="appTitle"></h3>
+        </header>
+
+        <main id="app-content">
+            <!-- VIEW 1: LANDING PAGE -->
+            <div id="landingView" class="view" style="display: <?= initialView === 'landingView' ? 'block' : 'none' ?>;">
+                <h3>স্বাগতম!</h3>
+                <p>অনুগ্রহ করে নিচের অপশন থেকে আপনার প্রয়োজনীয় সেবাটি নির্বাচন করুন।</p>
+                <button id="resultBtn" class="app-button nav-button btn-primary" onclick="showView('resultView')">ফলাফল দেখুন</button>
+                <button id="paymentBtn" class="app-button nav-button btn-secondary" onclick="showView('paymentView')">অ্যাডমিট কার্ড ফি দিন</button>
+                <button id="statusBtn" class="app-button nav-button btn-purple" onclick="showView('statusCheckView')">পেমেন্ট স্ট্যাটাস দেখুন</button>
+            </div>
+        
+            <!-- VIEW 2: RESULT CHECKER -->
+            <div id="resultView" class="view" style="display: <?= initialView === 'resultView' ? 'block' : 'none' ?>;">
+                <?!= include('ResultView'); ?>
+            </div>
+
+            <!-- VIEW 3: PAYMENT FORM -->
+            <div id="paymentView" class="view" style="display: <?= initialView === 'paymentView' ? 'block' : 'none' ?>;">
+                <?!= include('PaymentView'); ?>
+            </div>
+
+            <!-- VIEW 4: PAYMENT STATUS CHECKER -->
+            <div id="statusCheckView" class="view" style="display: <?= initialView === 'statusCheckView' ? 'block' : 'none' ?>;">
+                <?!= include('StatusCheckView'); ?>
+            </div>
+        </main>
+    </div>
+
+<script>
+    // ================================================
+    //      GLOBAL APP LOGIC & NAVIGATION
+    // ================================================
+    const settings = <?!= JSON.stringify(settings) ?>;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Populate header and other dynamic content that isn't part of a specific view
+        document.getElementById('logo').src = settings.logoUrl;
+        document.getElementById('appTitle').innerText = settings.appTitle;
+        
+        // Populate the payment options dropdown menu
+        const paymentMethodSelect = document.getElementById('paymentMethod');
+        if (paymentMethodSelect) {
+            paymentMethodSelect.innerHTML = '<option value="" disabled selected>-- একটি মাধ্যম নির্বাচন করুন --</option>';
+            if (settings.paymentOptions) {
+                settings.paymentOptions.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt;
+                    option.textContent = opt;
+                    paymentMethodSelect.appendChild(option);
+                });
+            }
+        }
+
+        // --- UPDATED LOGIC FOR DYNAMIC BUTTONS ---
+        // Dynamically show/hide buttons on the landing page based on sheet settings.
+        if (!settings.resultCheckerActive) {
+            const btn = document.getElementById('resultBtn');
+            if (btn) btn.style.display = 'none';
+        }
+        if (!settings.paymentFormActive) {
+            const btn = document.getElementById('paymentBtn');
+            if (btn) btn.style.display = 'none';
+        }
+        if (!settings.statusCheckActive) { // FIX ADDED
+            const btn = document.getElementById('statusBtn');
+            if (btn) btn.style.display = 'none';
+        }
+    });
+
+    /**
+     * Handles navigation between different views/pages of the app.
+     * @param {string} viewId The ID of the view to display.
+     */
+    function showView(viewId) {
+        document.querySelectorAll('.view').forEach(view => view.style.display = 'none');
+        const view = document.getElementById(viewId);
+        if (view) view.style.display = 'block';
+    }
+
+    // ================================================
+    //      RESULT CHECKER - CLIENT-SIDE LOGIC
+    // ================================================
+    const resultSearchForm = document.getElementById('resultSearchForm');
+    if (resultSearchForm) {
+        resultSearchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const searchKey = document.getElementById('resultSearchInput').value;
+            const resultDisplay = document.getElementById('resultDisplay');
+            const loader = document.getElementById('resultLoader');
+            
+            resultDisplay.innerHTML = "";
+            loader.style.display = 'block';
+            this.querySelector('button').disabled = true;
+
+            google.script.run
+                .withSuccessHandler(onResultSuccess)
+                .withFailureHandler(onResultFailure)
+                .searchStudentData(searchKey);
+        });
+    }
+
+    function onResultSuccess(response) {
+        document.getElementById('resultLoader').style.display = 'none';
+        document.getElementById('resultSearchForm').querySelector('button').disabled = false;
+        const resultDiv = document.getElementById('resultDisplay');
+
+        if (response.status === 'found') {
+            const student = response.data;
+            let statusClass = 'info-card status-viva'; // Default class
+            if (String(student.Status).toLowerCase().includes('finally')) statusClass = 'info-card status-final';
+            if (String(student.Status).toLowerCase().includes('not selected')) statusClass = 'info-card status-not-selected';
+            if (String(student.Status).toLowerCase().includes('waiting')) statusClass = 'info-card status-waiting';
+
+            let detailsHtml = '';
+            for (const key in student) {
+                if (student[key] && key !== 'Name' && key !== 'Message') {
+                    const value = (key === 'Phone Number') ? maskPhoneNumber(student[key]) : student[key];
+                    detailsHtml += `<div class="info-item"><span class="label">${key}</span><span>${value}</span></div>`;
+                }
+            }
+            resultDiv.innerHTML = `
+                <div class="${statusClass}">
+                    <h3>${student.Name || 'নাম পাওয়া যায়নি'}</h3>
+                    <p>${student.Message || 'আপনার স্ট্যাটাস নিচে দেখুন।'}</p>
+                    <div class="info-grid">${detailsHtml}</div>
+                </div>`;
+        } else if (response.status === 'not_found') {
+            resultDiv.innerHTML = `<div class="info-card status-not-selected"><h3>দুঃখিত, আপনি নির্বাচিত হননি</h3><p>আপনার দেওয়া তথ্যটি আমাদের তালিকায় পাওয়া যায়নি। আমাদের প্রতিষ্ঠানে আগ্রহ প্রকাশের জন্য ধন্যবাদ। আপনার জন্য শুভকামনা রইল।</p></div>`;
+        } else {
+             resultDiv.innerHTML = `<div class="info-card status-not-selected"><h3>সিস্টেম ত্রুটি</h3><p>${response.message}</p></div>`;
+        }
+    }
+    
+    function onResultFailure(error) {
+         document.getElementById('resultLoader').style.display = 'none';
+         document.getElementById('resultSearchForm').querySelector('button').disabled = false;
+         document.getElementById('resultDisplay').innerHTML = `<div class="info-card status-not-selected"><h3>সংযোগ বিচ্ছিন্ন</h3><p>সার্ভারের সাথে সংযোগে সমস্যা হচ্ছে। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</p></div>`;
+    }
+
+    function maskPhoneNumber(number) {
+        const numStr = String(number);
+        if (!numStr || numStr.length < 11) return "N/A";
+        return `${numStr.substring(0, 3)}****${numStr.substring(numStr.length - 4)}`;
+    }
+
+    // ================================================
+    //      PAYMENT FORM - CLIENT-SIDE LOGIC
+    // ================================================
+    
+    function verifyPhoneNumber() {
+        const phoneInput = document.getElementById('phone');
+        const phone = phoneInput.value.trim();
+        const statusDiv = document.getElementById('paymentStatus');
+        
+        if (!/^01[3-9]\d{8}$/.test(phone)) {
+            statusDiv.innerHTML = `<span class="text-danger">❌ সঠিক ১১-ডিজিটের মোবাইল নম্বর দিন (যেমন: 017...)</span>`;
+            return;
+        }
+
+        const loader = document.getElementById('paymentLoader');
+        loader.style.display = 'block';
+        statusDiv.innerText = "আপনার তথ্য খোঁজা হচ্ছে...";
+        document.getElementById('detailsSection').style.display = 'none';
+
+        google.script.run.withSuccessHandler(onUserSearchSuccess).getUserDetails(phone);
+    }
+    
+    function onUserSearchSuccess(response) {
+        document.getElementById('paymentLoader').style.display = 'none';
+        const statusDiv = document.getElementById('paymentStatus');
+        const detailsSection = document.getElementById('detailsSection');
+        if (response.found) {
+            statusDiv.innerHTML = '<span class="text-success">✅ আপনার তথ্য পাওয়া গেছে। অনুগ্রহ করে নিচের ফর্মটি পূরণ করুন।</span>';
+            detailsSection.style.display = 'block';
+            document.getElementById('nameDisplay').innerText = response.name;
+            document.getElementById('serialDisplay').innerText = response.serial;
+            document.getElementById('nameInput').value = response.name;
+            document.getElementById('serialInput').value = response.serial;
+            document.getElementById('districtInput').value = response.district;
+        } else {
+            statusDiv.innerHTML = `<span class="text-danger">❌ ${response.message}</span>`;
+            detailsSection.style.display = 'none';
+        }
+    }
+
+    const paymentForm = document.getElementById('paymentForm');
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const paymentSource = document.getElementById('paymentSource').value;
+            if (!/^01[3-9]\d{8}$/.test(paymentSource)) {
+                 alert("অনুগ্রহ করে 'যে নম্বর থেকে টাকা পাঠিয়েছেন' ফিল্ডে একটি সঠিক ১১-ডিজিটের মোবাইল নম্বর দিন।");
+                 return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="loader" style="display: block; margin: 0 auto; width: 24px; height: 24px; border-top-color: white;"></div>';
+            
+            const formObject = Object.fromEntries(new FormData(this).entries());
+
+            google.script.run
+                .withSuccessHandler(onPaymentSuccess)
+                .handlePost({ action: 'submitPayment', formData: formObject });
+        });
+    }
+
+    /**
+     * CRITICAL FIX: This function now correctly handles the structured JSON object
+     * received from the server, preventing the 'undefined' error.
+     */
+    function onPaymentSuccess(response) {
+        // Check if the response object has a 'success' key
+        if (response && response.success) {
+            document.getElementById('paymentView').innerHTML = `
+                <div id="successMessage">
+                    <h4>ধন্যবাদ!</h4>
+                    <p>${response.success}</p>
+                </div>`;
+        } 
+        // Otherwise, check if it has an 'error' key
+        else if (response && response.error) {
+            document.getElementById('paymentView').innerHTML = `
+                <div id="successMessage" style="background-color: #F9EBEA;">
+                    <h4 style="color: var(--danger-color);">ত্রুটি</h4>
+                    <p>${response.error}</p>
+                </div>`;
+        }
+        // Fallback for any unexpected response format
+        else {
+            document.getElementById('paymentView').innerHTML = `
+                <div id="successMessage">
+                    <h4>সম্পন্ন হয়েছে</h4>
+                    <p>আপনার অনুরোধটি প্রক্রিয়া করা হয়েছে।</p>
+                </div>`;
+        }
+    }
+
+    // ================================================
+    //      PAYMENT STATUS CHECKER - CLIENT-SIDE LOGIC
+    // ================================================
+    const statusSearchForm = document.getElementById('statusSearchForm');
+    if (statusSearchForm) {
+        statusSearchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const phone = document.getElementById('statusSearchInput').value;
+            const statusDisplay = document.getElementById('statusDisplay');
+            const loader = document.getElementById('statusLoader');
+            
+            statusDisplay.innerHTML = "";
+            loader.style.display = 'block';
+            this.querySelector('button').disabled = true;
+
+            google.script.run
+                .withSuccessHandler(onStatusCheckSuccess)
+                .getPaymentStatus(phone);
+        });
+    }
+
+    function onStatusCheckSuccess(response) {
+        document.getElementById('statusLoader').style.display = 'none';
+        document.getElementById('statusSearchForm').querySelector('button').disabled = false;
+        const statusDiv = document.getElementById('statusDisplay');
+
+        let statusClass = 'info-card status-waiting'; // Default
+        if (response.found) {
+            if (response.status === 'Approved') statusClass = 'info-card status-final';
+            if (response.status === 'Rejected') statusClass = 'info-card status-not-selected';
+        } else {
+            statusClass = 'info-card status-not-selected';
+        }
+
+        statusDiv.innerHTML = `<div class="${statusClass}"><p style="margin:0;">${response.message}</p></div>`;
+    }
+
+</script>
+</body>
+</html>

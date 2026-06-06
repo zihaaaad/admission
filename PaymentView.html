@@ -1,0 +1,51 @@
+<div class="instructions-box">
+    <h3>নির্দেশনাবলী:</h3>
+    <p id="instructions"></p>
+</div>
+
+<form id="paymentForm">
+    <!-- Verification Section -->
+    <div style="margin-bottom: 1.5rem;">
+        <label for="phone">নিবন্ধিত মোবাইল নম্বর</label>
+        <div style="display: flex; gap: 10px;">
+            <input type="tel" id="phone" name="phone" class="app-input" placeholder="01xxxxxxxxx" required>
+            <button type="button" class="app-button btn-primary" style="margin-top: 0; width: auto; white-space: nowrap;" onclick="verifyPhoneNumber()">যাচাই করুন</button>
+        </div>
+        <div id="paymentStatus" class="status-text"></div>
+        <div id="paymentLoader" class="loader" style="margin-top: 10px;"></div>
+    </div>
+
+    <!-- Candidate Info & Payment Submit Section -->
+    <div id="detailsSection" class="details-box" style="display: none;">
+        <div style="margin-bottom: 1rem; font-size: 1.1rem; line-height: 1.6;">
+            <p><strong>নাম:</strong> <span id="nameDisplay"></span></p>
+            <p><strong>সিরিয়াল নম্বর:</strong> <span id="serialDisplay"></span></p>
+        </div>
+        
+        <!-- Hidden Inputs for Form Submission -->
+        <input type="hidden" id="nameInput" name="name">
+        <input type="hidden" id="serialInput" name="serial">
+        <input type="hidden" id="districtInput" name="district">
+
+        <div style="margin-bottom: 1.2rem;">
+            <label for="paymentMethod">পেমেন্ট মাধ্যম</label>
+            <select id="paymentMethod" name="paymentMethod" class="app-select" required></select>
+        </div>
+
+        <div style="margin-bottom: 1.2rem;">
+            <label for="paymentSource">যে নম্বর থেকে টাকা পাঠিয়েছেন</label>
+            <input type="tel" id="paymentSource" name="paymentSource" class="app-input" placeholder="01xxxxxxxxx" required>
+        </div>
+
+        <div style="margin-bottom: 1.2rem;">
+            <label for="trxId">Transaction ID (TrxID)</label>
+            <input type="text" id="trxId" name="trxId" class="app-input" placeholder="TrxID লিখুন" required>
+        </div>
+
+        <button type="submit" id="submitBtn" class="app-button btn-success">পেমেন্ট তথ্য জমা দিন</button>
+    </div>
+</form>
+
+<div style="margin-top: 2rem; text-align: center;">
+    <a class="back-button" onclick="showView('landingView')">← মূল পাতায় ফিরে যান</a>
+</div>
