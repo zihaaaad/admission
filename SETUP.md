@@ -1,5 +1,14 @@
 # Setup and Configuration Manual
 
+---
+
+### Developer Profile
+*   **Developer Name:** Zihad Hasan
+*   **Email Address:** zihad.connects@gmail.com
+*   **Note:** This portal was developed to provide a seamless admission and payment validation interface for As-Sunnah Skill Development Institute. For technical support or modifications, please get in touch via email.
+
+---
+
 This guide describes how to configure the Google Sheets spreadsheet, generate a Google Docs template for the Admit Cards, and run this application.
 
 ## 1. Sheet Tabs & Columns
