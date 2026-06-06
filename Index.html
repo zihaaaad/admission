@@ -14,20 +14,21 @@
     
     <style>
         /* ================================================
-           GLOBAL STYLES & UI KIT
+           GLOBAL STYLES & UI KIT - DEEP FOREST NATURAL THEME
            ================================================ */
         :root {
-            --primary-color: #00684A;
-            --secondary-color: #3498DB;
-            --success-color: #27AE60;
-            --warning-color: #F39C12;
-            --danger-color: #C0392B;
-            --purple-color: #8E44AD;
-            --bg-color: #F4F7F9;
-            --text-dark: #2C3E50;
+            --primary-color: #1A3E2F; /* Deep forest green */
+            --primary-light: #2D5A46;
+            --accent-color: #D4AF37; /* Forest gold */
+            --success-color: #2E6B4E;
+            --warning-color: #B27A23;
+            --danger-color: #8C2D19;
+            --bg-color: #F4F6F4;      /* Soft leaf-gray background */
+            --text-dark: #1E2722;     /* Forest charcoal */
+            --text-light: #52635A;    /* Muted foliage gray */
             --card-bg: #FFFFFF;
-            --border-color: #E0E4E8;
-            --shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            --border-color: #D0DCD5;  /* Pale forest border */
+            --shadow: 0 10px 30px rgba(26, 62, 47, 0.05);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
@@ -35,73 +36,82 @@
             font-family: 'Noto Sans Bengali', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-dark);
-            padding: 1.5rem 1rem;
+            padding: 2.5rem 1rem;
             -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
         }
         .container {
-            max-width: 650px;
+            max-width: 620px;
             margin: auto;
             background: var(--card-bg);
-            border-radius: 16px;
+            border-radius: 20px;
             box-shadow: var(--shadow);
             overflow: hidden;
-            border-top: 5px solid var(--primary-color);
+            border: 1px solid var(--border-color);
         }
         .header {
             text-align: center;
-            padding: 2.5rem 1.5rem;
+            padding: 3rem 2rem;
             border-bottom: 1px solid var(--border-color);
-            background-color: #FCFCFC;
+            background-color: #FAFCFA;
         }
-        .header img { max-width: 250px; margin-bottom: 1rem; }
-        .header h3 { font-size: 1.6rem; font-weight: 700; color: var(--primary-color); }
+        .header img { max-width: 200px; margin-bottom: 1.2rem; filter: grayscale(10%) contrast(105%); }
+        .header h3 { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); letter-spacing: -0.02em; }
         .view {
             display: none; /* All views hidden by default */
-            padding: 2rem 2.5rem;
-            animation: fadeIn 0.4s ease-out;
+            padding: 2.5rem 3rem;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(10px); } 
+            from { opacity: 0; transform: translateY(8px); } 
             to { opacity: 1; transform: translateY(0); } 
         }
 
-        /* --- Improved UI Kit --- */
+        /* --- Premium Clean UI Kit --- */
         .app-input, .app-select {
-            width: 100%; padding: 0.8rem 1rem; font-size: 1rem;
-            border-radius: 8px; border: 1px solid var(--border-color);
-            transition: all 0.3s ease; font-family: 'Noto Sans Bengali', sans-serif;
-            background-color: #FAFAFA;
+            width: 100%; padding: 0.9rem 1.1rem; font-size: 1rem;
+            border-radius: 10px; border: 1.5px solid var(--border-color);
+            transition: all 0.25s ease; font-family: 'Noto Sans Bengali', sans-serif;
+            background-color: #FCFDFC;
+            color: var(--text-dark);
         }
         .app-input:focus, .app-select:focus {
             outline: none; border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0,104,74,0.15);
+            box-shadow: 0 0 0 3px rgba(26, 62, 47, 0.08);
+            background-color: #FFFFFF;
         }
         .app-button {
-            width: 100%; margin-top: 1rem; padding: 0.9rem; font-size: 1.1rem;
+            width: 100%; margin-top: 1rem; padding: 1rem; font-size: 1.1rem;
             font-weight: 600; color: white; border: none;
-            border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+            border-radius: 10px; cursor: pointer; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            background-color: var(--primary-color);
         }
         .app-button:hover:not(:disabled) {
-            filter: brightness(110%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background-color: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(26, 62, 47, 0.12);
         }
-        .app-button:disabled { background-color: #bdc3c7; cursor: not-allowed; transform: none; }
+        .app-button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        .app-button:disabled { background-color: #BDC7C2; cursor: not-allowed; transform: none; box-shadow: none; }
         
         .loader {
-            display: none; border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid var(--primary-color);
-            width: 24px; height: 24px; animation: spin 1s linear infinite;
+            display: none; border: 3px solid #E1E8E4; border-radius: 50%; border-top: 3px solid var(--primary-color);
+            width: 24px; height: 24px; animation: spin 0.8s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .back-button {
             display: inline-block; margin-bottom: 20px; font-weight: 600;
-            color: #555; cursor: pointer; text-decoration: none;
+            color: var(--text-light); cursor: pointer; text-decoration: none;
+            font-size: 0.95rem; transition: color 0.2s ease;
         }
-        .status-text { font-weight: 500; margin-top: 8px; min-height: 20px; }
+        .back-button:hover { color: var(--primary-color); }
+        .status-text { font-weight: 500; margin-top: 8px; min-height: 20px; font-size: 0.9rem; }
         .text-success { color: var(--success-color); }
         .text-danger { color: var(--danger-color); }
-        label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.95rem; color: var(--primary-color); }
         
         /* ================================================
            SPECIFIC VIEW STYLES
@@ -109,29 +119,39 @@
 
         /* --- Landing Page --- */
         #landingView { text-align: center; }
-        .nav-button { padding: 18px; font-size: 1.2rem; font-weight: 700; }
-        .btn-primary { background-color: var(--primary-color); }
-        .btn-secondary { background-color: var(--secondary-color); }
-        .btn-purple { background-color: var(--purple-color); }
+        #landingView h3 { font-size: 1.4rem; color: var(--text-light); margin-bottom: 1.5rem; font-weight: 500; }
+        .nav-button { padding: 1.1rem; font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; border: 1.5px solid transparent; }
         
-        /* --- Universal Cards --- */
-        .info-card { margin-top: 2rem; padding: 1.5rem; border-radius: 12px; border-left: 5px solid; }
-        .info-card h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .status-final { border-color: var(--success-color); background-color: #E8F8F5; }
+        /* Clean Flat Theme Button Colors (Forest Tones) */
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-secondary { background-color: transparent; border-color: var(--primary-color); color: var(--primary-color); }
+        .btn-secondary:hover:not(:disabled) { background-color: #F0F4F2; color: var(--primary-color); border-color: var(--primary-color); }
+        .btn-purple { background-color: transparent; border-color: var(--border-color); color: var(--text-light); }
+        .btn-purple:hover:not(:disabled) { background-color: #F5F7F6; color: var(--text-dark); border-color: var(--text-dark); }
+        
+        /* --- Universal Premium Flat Cards --- */
+        .info-card { margin-top: 2rem; padding: 1.8rem; border-radius: 12px; border: 1.5px solid var(--border-color); background-color: #FAFCFA; }
+        .info-card h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.6rem; color: var(--primary-color); }
+        .info-card p { color: var(--text-light); font-size: 0.95rem; }
+        
+        .status-final { border-color: var(--success-color); background-color: #F2FAF6; }
         .status-final h3 { color: var(--success-color); }
-        .status-viva, .status-waiting { border-color: var(--secondary-color); background-color: #EBF5FB; }
-        .status-viva h3, .status-waiting h3 { color: var(--secondary-color); }
-        .status-not-selected { border-color: var(--danger-color); background-color: #F9EBEA; }
+        .status-viva, .status-waiting { border-color: var(--primary-light); background-color: #F6FAF8; }
+        .status-viva h3, .status-waiting h3 { color: var(--primary-light); }
+        .status-not-selected { border-color: var(--danger-color); background-color: #FCF5F4; }
         .status-not-selected h3 { color: var(--danger-color); }
-        .info-grid { margin-top: 1.5rem; border-top: 1px dashed #B0BEC5; padding-top: 1rem; }
-        .info-item { display: flex; justify-content: space-between; padding: 0.6rem 0; font-size: 1rem; }
-        .info-item .label { font-weight: 500; color: #546E7A; }
+        
+        .info-grid { margin-top: 1.5rem; border-top: 1px dashed var(--border-color); padding-top: 1.2rem; }
+        .info-item { display: flex; justify-content: space-between; padding: 0.7rem 0; font-size: 0.95rem; border-bottom: 1px solid #F0F4F2; }
+        .info-item:last-child { border-bottom: none; }
+        .info-item .label { font-weight: 500; color: var(--text-light); }
 
         /* --- Payment Form --- */
-        .instructions-box { background: #fffaf0; border-left: 4px solid var(--warning-color); padding: 15px; margin-bottom: 20px; border-radius: 8px; }
-        .details-box { background-color: #e6f7f2; padding: 20px; border-radius: 8px; border-left: 4px solid var(--success-color); margin-top: 1rem; }
-        #successMessage { text-align:center; padding: 40px 20px; }
-        #successMessage h4 { font-size: 1.8rem; color: var(--success-color); }
+        .instructions-box { background: #FCFAF6; border: 1.5px solid #F0E6D2; padding: 1.2rem; margin-bottom: 2rem; border-radius: 12px; font-size: 0.95rem; color: #735F3F; }
+        .details-box { background-color: #FAFCFA; padding: 1.8rem; border-radius: 12px; border: 1.5px solid var(--success-color); margin-top: 1.5rem; }
+        #successMessage { text-align:center; padding: 3rem 1.5rem; }
+        #successMessage h4 { font-size: 1.8rem; color: var(--success-color); margin-bottom: 0.5rem; }
+        #successMessage p { color: var(--text-light); }
     </style>
 </head>
 <body>
