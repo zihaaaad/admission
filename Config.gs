@@ -17,7 +17,7 @@ const FOLDER_ID = "YOUR_PDF_OUTPUT_FOLDER_ID_HERE";
 
 // Application Fallback Defaults
 const DEFAULTS = {
-  APP_TITLE: "ভর্তি ও ফলাফল পোর্টাল",
-  INSTITUTE_NAME: "আপনার শিক্ষা প্রতিষ্ঠান",
+  APP_TITLE: "আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট",
+  INSTITUTE_NAME: "আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট",
   LOGO_URL: "https://i.postimg.cc/RZ4wD83V/skill-color-logo-32x32.png"
 };
