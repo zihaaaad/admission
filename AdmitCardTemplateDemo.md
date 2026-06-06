@@ -4,7 +4,7 @@ This is a template file simulating the layout of the Google Docs Admit Card temp
 
 ---
 
-# [INSTITUTE LOGO PLACEHOLDER]
+# As-Sunnah Skill Development Institute
 ## {{FullName}} - EXAM ADMIT CARD
 **Admission Roll:** {{SerialNumber}}
 

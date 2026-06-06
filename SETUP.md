@@ -56,8 +56,8 @@ You must create a Google Sheet and add the following sheet tabs (case-sensitive)
 *   **Column B:** `Value`
 
 #### Keys required in Column A:
-*   `appTitle`: (e.g. *ভর্তি ও ফলাফল পোর্টাল*)
-*   `instituteName`: (e.g. *আল-ইসলাহ একাডেমি*)
+*   `appTitle`: (e.g. *আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট*)
+*   `instituteName`: (e.g. *আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট*)
 *   `logoUrl`: (Direct link to logo image)
 *   `resultCheckerActive`: `TRUE` or `FALSE`
 *   `paymentFormActive`: `TRUE` or `FALSE`
