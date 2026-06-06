@@ -8,9 +8,6 @@
 *   **Note:** This portal was developed to provide a seamless admission and payment validation interface for As-Sunnah Skill Development Institute. For technical support or modifications, please get in touch via email.
 
 ---
-
-![Portal Dashboard Mockup](assunnah_dashboard_ui.png)
-
 A beautiful, performant, and responsive web portal built with **Google Apps Script** for handling student result checking, registered candidate payment submission logs, and automated PDF Admit Card generation with email verification.
 
 ## Features
