@@ -187,8 +187,85 @@ function doPost(formObject) {
 function onOpen() {
   SpreadsheetApp.getUi()
       .createMenu('⚙️ অটোমেশন')
+      .addItem('📊 ড্যাশবোর্ড আপডেট করুন', 'updateDashboardSheet')
       .addItem('✅ সকল অনুমোদিত পেমেন্ট প্রসেস করুন', 'processAllApprovedManually')
       .addToUi();
+}
+
+/**
+ * Calculates payment metrics and writes/formats the Dashboard tab.
+ */
+function updateDashboardSheet() {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let dashSheet = ss.getSheetByName(SHEET_DASHBOARD);
+    if (!dashSheet) {
+      dashSheet = ss.insertSheet(SHEET_DASHBOARD);
+    }
+    
+    // Clear old data and formats
+    dashSheet.clear();
+    
+    // Read logs
+    const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
+    let totalLogs = 0;
+    let pendingLogs = 0;
+    let approvedLogs = 0;
+    let rejectedLogs = 0;
+    
+    if (paymentSheet) {
+      const lastRow = paymentSheet.getLastRow();
+      if (lastRow > 1) {
+        const headers = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
+        const approvalColIndex = headers.indexOf('ApprovalStatus');
+        if (approvalColIndex !== -1) {
+          const approvalValues = paymentSheet.getRange(2, approvalColIndex + 1, lastRow - 1, 1).getValues().flat();
+          totalLogs = approvalValues.length;
+          approvalValues.forEach(val => {
+            const status = String(val).trim();
+            if (status === 'Approved') approvedLogs++;
+            else if (status === 'Rejected') rejectedLogs++;
+            else pendingLogs++;
+          });
+        }
+      }
+    }
+    
+    // Setup and format Dashboard
+    dashSheet.getRange("A1:C1").merge().setValue("ভর্তি ও পেমেন্ট ড্যাশবোর্ড ওভারভিউ")
+      .setFontSize(16).setFontWeight("bold").setHorizontalAlignment("center")
+      .setBackground("#1A3E2F").setFontColor("#FFFFFF");
+      
+    dashSheet.getRange("A3:B3").merge().setValue(`সর্বশেষ আপডেট: ${Utilities.formatDate(new Date(), "GMT+6", "yyyy-MM-dd hh:mm a")}`)
+      .setFontStyle("italic").setFontColor("#52635A");
+      
+    const headers = [["মেট্রিক (Metric)", "পরিমাণ (Count)"]];
+    dashSheet.getRange("A5:B5").setValues(headers).setFontWeight("bold").setBackground("#D0DCD5").setFontColor("#1A3E2F");
+    
+    const rows = [
+      ["মোট পেমেন্ট আবেদন (Total Submissions)", totalLogs],
+      ["যাচাইকরণাধীন (Pending Verification)", pendingLogs],
+      ["অনুমোদিত আবেদন (Approved Payments)", approvedLogs],
+      ["বাতিলকৃত আবেদন (Rejected Payments)", rejectedLogs]
+    ];
+    
+    dashSheet.getRange(6, 1, rows.length, 2).setValues(rows);
+    dashSheet.getRange("A6:A9").setFontWeight("bold");
+    dashSheet.getRange("B6:B9").setHorizontalAlignment("center");
+    
+    // Add gridlines and border styles
+    dashSheet.getRange("A5:B9").setBorder(true, true, true, true, true, true, "#D0DCD5", SpreadsheetApp.BorderStyle.SOLID);
+    
+    // Auto-fit columns
+    dashSheet.autoResizeColumn(1);
+    dashSheet.autoResizeColumn(2);
+    
+    if (typeof SpreadsheetApp !== 'undefined') {
+      SpreadsheetApp.getUi().alert("ড্যাশবোর্ড সফলভাবে আপডেট করা হয়েছে!");
+    }
+  } catch (e) {
+    logErrorToSheet("updateDashboardSheet", e);
+  }
 }
 
 /**

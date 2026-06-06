@@ -9,6 +9,7 @@ const SHEET_RESULTS = "Results";
 const SHEET_PAYMENT_LOG = "Payment_Verification_Log";
 const SHEET_MASTER_LIST = "Candidate_Master_List";
 const SHEET_ERROR_LOG = "Error_Log";
+const SHEET_DASHBOARD = "Dashboard";
 
 // Drive Folder & Template Configuration for Admit Cards
 const TEMPLATE_ID = "YOUR_DOC_TEMPLATE_ID_HERE";

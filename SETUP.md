@@ -56,6 +56,11 @@ You must create a Google Sheet and add the following sheet tabs (case-sensitive)
 *   `paymentOptions`: (Add multiple rows with this key to populate bkash, Nagad, Rocket, etc.)
 *   `instructions`: (Detailed text supporting bolding via `*bold text*` markdown syntax)
 
+### Tab 5: `Dashboard`
+*An administrative statistics dashboard formatted dynamically with deep forest natural themes.*
+
+*   Contains merged headers for overview titles, latest timestamps, metrics tables, and color-coded status breakdowns (Submissions, Pending, Approved, Rejected). Automatically updated by selecting the custom menu option `📊 ড্যাশবোর্ড আপডেট করুন` in the Google Sheet UI.
+
 ---
 
 ## 2. Google Docs Admit Card Template
