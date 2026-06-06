@@ -9,7 +9,7 @@
 
 ---
 
-![Portal Dashboard Mockup](portal_dashboard_mockup.png)
+![Portal Dashboard Mockup](dashboard_overview_ui.png)
 
 A beautiful, performant, and responsive web portal built with **Google Apps Script** for handling student result checking, registered candidate payment submission logs, and automated PDF Admit Card generation with email verification.
 
