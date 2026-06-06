@@ -315,7 +315,7 @@
         const statusDiv = document.getElementById('paymentStatus');
         
         if (!/^01[3-9]\d{8}$/.test(phone)) {
-            statusDiv.innerHTML = `<span class="text-danger">❌ সঠিক ১১-ডিজিটের মোবাইল নম্বর দিন (যেমন: 017...)</span>`;
+            statusDiv.innerHTML = `<span class="text-danger">সঠিক ১১-ডিজিটের মোবাইল নম্বর দিন (যেমন: 017...)</span>`;
             return;
         }
 
@@ -332,7 +332,7 @@
         const statusDiv = document.getElementById('paymentStatus');
         const detailsSection = document.getElementById('detailsSection');
         if (response.found) {
-            statusDiv.innerHTML = '<span class="text-success">✅ আপনার তথ্য পাওয়া গেছে। অনুগ্রহ করে নিচের ফর্মটি পূরণ করুন।</span>';
+            statusDiv.innerHTML = '<span class="text-success">আপনার তথ্য পাওয়া গেছে। অনুগ্রহ করে নিচের ফর্মটি পূরণ করুন।</span>';
             detailsSection.style.display = 'block';
             document.getElementById('nameDisplay').innerText = response.name;
             document.getElementById('serialDisplay').innerText = response.serial;
@@ -340,7 +340,7 @@
             document.getElementById('serialInput').value = response.serial;
             document.getElementById('districtInput').value = response.district;
         } else {
-            statusDiv.innerHTML = `<span class="text-danger">❌ ${response.message}</span>`;
+            statusDiv.innerHTML = `<span class="text-danger">${response.message}</span>`;
             detailsSection.style.display = 'none';
         }
     }

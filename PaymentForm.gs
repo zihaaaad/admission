@@ -97,12 +97,12 @@ function getPaymentStatus(phone) {
       if (String(data[i][phoneColIndex]).trim() === phoneTrimmed) {
         const status = data[i][statusColIndex] || 'Pending';
         if (status === 'Approved') {
-          return { found: true, status: 'Approved', message: "✅ আপনার পেমেন্ট অনুমোদিত হয়েছে! আপনার প্রবেশপত্র ইমেইলে পাঠিয়ে দেওয়া হয়েছে।" };
+          return { found: true, status: 'Approved', message: "আপনার পেমেন্ট অনুমোদিত হয়েছে! আপনার প্রবেশপত্র ইমেইলে পাঠিয়ে দেওয়া হয়েছে।" };
         } else if (status === 'Rejected') {
           const reason = rejectReasonColIndex !== -1 ? data[i][rejectReasonColIndex] : '';
-          return { found: true, status: 'Rejected', message: `❌ আপনার পেমেন্ট বাতিল করা হয়েছে। কারণ: ${reason || 'অনির্দিষ্ট'}` };
+          return { found: true, status: 'Rejected', message: `আপনার পেমেন্ট বাতিল করা হয়েছে। কারণ: ${reason || 'অনির্দিষ্ট'}` };
         } else {
-          return { found: true, status: 'Pending', message: "⏳ আপনার পেমেন্ট যাচাইকরণাধীন রয়েছে। অনুগ্রহ করে অপেক্ষা করুন।" };
+          return { found: true, status: 'Pending', message: "আপনার পেমেন্ট যাচাইকরণাধীন রয়েছে। অনুগ্রহ করে অপেক্ষা করুন।" };
         }
       }
     }
