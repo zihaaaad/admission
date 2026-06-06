@@ -123,13 +123,18 @@ function doGet(e) {
 }
 
 /**
- * Reads the _Configuration sheet (defined in Config.gs) and returns a clean, ready-to-use settings object.
- * This centralizes all application settings, making them easy to manage from the spreadsheet.
- * This version includes the logic for the new 'statusCheckActive' setting.
+ * Reads the _Configuration sheet and returns a cached/clean settings object.
  */
 function getAppSettings() {
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get("app_settings");
+  if (cached) {
+    try {
+      return JSON.parse(cached);
+    } catch(e) {}
+  }
+
   try {
-    // Note: SPREADSHEET_ID and SHEET_CONFIG are read from the central Config.gs file.
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     const sheet = ss.getSheetByName(SHEET_CONFIG);
 
@@ -141,35 +146,23 @@ function getAppSettings() {
     const settings = {};
     let paymentOptions = [];
 
-    // Loop through each row in the configuration sheet
     data.forEach(row => {
       const key = row[0];
       const value = row[1];
-      
-      // Process only if both key and value exist
       if (key && value !== "") {
         if (key === 'paymentOptions') {
-          // Collect all payment options into an array
           paymentOptions.push(value);
         } else {
-          // Add other settings to the settings object
           settings[key] = value;
         }
       }
     });
 
-    // Assign the collected arrays to the settings object
     settings.paymentOptions = paymentOptions;
-
-    // Convert all TRUE/FALSE strings from the sheet to actual boolean values.
-    // This is crucial because sheet values can be text. Using String().toUpperCase() handles both boolean true and string "TRUE".
     settings.resultCheckerActive = (String(settings.resultCheckerActive).toUpperCase() === 'TRUE');
     settings.paymentFormActive = (String(settings.paymentFormActive).toUpperCase() === 'TRUE');
     settings.statusCheckActive = (String(settings.statusCheckActive).toUpperCase() === 'TRUE');
     
-    // Pre-process instructions on the server-side.
-    // This converts special characters (* for bold, newline for <br>) into HTML,
-    // preventing JavaScript syntax errors on the client side with multi-line strings.
     if (settings.instructions) {
       settings.instructions = settings.instructions
         .toString()
@@ -177,19 +170,17 @@ function getAppSettings() {
         .replace(/\n/g, '<br>');
     }
 
-    // Return the final, clean settings object
+    // Cache configurations for 10 minutes (600 seconds)
+    cache.put("app_settings", JSON.stringify(settings), 600);
     return settings;
 
   } catch (e) {
-      // If any error occurs (e.g., sheet not found, permission issues), log it and return safe default values.
-      Logger.log("FATAL ERROR in getAppSettings: " + e.message);
-      
-      // DEFAULTS are read from Config.gs
+      logErrorToSheet("getAppSettings", e);
       return { 
           appTitle: DEFAULTS.APP_TITLE, 
           instituteName: DEFAULTS.INSTITUTE_NAME,
           logoUrl: DEFAULTS.LOGO_URL,
-          resultCheckerActive: false, // All features are disabled by default on error for safety.
+          resultCheckerActive: false,
           paymentFormActive: false,
           statusCheckActive: false,
           paymentOptions: [],
@@ -200,7 +191,6 @@ function getAppSettings() {
 
 /**
  * A helper function to include HTML partials into the main Index.html file.
- * This is essential for our modular frontend architecture.
  */
 function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
@@ -208,16 +198,38 @@ function include(filename) {
 
 /**
  * A centralized function for handling POST requests from the client.
- * It determines which service to call based on the 'action' parameter.
- * This makes the client-side code cleaner.
  */
 function handlePost(request) {
+  try {
     if (request.action === 'submitPayment') {
         return doPost(request.formData);
     }
-    // Future actions can be added here
-    // else if (request.action === 'anotherAction') {
-    //     return anotherFunction(request.formData);
-    // }
     return { error: 'Unknown action' };
+  } catch (e) {
+    logErrorToSheet("handlePost", e);
+    return { error: "সার্ভারে একটি ত্রুটি ঘটেছে: " + e.message };
+  }
+}
+
+/**
+ * Centrally log error records into spreadsheet tab 'Error_Log'.
+ */
+function logErrorToSheet(context, errorObj) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let logSheet = ss.getSheetByName(SHEET_ERROR_LOG);
+    if (!logSheet) {
+      logSheet = ss.insertSheet(SHEET_ERROR_LOG);
+      logSheet.appendRow(["Timestamp", "Context/Function", "Error Message", "Stack Trace"]);
+      logSheet.getRange("A1:D1").setFontWeight("bold").setBackground("#F9EBEA");
+    }
+    logSheet.appendRow([
+      new Date(),
+      context,
+      errorObj.message || errorObj.toString(),
+      errorObj.stack || ""
+    ]);
+  } catch (e) {
+    Logger.log("CRITICAL ERROR LOGGING FAILURE: " + e.toString());
+  }
 }

@@ -25,71 +25,155 @@ function getUserDetails(phone) {
     const masterSheet = ss.getSheetByName(SHEET_MASTER_LIST);
 
     if (!paymentSheet || !masterSheet) {
-      Logger.log("CRITICAL ERROR: Payment or Master sheet not found.");
-      return { found: false, message: "সিস্টেম কনফিগারেশন ত্রুটি। অনুগ্রহ করে অ্যাডমিনের সাথে যোগাযোগ করুন।" };
+      throw new Error("Payment or Master sheet not found configuration error.");
     }
 
     // 1. DUPLICATE CHECK: Prevent resubmission.
-    const paymentData = paymentSheet.getRange(2, 2, paymentSheet.getLastRow(), 1).getValues().flat();
-    if (paymentData.map(p => String(p).trim()).includes(phoneTrimmed)) {
-      return { 
-        found: false, 
-        message: 'এই নম্বর থেকে ফি প্রদানের তথ্য ইতিমধ্যে জমা দেওয়া হয়েছে। কোনো পরিবর্তনের জন্য অফিসে যোগাযোগ করুন।' 
-      };
+    const lastRow = paymentSheet.getLastRow();
+    if (lastRow > 1) {
+      const paymentData = paymentSheet.getRange(2, 2, lastRow - 1, 1).getValues().flat();
+      if (paymentData.map(p => String(p).trim()).includes(phoneTrimmed)) {
+        return { 
+          found: false, 
+          message: 'এই নম্বর থেকে ফি প্রদানের তথ্য ইতিমধ্যে জমা দেওয়া হয়েছে। কোনো পরিবর্তনের জন্য অফিসে যোগাযোগ করুন।' 
+        };
+      }
     }
 
     // 2. SEARCH MASTER LIST: Verify the candidate exists.
-    const masterData = masterSheet.getRange(2, 1, masterSheet.getLastRow(), 5).getValues();
-    for (const row of masterData) {
-      if (String(row[2]).trim() === phoneTrimmed) { // Column C is RegisteredPhoneNumber
-        return { found: true, serial: row[0], name: row[1], district: row[3], email: row[4] };
+    const masterLastRow = masterSheet.getLastRow();
+    if (masterLastRow > 1) {
+      const masterData = masterSheet.getRange(2, 1, masterLastRow - 1, 5).getValues();
+      for (const row of masterData) {
+        if (String(row[2]).trim() === phoneTrimmed) { // Column C is RegisteredPhoneNumber
+          return { found: true, serial: row[0], name: row[1], district: row[3], email: row[4] };
+        }
       }
     }
     
     return { found: false, message: 'দুঃখিত, এই নম্বরের কোনো তথ্য আমাদের প্রাথমিক তালিকায় পাওয়া যায়নি।' };
   } catch (e) {
-    Logger.log("FATAL ERROR in getUserDetails: " + e.toString());
+    logErrorToSheet("getUserDetails", e);
     return { found: false, message: "সিস্টেমের ত্রুটির কারণে তথ্য যাচাই করা সম্ভব হচ্ছে না।" };
   }
 }
 
 /**
- * CRITICAL FIX: Handles the POST request and returns a structured JSON object
- * instead of a plain string. This prevents the 'undefined' error on the client side.
+ * Checks the status of payment for a given phone number.
+ * @param {string} phone The registered phone number of the candidate.
+ * @return {object} Verification status and descriptive message.
+ */
+function getPaymentStatus(phone) {
+  try {
+    const phoneTrimmed = String(phone).trim();
+    if (!/^01[3-9]\d{8}$/.test(phoneTrimmed)) {
+      return { found: false, message: "অবৈধ ফোন নম্বর ফরম্যাট। সঠিক ১১-ডিজিটের নম্বর দিন।" };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
+
+    if (!paymentSheet) {
+      return { found: false, message: "সিস্টেম ত্রুটি: পেমেন্ট তথ্য সংরক্ষণ টেবিল পাওয়া যায়নি।" };
+    }
+
+    const lastRow = paymentSheet.getLastRow();
+    if (lastRow < 2) {
+      return { found: false, message: "কোনো পেমেন্ট রেকর্ড খুঁজে পাওয়া যায়নি।" };
+    }
+
+    const headers = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
+    const data = paymentSheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+
+    const phoneColIndex = headers.indexOf('RegisteredPhoneNumber');
+    const statusColIndex = headers.indexOf('ApprovalStatus');
+    const rejectReasonColIndex = headers.indexOf('Rejection_Reason');
+
+    if (phoneColIndex === -1 || statusColIndex === -1) {
+      return { found: false, message: "সিস্টেম কলাম ত্রুটি: প্রয়োজনীয় কলামসমূহ পাওয়া যায়নি।" };
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      if (String(data[i][phoneColIndex]).trim() === phoneTrimmed) {
+        const status = data[i][statusColIndex] || 'Pending';
+        if (status === 'Approved') {
+          return { found: true, status: 'Approved', message: "✅ আপনার পেমেন্ট অনুমোদিত হয়েছে! আপনার প্রবেশপত্র ইমেইলে পাঠিয়ে দেওয়া হয়েছে।" };
+        } else if (status === 'Rejected') {
+          const reason = rejectReasonColIndex !== -1 ? data[i][rejectReasonColIndex] : '';
+          return { found: true, status: 'Rejected', message: `❌ আপনার পেমেন্ট বাতিল করা হয়েছে। কারণ: ${reason || 'অনির্দিষ্ট'}` };
+        } else {
+          return { found: true, status: 'Pending', message: "⏳ আপনার পেমেন্ট যাচাইকরণাধীন রয়েছে। অনুগ্রহ করে অপেক্ষা করুন।" };
+        }
+      }
+    }
+
+    return { found: false, message: "আপনার মোবাইল নম্বরের বিপরীতে কোনো পেমেন্ট রেকর্ড পাওয়া যায়নি।" };
+  } catch (e) {
+    logErrorToSheet("getPaymentStatus", e);
+    return { found: false, message: "স্ট্যাটাস লোড করার সময় একটি ত্রুটি ঘটেছে।" };
+  }
+}
+
+/**
+ * Handles the POST request, processes data with Locks & Validations.
  *
  * @param {object} formObject The data submitted from the HTML form.
  * @return {object} An object with either a 'success' or 'error' key.
  */
 function doPost(formObject) {
+  const lock = LockService.getScriptLock();
   try {
+    // Acquire a lock for 30 seconds to prevent concurrent duplicates
+    lock.waitLock(30000);
+
+    const phone = String(formObject.phone).trim();
+    const paymentSource = String(formObject.paymentSource).trim();
+    const trxId = String(formObject.trxId).trim().toUpperCase();
+
+    // 1. Back-end Validation checks
+    if (!/^01[3-9]\d{8}$/.test(phone)) {
+      return { error: "অবৈধ মোবাইল নম্বর ফরম্যাট।" };
+    }
+    if (!/^01[3-9]\d{8}$/.test(paymentSource)) {
+      return { error: "অবৈধ প্রেরক মোবাইল নম্বর ফরম্যাট।" };
+    }
+    if (trxId.length < 8) {
+      return { error: "অবৈধ Transaction ID। অনুগ্রহ করে সঠিক TrxID দিন।" };
+    }
+
+    // 2. Re-Verify candidate in master list to prevent form spoofing
+    const userCheck = getUserDetails(phone);
+    if (!userCheck.found) {
+      return { error: "দুঃখিত, তথ্য যাচাই করা সম্ভব হয়নি: " + userCheck.message };
+    }
+
     const paymentSheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_PAYMENT_LOG);
     
-    // Append data to the log sheet
+    // Append data safely to the log sheet
     paymentSheet.appendRow([
       new Date(),
-      "'" + formObject.phone,
-      formObject.name,
-      formObject.serial,
-      formObject.district,
+      "'" + phone,
+      userCheck.name,
+      userCheck.serial,
+      userCheck.district,
       formObject.paymentMethod,
-      "'" + formObject.paymentSource,
-      formObject.trxId,
+      "'" + paymentSource,
+      trxId,
       'Pending',
       '', '' 
     ]);
 
-    // Return a success object
     return { 
       success: "আপনার তথ্য সফলভাবে জমা হয়েছে। পেমেন্ট যাচাই করার পর ২৪ ঘণ্টার মধ্যে আপনার ইমেইলে অ্যাডমিট কার্ড পাঠানো হবে। ধন্যবাদ।" 
     };
 
   } catch (e) {
-    Logger.log("FATAL ERROR in doPost: " + e.toString());
-    
-    // Return an error object
+    logErrorToSheet("doPost", e);
     return { 
       error: "একটি অপ্রত্যাশিত ত্রুটি দেখা দিয়েছে। তথ্য জমা দেওয়া সম্ভব হয়নি। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।" 
     };
+  } finally {
+    lock.releaseLock();
   }
 }
 
@@ -105,6 +189,49 @@ function onOpen() {
       .createMenu('⚙️ অটোমেশন')
       .addItem('✅ সকল অনুমোদিত পেমেন্ট প্রসেস করুন', 'processAllApprovedManually')
       .addToUi();
+}
+
+/**
+ * Admin utility to manually process all approved rows that are pending processing.
+ */
+function processAllApprovedManually() {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
+    if (!paymentSheet) return;
+
+    const lastRow = paymentSheet.getLastRow();
+    if (lastRow < 2) return;
+
+    const headers = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
+    const statusColIndex = headers.indexOf('ApprovalStatus');
+    const procColIndex = headers.indexOf('ProcessingStatus');
+
+    if (statusColIndex === -1 || procColIndex === -1) return;
+
+    const data = paymentSheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
+
+    let processedCount = 0;
+    for (let i = 0; i < data.length; i++) {
+      const rowNum = i + 2;
+      const approvalStatus = data[i][statusColIndex];
+      const processingStatus = data[i][procColIndex];
+
+      if (approvalStatus === 'Approved' && processingStatus !== 'Success' && processingStatus !== 'প্রসেসিং চলছে...') {
+        paymentSheet.getRange(rowNum, procColIndex + 1).setValue('প্রসেসিং চলছে...').setFontColor('#E67E22');
+        SpreadsheetApp.flush();
+        processSingleRow(rowNum);
+        processedCount++;
+      }
+    }
+
+    SpreadsheetApp.getUi().alert(`প্রক্রিয়া সম্পন্ন হয়েছে! মোট ${processedCount} টি অনুমোদিত প্রবেশপত্র পাঠানো হয়েছে।`);
+  } catch (e) {
+    Logger.log("ERROR in processAllApprovedManually: " + e.toString());
+    if (typeof SpreadsheetApp !== 'undefined') {
+      SpreadsheetApp.getUi().alert("ত্রুটি ঘটেছে: " + e.message);
+    }
+  }
 }
 
 /**
@@ -124,7 +251,7 @@ function handleEditTrigger(e) {
   const editedColumn = range.getColumn();
   const newValue = e.value;
 
-  const TARGET_SHEET = PAYMENT_SHEET_NAME;
+  const TARGET_SHEET = SHEET_PAYMENT_LOG;
   const TRIGGER_COLUMN_INDEX = 9; // Column I is 'ApprovalStatus'
 
   if (sheet.getName() === TARGET_SHEET && editedColumn === TRIGGER_COLUMN_INDEX && editedRow > 1) {
@@ -152,8 +279,8 @@ function handleEditTrigger(e) {
 function sendRejectionEmail(rowNum) {
     try {
         const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-        const paymentSheet = ss.getSheetByName(PAYMENT_SHEET_NAME);
-        const masterSheet = ss.getSheetByName(MASTER_SHEET_NAME);
+        const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
+        const masterSheet = ss.getSheetByName(SHEET_MASTER_LIST);
 
         const headers = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
         const rowData = paymentSheet.getRange(rowNum, 1, 1, headers.length).getValues()[0];
@@ -195,7 +322,7 @@ function sendRejectionEmail(rowNum) {
  */
 function processSingleRow(rowNum) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const paymentSheet = ss.getSheetByName(PAYMENT_SHEET_NAME);
+  const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
   const headers = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
   const rowData = paymentSheet.getRange(rowNum, 1, 1, headers.length).getValues()[0];
   let rowObject = {};
@@ -208,7 +335,7 @@ function processSingleRow(rowNum) {
   const pdfLinkColIndex = headers.indexOf('AdmitCardLink') + 1;
 
   try {
-    const masterSheet = ss.getSheetByName(MASTER_SHEET_NAME);
+    const masterSheet = ss.getSheetByName(SHEET_MASTER_LIST);
     const masterData = masterSheet.getRange(2, 1, masterSheet.getLastRow(), 5).getValues();
     const emailMap = new Map();
     masterData.forEach(row => emailMap.set(String(row[2]).trim(), row[4]));
