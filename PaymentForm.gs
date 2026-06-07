@@ -328,7 +328,7 @@ function initializeSystemSheets() {
           .setFontColor("#FFFFFF")
           .setHorizontalAlignment("center");
         sheet.setRowHeight(1, 28);
-        sheet.freezeRows(1);
+        sheet.setFrozenRows(1);
         
         // Auto-fit headers
         for (let i = 1; i <= def.headers.length; i++) {
