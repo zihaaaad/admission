@@ -22,7 +22,12 @@
 
 ## Step 1: Create the Google Spreadsheet
 
-Create a new Google Spreadsheet. This single spreadsheet will serve as your entire database. You need to create **5 sheet tabs** with exact names (case-sensitive):
+Create a new Google Spreadsheet.
+
+> [!TIP]
+> **One-Click Setup**: You do NOT need to create the sheets or add the headers manually! Once you copy the Apps Script code in Step 4, you can simply go to the spreadsheet menu and select **অটোমেশন > নতুন ডাটাবেজ প্রস্তুত করুন (Initialize System)**. This will automatically create all required sheets, style the header rows, and populate default settings in seconds.
+>
+> If you choose to configure the spreadsheet tabs manually, you must create **5 sheet tabs** with the exact names (case-sensitive) detailed below:
 
 ---
 
@@ -190,7 +195,7 @@ This step is **critical** — without it, approve/reject automation will not wor
 ### Option A: Automatic Setup (Recommended)
 1. Open your Google Spreadsheet.
 2. In the top menu bar, click on **অটোমেশন** (Automation).
-3. Select **অন-এডিট ট্রিগার সক্রিয় করুন (Enable Trigger)**.
+3. Select **অটো-অ্যাকশন চালু করুন (Enable Trigger)**.
 4. Click **OK** on the permission prompts if they appear. The system will programmatically build and bind the trigger for you!
 
 ### Option B: Manual Setup (Fallback)
@@ -248,7 +253,7 @@ Run through this checklist to verify everything works:
 | Admit card email | Check the candidate's email for the PDF attachment |
 | Rejection flow | Set `ApprovalStatus` to `Rejected` with a reason in column L |
 | Status checker | Search for the phone number in the status checker view |
-| Dashboard | Click **অটোমেশন > ড্যাশবোর্ড আপডেট করুন** in the spreadsheet menu |
+| Dashboard | Click **অটোমেশন > ড্যাশবোর্ড রিফ্রেশ করুন** in the spreadsheet menu |
 
 ---
 
@@ -258,11 +263,13 @@ When you are ready to reuse the system for a new batch or course:
 
 1. **Download Backup**: Export your current sheets (`Candidate_Master_List`, `Payment_Verification_Log`, `Results`, `Error_Log`) as CSV or Excel backups to preserve the previous batch's records.
 2. **Clear Sheet Data**:
-   > When clearing data from the sheet tabs, **DO NOT delete Row 1 (the Header Row)**. The Google Apps Script relies on exact column headers (like `SerialNumber`, `Phone Number`, etc.) to locate columns dynamically. If headers are deleted or modified, the code will fail.
-   * For `Candidate_Master_List`: Keep Row 1. Clear rows 2 and onwards.
-   * For `Payment_Verification_Log`: Keep Row 1. Clear rows 2 and onwards.
-   * For `Results`: Keep Row 1. Clear rows 2 and onwards.
-   * For `Error_Log`: Keep Row 1. Clear rows 2 and onwards.
+   * For `Candidate_Master_List`: Clear rows 2 and onwards.
+   * For `Payment_Verification_Log`: Clear rows 2 and onwards.
+   * For `Results`: Clear rows 2 and onwards.
+   * For `Error_Log`: Clear rows 2 and onwards.
+
+   > [!TIP]
+   > **Auto-Recovery**: If you accidentally delete Row 1 (the Header Row) or an entire tab while clearing data, don't worry! Simply run **অটোমেশন > নতুন ডাটাবেজ প্রস্তুত করুন (Initialize System)**. The script will automatically restore the missing tabs and reconstruct the header rows in seconds without affecting your existing data on other tabs.
 3. **Insert New Data**:
    * Paste the new applicant list into `Candidate_Master_List`.
    * Paste the new results into `Results`.

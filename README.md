@@ -5,15 +5,18 @@
 
 ---
 
-## Key Features
+### Key Features
 
-*   **Mobile-First UI/UX**: Styled with a premium Forest Green & Warm Gold theme. Offers edge-to-edge layouts, smooth transitions, and Noto Sans Bengali typography.
-*   **Secure Submission**: Front-end numeric key filters, Transaction ID validation, and Google Script `LockService` to prevent double-submissions or race conditions.
+*   **Mobile-First UI/UX**: Styled with a premium Deep Forest Green & Warm Gold theme. Offers edge-to-edge layouts, smooth transitions, and Noto Sans Bengali typography.
+*   **Zero-Configuration Fallback**: Connects to the host spreadsheet automatically. Works out of the box as a container-bound script without editing `SPREADSHEET_ID` manually.
+*   **Fuzzy Header Matcher**: Resilient lookup maps data correctly even if columns are reordered or headers are renamed (e.g. `Roll No` vs `SerialNumber`).
+*   **Phone Normalization**: Matches queries based on the last 10 digits to prevent formatting variations or stripped leading zero errors.
+*   **Duplicate ID Prevention**: Server-side duplicate checking prevents candidates from registering with an already submitted Transaction ID.
+*   **One-Click Database Setup**: Automatically builds all sheets, headers, default settings, and visual KPI cards in one click from the custom menu (**অটোমেশন > নতুন ডাটাবেজ প্রস্তুত করুন**).
 *   **Auto Admit Cards**: Generates PDF admit cards dynamically from a Google Docs template, stores them in Drive, and updates candidate logs with the file link.
 *   **Branded HTML Emails**: Sends responsive HTML emails with Noto Sans Bengali typography, social links, custom instructions, and the PDF admit card attached.
 *   **Custom Modal Dialogs**: Professional, matching modal popups replace native browser `alert()` prompts for all validation messages and confirmations.
-*   **Automated Trigger Menu**: A custom menu inside Google Sheets (**অটোমেশন > অন-এডিট ট্রিগার সক্রিয় করুন**) installs triggers programmatically, bypassing the complex GAS dashboard.
-*   **Zero-Header Resilience**: Reads the `_Configuration` sheet starting at Row 1, meaning settings work perfectly even if column headers are deleted.
+*   **Automated Trigger Menu**: A custom menu inside Google Sheets installs triggers programmatically, bypassing the complex GAS dashboard.
 
 ---
 
@@ -34,10 +37,11 @@
          v                         v                         v
 ┌──────────────────┐     ┌───────────────────┐     ┌──────────────────┐
 │  Dynamic View    │     │ google.script.run │     │  onEdit Trigger  │
-│  - ResultView    │     │ - searchStudent() │     │                  │
-│  - PaymentView   │     │ - getUserDetails()│     │  [ApprovalStatus]│
-│  - StatusCheck   │     │ - submitPayment() │     │                  │
-└──────────────────┘     └───────────────────┘     └────────┬─────────┘
+│  - ResultView    │     │ - searchStudent   │     │                  │
+│  - PaymentView   │     │   Data()          │     │  [ApprovalStatus]│
+│  - StatusCheck   │     │ - getUserDetails()│     │                  │
+└──────────────────┘     │ - submitPayment() │     └────────┬─────────┘
+                         └───────────────────┘              │
                                                             │
                                         ┌───────────────────┴───────────────────┐
                                         ▼                                       ▼
