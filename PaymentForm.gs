@@ -356,6 +356,12 @@ function processAllApprovedManually() {
  * UPDATED: Now handles 'Rejected' status to send an automated rejection email.
  */
 function handleEditTrigger(e) {
+  // Defensive check: prevent crash when run manually in editor without event arguments
+  if (!e || !e.range) {
+    Logger.log("Trigger function handleEditTrigger was run manually from script editor without context.");
+    return;
+  }
+
   const range = e.range;
   const sheet = range.getSheet();
   const editedRow = range.getRow();

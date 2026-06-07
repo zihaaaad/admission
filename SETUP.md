@@ -296,5 +296,5 @@ When you are ready to reuse the system for a new batch or course:
 ## Notes
 
 - The system caches `_Configuration` settings for **10 minutes**. After changing settings, wait for the cache to expire or redeploy
-- `handleEditTrigger` watches **Column I** (9th column) of `Payment_Verification_Log`. Do not reorder the columns
+- `handleEditTrigger` dynamically locates columns in `Payment_Verification_Log` by searching headers. Columns can be in any order, but the header names must remain unchanged.
 - Google Apps Script has daily email quotas (100 for free accounts, 1500 for Workspace). Plan batch approvals accordingly
