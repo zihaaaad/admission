@@ -20,7 +20,7 @@ function getUserDetails(phone) {
         return { found: false, message: "মোবাইল নম্বরটি সঠিক নয়। সঠিক ১১ ডিজিটের নম্বর দিন।" };
     }
       
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const ss = getSpreadsheet();
     const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
     const masterSheet = ss.getSheetByName(SHEET_MASTER_LIST);
 
@@ -28,14 +28,16 @@ function getUserDetails(phone) {
       throw new Error("Payment or Master sheet not found configuration error.");
     }
 
+    const normPhone = normalizePhoneNumber(phoneTrimmed);
+
     // 1. DUPLICATE CHECK: Prevent resubmission.
     const lastRow = paymentSheet.getLastRow();
     if (lastRow > 1) {
       const paymentHeaders = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
-      const phoneColIndex = paymentHeaders.indexOf('RegisteredPhoneNumber');
+      const phoneColIndex = findColumnIndex(paymentHeaders, ['RegisteredPhoneNumber', 'RegisteredPhone', 'PhoneNumber', 'Phone', 'Mobile']);
       if (phoneColIndex !== -1) {
         const paymentData = paymentSheet.getRange(2, phoneColIndex + 1, lastRow - 1, 1).getValues().flat();
-        if (paymentData.map(p => String(p).trim()).includes(phoneTrimmed)) {
+        if (paymentData.some(p => normalizePhoneNumber(p) === normPhone)) {
           return { 
             found: false, 
             message: 'এই নম্বর থেকে ফি দেওয়ার তথ্য ইতিমধ্যেই জমা দেওয়া হয়েছে। কোনো পরিবর্তনের জন্য অফিসে যোগাযোগ করুন।' 
@@ -46,11 +48,11 @@ function getUserDetails(phone) {
 
     // 2. SEARCH MASTER LIST: Verify the candidate exists.
     const masterHeaders = masterSheet.getRange(1, 1, 1, masterSheet.getLastColumn()).getValues()[0];
-    const serialIndex = masterHeaders.indexOf('SerialNumber');
-    const nameIndex = masterHeaders.indexOf('FullName');
-    const phoneIndex = masterHeaders.indexOf('RegisteredPhoneNumber');
-    const districtIndex = masterHeaders.indexOf('District');
-    const emailIndex = masterHeaders.indexOf('EmailAddress');
+    const serialIndex = findColumnIndex(masterHeaders, ['SerialNumber', 'SerialNo', 'Serial', 'RollNo', 'Roll', 'SerialNumber_Roll', 'RollNumber']);
+    const nameIndex = findColumnIndex(masterHeaders, ['FullName', 'Name', 'CandidateName']);
+    const phoneIndex = findColumnIndex(masterHeaders, ['RegisteredPhoneNumber', 'RegisteredPhone', 'PhoneNumber', 'Phone', 'Mobile']);
+    const districtIndex = findColumnIndex(masterHeaders, ['District', 'Zilla']);
+    const emailIndex = findColumnIndex(masterHeaders, ['EmailAddress', 'Email']);
 
     if (serialIndex === -1 || nameIndex === -1 || phoneIndex === -1) {
       throw new Error("Master list missing required columns ('SerialNumber', 'FullName', 'RegisteredPhoneNumber').");
@@ -60,7 +62,7 @@ function getUserDetails(phone) {
     if (masterLastRow > 1) {
       const masterData = masterSheet.getRange(2, 1, masterLastRow - 1, masterHeaders.length).getValues();
       for (const row of masterData) {
-        if (String(row[phoneIndex]).trim() === phoneTrimmed) {
+        if (normalizePhoneNumber(row[phoneIndex]) === normPhone) {
           return { 
             found: true, 
             serial: row[serialIndex], 
@@ -91,7 +93,7 @@ function getPaymentStatus(phone) {
       return { found: false, message: "অবৈধ ফোন নম্বর ফরম্যাট। সঠিক ১১-ডিজিটের নম্বর দিন।" };
     }
 
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const ss = getSpreadsheet();
     const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
 
     if (!paymentSheet) {
@@ -106,16 +108,18 @@ function getPaymentStatus(phone) {
     const headers = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
     const data = paymentSheet.getRange(2, 1, lastRow - 1, headers.length).getValues();
 
-    const phoneColIndex = headers.indexOf('RegisteredPhoneNumber');
-    const statusColIndex = headers.indexOf('ApprovalStatus');
-    const rejectReasonColIndex = headers.indexOf('Rejection_Reason');
+    const phoneColIndex = findColumnIndex(headers, ['RegisteredPhoneNumber', 'RegisteredPhone', 'PhoneNumber', 'Phone', 'Mobile']);
+    const statusColIndex = findColumnIndex(headers, ['ApprovalStatus', 'Status', 'Approval_Status']);
+    const rejectReasonColIndex = findColumnIndex(headers, ['Rejection_Reason', 'Reason', 'RejectionReason']);
 
     if (phoneColIndex === -1 || statusColIndex === -1) {
       return { found: false, message: "সিস্টেমের সমস্যা: প্রয়োজনীয় কলাম পাওয়া যায়নি।" };
     }
 
+    const normPhone = normalizePhoneNumber(phoneTrimmed);
+
     for (let i = 0; i < data.length; i++) {
-      if (String(data[i][phoneColIndex]).trim() === phoneTrimmed) {
+      if (normalizePhoneNumber(data[i][phoneColIndex]) === normPhone) {
         const status = data[i][statusColIndex] || 'Pending';
         if (status === 'Approved') {
           return { found: true, status: 'Approved', message: "আপনার পেমেন্ট অনুমোদন করা হয়েছে! প্রবেশপত্রটি আপনার ইমেইলে পাঠানো হয়েছে।" };
@@ -168,10 +172,25 @@ function doPost(formObject) {
       return { error: "দুঃখিত, তথ্য চেক করা যায়নি: " + userCheck.message };
     }
 
-    const paymentSheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_PAYMENT_LOG);
+    const ss = getSpreadsheet();
+    const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
+    if (!paymentSheet) {
+      throw new Error(`Payment log sheet "${SHEET_PAYMENT_LOG}" not found.`);
+    }
     
     // Get headers dynamically to support any column order
     const headers = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
+
+    // Check for duplicate Transaction ID in the payment log
+    const trxIdColIndex = findColumnIndex(headers, ['TransactionID', 'TrxID', 'Transaction_ID', 'TransactionNo']);
+    const lastRow = paymentSheet.getLastRow();
+    if (trxIdColIndex !== -1 && lastRow > 1) {
+      const trxIds = paymentSheet.getRange(2, trxIdColIndex + 1, lastRow - 1, 1).getValues().flat();
+      if (trxIds.some(t => String(t).trim().toUpperCase() === trxId)) {
+        return { error: "এই Transaction ID-টি ইতিমধ্যেই জমা দেওয়া হয়েছে। সঠিক TrxID দিন।" };
+      }
+    }
+    
     const newRow = new Array(headers.length).fill("");
     
     const mappings = {
@@ -188,12 +207,30 @@ function doPost(formObject) {
       'AdmitCardLink': '',
       'Rejection_Reason': ''
     };
+
+    const aliasMap = {
+      'Timestamp': ['Timestamp', 'Date', 'Time'],
+      'RegisteredPhoneNumber': ['RegisteredPhoneNumber', 'RegisteredPhone', 'PhoneNumber', 'Phone', 'Mobile'],
+      'FullName': ['FullName', 'Name', 'CandidateName'],
+      'SerialNumber': ['SerialNumber', 'SerialNo', 'Serial', 'RollNo', 'Roll', 'SerialNumber_Roll', 'RollNumber'],
+      'District': ['District', 'Zilla'],
+      'PaymentMethod': ['PaymentMethod', 'Method', 'PaymentType'],
+      'PaymentPhoneNumber': ['PaymentPhoneNumber', 'PaymentPhone', 'PaymentSource', 'SenderNumber', 'SenderPhone'],
+      'TransactionID': ['TransactionID', 'TrxID', 'Transaction_ID', 'TransactionNo'],
+      'ApprovalStatus': ['ApprovalStatus', 'Status', 'Approval_Status'],
+      'ProcessingStatus': ['ProcessingStatus', 'Processing_Status', 'ProcessStatus'],
+      'AdmitCardLink': ['AdmitCardLink', 'AdmitCard', 'Link', 'PDFLink'],
+      'Rejection_Reason': ['Rejection_Reason', 'Reason', 'RejectionReason']
+    };
     
-    headers.forEach((header, index) => {
-      if (mappings.hasOwnProperty(header)) {
-        newRow[index] = mappings[header];
+    for (const key in mappings) {
+      if (aliasMap.hasOwnProperty(key)) {
+        const colIdx = findColumnIndex(headers, aliasMap[key]);
+        if (colIdx !== -1) {
+          newRow[colIdx] = mappings[key];
+        }
       }
-    });
+    }
     
     paymentSheet.appendRow(newRow);
 
@@ -404,17 +441,29 @@ function handleEditTrigger(e) {
 
   const range = e.range;
   const sheet = range.getSheet();
+  const sheetName = sheet.getName();
   const editedRow = range.getRow();
   const editedColumn = range.getColumn();
   const newValue = e.value;
 
+  // Cache Invalidation for Settings Sheet
+  if (sheetName === SHEET_CONFIG) {
+    try {
+      CacheService.getScriptCache().remove("app_settings");
+      Logger.log("Settings cache invalidated instantly because _Configuration sheet was edited.");
+    } catch (cacheErr) {
+      logErrorToSheet("handleEditTrigger_cache", cacheErr);
+    }
+    return;
+  }
+
   const TARGET_SHEET = SHEET_PAYMENT_LOG;
 
-  if (sheet.getName() === TARGET_SHEET && editedRow > 1) {
+  if (sheetName === TARGET_SHEET && editedRow > 1) {
     // Dynamically retrieve column indices from the headers
     const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-    const approvalColIndex = headers.indexOf('ApprovalStatus') + 1;
-    const processingColIndex = headers.indexOf('ProcessingStatus') + 1;
+    const approvalColIndex = findColumnIndex(headers, ['ApprovalStatus', 'Status', 'Approval_Status']) + 1;
+    const processingColIndex = findColumnIndex(headers, ['ProcessingStatus', 'Processing_Status', 'ProcessStatus']) + 1;
 
     if (approvalColIndex > 0 && processingColIndex > 0 && editedColumn === approvalColIndex) {
       const statusCell = sheet.getRange(editedRow, processingColIndex);
@@ -441,19 +490,31 @@ function handleEditTrigger(e) {
  */
 function sendRejectionEmail(rowNum) {
     try {
-        const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+        const ss = getSpreadsheet();
         const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
         const masterSheet = ss.getSheetByName(SHEET_MASTER_LIST);
 
+        if (!paymentSheet || !masterSheet) {
+            throw new Error("Payment or Master sheet not found.");
+        }
+
         const headers = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
         const rowData = paymentSheet.getRange(rowNum, 1, 1, headers.length).getValues()[0];
-        let rowObject = {};
-        headers.forEach((header, i) => rowObject[header] = rowData[i]);
+
+        const phoneColIdx = findColumnIndex(headers, ['RegisteredPhoneNumber', 'RegisteredPhone', 'PhoneNumber', 'Phone', 'Mobile']);
+        const reasonColIdx = findColumnIndex(headers, ['Rejection_Reason', 'Reason', 'RejectionReason']);
+        
+        if (phoneColIdx === -1) {
+            throw new Error("Payment verification sheet missing registered phone column.");
+        }
+
+        const registeredPhone = String(rowData[phoneColIdx]).trim();
+        const rejectionReason = reasonColIdx !== -1 ? String(rowData[reasonColIdx]).trim() : "অনির্দিষ্ট কারণে";
 
         const masterHeaders = masterSheet.getRange(1, 1, 1, masterSheet.getLastColumn()).getValues()[0];
-        const mPhoneIndex = masterHeaders.indexOf('RegisteredPhoneNumber');
-        const mEmailIndex = masterHeaders.indexOf('EmailAddress');
-        const mNameIndex = masterHeaders.indexOf('FullName');
+        const mPhoneIndex = findColumnIndex(masterHeaders, ['RegisteredPhoneNumber', 'RegisteredPhone', 'PhoneNumber', 'Phone', 'Mobile']);
+        const mEmailIndex = findColumnIndex(masterHeaders, ['EmailAddress', 'Email']);
+        const mNameIndex = findColumnIndex(masterHeaders, ['FullName', 'Name', 'CandidateName']);
 
         if (mPhoneIndex === -1 || mEmailIndex === -1 || mNameIndex === -1) {
             throw new Error("Master list missing required columns.");
@@ -463,27 +524,25 @@ function sendRejectionEmail(rowNum) {
         if (masterLastRow < 2) throw new Error("Master list is empty.");
         const masterData = masterSheet.getRange(2, 1, masterLastRow - 1, masterHeaders.length).getValues();
         const emailMap = new Map();
-        masterData.forEach(row => emailMap.set(String(row[mPhoneIndex]).trim(), {email: row[mEmailIndex], name: row[mNameIndex]}));
+        masterData.forEach(row => {
+          emailMap.set(normalizePhoneNumber(row[mPhoneIndex]), {
+            email: String(row[mEmailIndex]).trim(), 
+            name: String(row[mNameIndex]).trim()
+          });
+        });
 
-        const registeredPhone = String(rowObject['RegisteredPhoneNumber']).trim();
-        const candidateInfo = emailMap.get(registeredPhone);
+        const candidateInfo = emailMap.get(normalizePhoneNumber(registeredPhone));
         
         if (!candidateInfo || !candidateInfo.email.includes('@')) {
-            throw new Error("Candidate email not found.");
+            throw new Error(`এই ফোন নম্বরের জন্য সঠিক ইমেইল পাওয়া যায়নি: ${registeredPhone}`);
         }
         
-        const rejectionReason = rowObject['Rejection_Reason'] || "অনির্দিষ্ট কারণে";
         const appSettings = getAppSettings();
 
-        const subject = `আপনার আবেদন নিয়ে জরুরি তথ্য - ${appSettings.instituteName}`;
-        const body = `
-            <p>প্রিয় ${candidateInfo.name},</p>
-            <p>আপনার প্রবেশপত্রের ফি জমা দেওয়ার আবেদনটি "${rejectionReason}" এর জন্য নেওয়া সম্ভব হয়নি।</p>
-            <p>বিস্তারিত জানতে বা কোনো প্রশ্ন থাকলে সরাসরি আমাদের অফিসে যোগাযোগ করুন।</p>
-            <p>শুভেচ্ছান্তে,<br><strong>${appSettings.instituteName}</strong></p>
-        `;
+        const subject = `আপনার আবেদন সংক্রান্ত জরুরি তথ্য - ${appSettings.instituteName}`;
+        const htmlBody = createHtmlRejectionEmailBody(candidateInfo.name, rejectionReason, appSettings);
 
-        GmailApp.sendEmail(candidateInfo.email, subject, "", { htmlBody: body });
+        GmailApp.sendEmail(candidateInfo.email, subject, "", { htmlBody: htmlBody });
 
     } catch (e) {
         logErrorToSheet("sendRejectionEmail", e);
@@ -495,28 +554,45 @@ function sendRejectionEmail(rowNum) {
  * @param {number} rowNum The specific row number in the payment log to process.
  */
 function processSingleRow(rowNum) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const ss = getSpreadsheet();
   const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
+  if (!paymentSheet) return;
+
   const headers = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
   const rowData = paymentSheet.getRange(rowNum, 1, 1, headers.length).getValues()[0];
-  let rowObject = {};
-  headers.forEach((header, i) => rowObject[header] = rowData[i]);
 
-  // Prevent re-processing of already successful entries.
-  if (rowObject['ProcessingStatus'] === 'Success') return;
+  // Resolve payment sheet columns dynamically
+  const phoneColIndex = findColumnIndex(headers, ['RegisteredPhoneNumber', 'RegisteredPhone', 'PhoneNumber', 'Phone', 'Mobile']);
+  const nameColIndex = findColumnIndex(headers, ['FullName', 'Name', 'CandidateName']);
+  const serialColIndex = findColumnIndex(headers, ['SerialNumber', 'SerialNo', 'Serial', 'RollNo', 'Roll', 'SerialNumber_Roll', 'RollNumber']);
+  const districtColIndex = findColumnIndex(headers, ['District', 'Zilla']);
+  const statusColIndex = findColumnIndex(headers, ['ProcessingStatus', 'Processing_Status', 'ProcessStatus']);
+  const pdfLinkColIndex = findColumnIndex(headers, ['AdmitCardLink', 'AdmitCard', 'Link', 'PDFLink']);
 
-  const statusColIndex = headers.indexOf('ProcessingStatus') + 1;
-  const pdfLinkColIndex = headers.indexOf('AdmitCardLink') + 1;
-
-  if (statusColIndex === 0 || pdfLinkColIndex === 0) {
-    throw new Error("Missing 'ProcessingStatus' or 'AdmitCardLink' column in Payment_Verification_Log sheet.");
+  if (phoneColIndex === -1 || nameColIndex === -1 || serialColIndex === -1 || statusColIndex === -1 || pdfLinkColIndex === -1) {
+    throw new Error("Missing required columns in Payment_Verification_Log sheet.");
   }
 
+  const currentProcessingStatus = String(rowData[statusColIndex]).trim();
+  if (currentProcessingStatus === 'Success') return;
+
   try {
+    // Check Template & Folder Configuration values
+    if (!TEMPLATE_ID || TEMPLATE_ID === "YOUR_DOC_TEMPLATE_ID_HERE" || TEMPLATE_ID.trim() === "") {
+      throw new Error("Admit Card Template ID কনফিগার করা হয়নি। অনুগ্রহ করে Config.gs ফাইলে TEMPLATE_ID সেট করুন।");
+    }
+    if (!FOLDER_ID || FOLDER_ID === "YOUR_PDF_OUTPUT_FOLDER_ID_HERE" || FOLDER_ID.trim() === "") {
+      throw new Error("Output Folder ID কনফিগার করা হয়নি। অনুগ্রহ করে Config.gs ফাইলে FOLDER_ID সেট করুন।");
+    }
+
     const masterSheet = ss.getSheetByName(SHEET_MASTER_LIST);
+    if (!masterSheet) {
+      throw new Error(`Master list sheet "${SHEET_MASTER_LIST}" not found.`);
+    }
+
     const masterHeaders = masterSheet.getRange(1, 1, 1, masterSheet.getLastColumn()).getValues()[0];
-    const mPhoneIndex = masterHeaders.indexOf('RegisteredPhoneNumber');
-    const mEmailIndex = masterHeaders.indexOf('EmailAddress');
+    const mPhoneIndex = findColumnIndex(masterHeaders, ['RegisteredPhoneNumber', 'RegisteredPhone', 'PhoneNumber', 'Phone', 'Mobile']);
+    const mEmailIndex = findColumnIndex(masterHeaders, ['EmailAddress', 'Email']);
     
     if (mPhoneIndex === -1 || mEmailIndex === -1) {
       throw new Error("Master list missing required columns.");
@@ -525,13 +601,17 @@ function processSingleRow(rowNum) {
     const masterLastRow = masterSheet.getLastRow();
     if (masterLastRow < 2) throw new Error("Master list is empty.");
     const masterData = masterSheet.getRange(2, 1, masterLastRow - 1, masterHeaders.length).getValues();
+    
     const emailMap = new Map();
-    masterData.forEach(row => emailMap.set(String(row[mPhoneIndex]).trim(), row[mEmailIndex]));
+    masterData.forEach(row => {
+      emailMap.set(normalizePhoneNumber(row[mPhoneIndex]), String(row[mEmailIndex]).trim());
+    });
 
-    const candidateName = rowObject['FullName'];
-    const rollNumber = rowObject['SerialNumber'];
-    const registeredPhone = String(rowObject['RegisteredPhoneNumber']).trim();
-    const candidateEmail = emailMap.get(registeredPhone);
+    const candidateName = String(rowData[nameColIndex]).trim();
+    const rollNumber = String(rowData[serialColIndex]).trim();
+    const registeredPhone = String(rowData[phoneColIndex]).trim();
+    const district = districtColIndex !== -1 ? String(rowData[districtColIndex]).trim() : "";
+    const candidateEmail = emailMap.get(normalizePhoneNumber(registeredPhone));
     
     // Validate that a correct email was found.
     if (!candidateEmail || !candidateEmail.includes('@')) {
@@ -547,7 +627,7 @@ function processSingleRow(rowNum) {
     doc.getBody()
       .replaceText('{{FullName}}', candidateName)
       .replaceText('{{SerialNumber}}', rollNumber)
-      .replaceText('{{District}}', rowObject['District'])
+      .replaceText('{{District}}', district)
       .replaceText('{{EmailAddress}}', candidateEmail)
       .replaceText('{{PhoneNumber}}', registeredPhone)
       .replaceText('{{ExamDate}}', appSettings.examDate || "প্রবেশপত্র দেখুন")
@@ -563,9 +643,9 @@ function processSingleRow(rowNum) {
         attachments: [pdfFile]
     });
     
-    // 3. Update Sheet with Success Status and PDF link
-    paymentSheet.getRange(rowNum, statusColIndex).setValue('Success').setFontColor('#00684A');
-    paymentSheet.getRange(rowNum, pdfLinkColIndex).setValue(pdfFile.getUrl());
+    // 3. Update Sheet with Success Status and PDF link (columns are 1-based, so + 1)
+    paymentSheet.getRange(rowNum, statusColIndex + 1).setValue('Success').setFontColor('#00684A');
+    paymentSheet.getRange(rowNum, pdfLinkColIndex + 1).setValue(pdfFile.getUrl());
     
     // 4. Clean up the temporary Google Doc file (non-critical).
     try {
@@ -576,7 +656,7 @@ function processSingleRow(rowNum) {
 
   } catch (e) {
     logErrorToSheet("processSingleRow", e);
-    paymentSheet.getRange(rowNum, statusColIndex).setValue(`ব্যর্থ: ${e.message}`).setFontColor('#C0392B');
+    paymentSheet.getRange(rowNum, statusColIndex + 1).setValue(`ব্যর্থ: ${e.message}`).setFontColor('#C0392B');
   }
 }
 
@@ -688,6 +768,122 @@ function createHtmlEmailBody(candidateName, rollNumber, settings) {
                     <tr>
                       <td valign="top" style="color:#C0392B;font-weight:bold;">৪.</td>
                       <td style="padding-bottom:8px;color:#C0392B;font-weight:bold;">পরীক্ষা কেন্দ্রে কোনো প্রকার মোবাইল ফোন, স্মার্টওয়াচ বা ইলেকট্রনিক ডিভাইস আনা সম্পূর্ণ নিষেধ।</td>
+                    </tr>
+                  </table>
+                </div>
+              </td>
+            </tr>
+            
+            <!-- FOOTER SIGNATURE SECTION -->
+            <tr>
+              <td style="padding:20px 30px;background-color:#F9FAF9;border-top:1px solid #ECEFEC;text-align:center;">
+                <p style="margin:0 0 5px 0;font-size:14px;color:#52635A;">শুভেচ্ছান্তে,</p>
+                <p style="margin:0 0 15px 0;font-size:16px;color:#1A3E2F;font-weight:700;">${instituteName}</p>
+                
+                <!-- SOCIAL MEDIA LINKS -->
+                <div style="margin-top:10px;">
+                  <a href="${social.facebook.link}" target="_blank" style="text-decoration:none;margin:0 6px;"><img src="${social.facebook.icon}" width="24" height="24" alt="Facebook" style="display:inline-block;vertical-align:middle;border:0;"></a>
+                  <a href="${social.youtube.link}" target="_blank" style="text-decoration:none;margin:0 6px;"><img src="${social.youtube.icon}" width="24" height="24" alt="YouTube" style="display:inline-block;vertical-align:middle;border:0;"></a>
+                  <a href="${social.whatsapp.link}" target="_blank" style="text-decoration:none;margin:0 6px;"><img src="${social.whatsapp.icon}" width="24" height="24" alt="WhatsApp" style="display:inline-block;vertical-align:middle;border:0;"></a>
+                </div>
+              </td>
+            </tr>
+            
+          </table>
+          <p style="margin:15px 0 0 0;font-size:11px;color:#8B9B90;text-align:center;">এটি একটি সিস্টেম জেনারেটেড ইমেইল। সরাসরি উত্তর দেওয়ার প্রয়োজন নেই।</p>
+        </td>
+      </tr>
+    </table>
+  </body>
+  </html>
+  `;
+}
+
+/**
+ * NEW FEATURE: Creates a professional, responsive, and branded HTML rejection email body.
+ * Matches the design guidelines and font sizes of the portal.
+ *
+ * @param {string} candidateName The name of the candidate.
+ * @param {string} rejectionReason The reason why the application was rejected.
+ * @param {object} settings The application settings.
+ * @return {string} The complete HTML string for the rejection email body.
+ */
+function createHtmlRejectionEmailBody(candidateName, rejectionReason, settings) {
+  const instituteName = settings.instituteName || "আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট";
+  
+  const social = {
+      facebook: { link: 'https://www.facebook.com/assunnahskill', icon: 'https://img.icons8.com/fluency/48/facebook-new.png' },
+      youtube: { link: 'https://www.youtube.com/@assunnahskill', icon: 'https://img.icons8.com/fluency/48/youtube-play.png' },
+      whatsapp: { link: 'https://wa.me/8801409979967', icon: 'https://img.icons8.com/color/48/whatsapp.png' }
+  };
+
+  const hasLogo = settings.logoUrl && 
+                  settings.logoUrl.trim() !== "" && 
+                  !settings.logoUrl.toLowerCase().includes("your_") &&
+                  !settings.logoUrl.toLowerCase().includes("placeholder");
+
+  return `
+  <!DOCTYPE html>
+  <html lang="bn">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আবেদন সংক্রান্ত জরুরি তথ্য - ${instituteName}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body style="margin:0;padding:0;background-color:#F0F3F1;font-family:'Noto Sans Bengali', SolaimanLipi, Kalpurush, Arial, sans-serif;-webkit-font-smoothing:antialiased;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#F0F3F1;padding:20px 0;">
+      <tr>
+        <td align="center">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;background-color:#FFFFFF;border-radius:12px;border-top:6px solid #8C2D19;box-shadow:0 4px 12px rgba(26,62,47,0.05);overflow:hidden;margin:0 10px;">
+            
+            <!-- HEADER SECTION -->
+            <tr>
+              <td style="padding:25px 30px;background-color:#F9FAF9;text-align:center;border-bottom:1px solid #ECEFEC;">
+                ${hasLogo ? `<img src="${settings.logoUrl}" alt="${instituteName} Logo" style="max-height:60px;margin-bottom:10px;display:inline-block;vertical-align:middle;">` : ""}
+                <h2 style="color:#8C2D19;margin:0;font-size:20px;font-weight:700;line-height:1.4;">${instituteName}</h2>
+              </td>
+            </tr>
+            
+            <!-- CONTENT SECTION -->
+            <tr>
+              <td style="padding:30px 30px 20px 30px;">
+                <p style="margin:0 0 15px 0;font-size:16px;color:#1A3E2F;font-weight:600;">প্রিয় ${candidateName},</p>
+                <p style="margin:0 0 20px 0;font-size:15px;color:#52635A;line-height:1.7;text-align:justify;">
+                  আস-সালামু আলাইকুম। আপনার পেমেন্ট ফি সংক্রান্ত আবেদনের স্ট্যাটাস আপডেট করা হয়েছে। দুঃখিত যে, আপনার আবেদনটি নিম্নোক্ত কারণে অনুমোদন করা সম্ভব হয়নি।
+                </p>
+                
+                <!-- REJECTION DETAILS CARD -->
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#FDF6F5;border-left:4px solid #8C2D19;border-radius:6px;margin:25px 0;padding:20px;">
+                  <tr>
+                    <td style="padding-bottom:12px;border-bottom:1px solid #FADAD2;">
+                      <h4 style="margin:0;color:#8C2D19;font-size:16px;font-weight:700;">বাতিল হওয়ার কারণ (Rejection Reason)</h4>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-top:12px;font-size:15px;color:#1E2722;font-weight:600;line-height:1.6;">
+                      ${rejectionReason}
+                    </td>
+                  </tr>
+                </table>
+                
+                <!-- NEXT STEPS SECTION -->
+                <div style="margin:25px 0 10px 0;">
+                  <h4 style="margin:0 0 12px 0;color:#1A3E2F;font-size:15px;font-weight:700;">করণীয় পদক্ষেপ:</h4>
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size:14px;color:#52635A;line-height:1.6;">
+                    <tr>
+                      <td valign="top" style="width:20px;color:#8C2D19;font-weight:bold;">১.</td>
+                      <td style="padding-bottom:8px;">অনুগ্রহ করে আপনার পেমেন্ট তথ্যের বিবরণ (TrxID ও মোবাইল নম্বর) পুনরায় পরীক্ষা করুন।</td>
+                    </tr>
+                    <tr>
+                      <td valign="top" style="color:#8C2D19;font-weight:bold;">২.</td>
+                      <td style="padding-bottom:8px;">যদি পেমেন্ট সাবমিশনে ভুল হয়ে থাকে, তবে সঠিক তথ্য দিয়ে পুনরায় ফি আবেদন ফরমটি সাবমিট করুন।</td>
+                    </tr>
+                    <tr>
+                      <td valign="top" style="color:#8C2D19;font-weight:bold;">৩.</td>
+                      <td style="padding-bottom:8px;">যেকোনো জরুরি প্রয়োজনে সরাসরি আমাদের হেল্পলাইন নম্বর অথবা অফিসে যোগাযোগ করুন।</td>
                     </tr>
                   </table>
                 </div>

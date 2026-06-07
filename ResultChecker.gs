@@ -13,8 +13,7 @@
  */
 function searchStudentData(searchKey) {
   try {
-    // Note: SPREADSHEET_ID and SHEET_RESULTS are now read from the central Config.gs file.
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const ss = getSpreadsheet();
     const sheet = ss.getSheetByName(SHEET_RESULTS);
 
     // Defensive check: Ensure the sheet actually exists.
@@ -34,9 +33,13 @@ function searchStudentData(searchKey) {
     const headers = data.shift(); 
     const searchKeyTrimmed = String(searchKey).trim();
 
+    if (searchKeyTrimmed === "") {
+      return { status: 'not_found' };
+    }
+
     // Dynamically find column indices. This makes the code resilient to column reordering in the sheet.
-    const serialNoIndex = headers.indexOf('Serial No');
-    const phoneNoIndex = headers.indexOf('Phone Number');
+    const serialNoIndex = findColumnIndex(headers, ['Serial No', 'SerialNumber', 'Serial', 'RollNo', 'Roll', 'ID', 'Serial_No']);
+    const phoneNoIndex = findColumnIndex(headers, ['Phone Number', 'Phone', 'PhoneNo', 'Mobile', 'MobileNo', 'MobileNumber', 'Contact', 'ContactNo']);
 
     // Defensive check: Ensure the required columns exist. If not, inform the admin.
     if (serialNoIndex === -1 || phoneNoIndex === -1) {
@@ -44,13 +47,20 @@ function searchStudentData(searchKey) {
        return { status: 'error', message: 'সিস্টেমের সমস্যা: শিটে প্রয়োজনীয় কলাম (Serial No / Phone Number) পাওয়া যায়নি।' };
     }
 
+    // Check if the search key looks like a phone number for normalized comparison
+    const isPhoneSearch = /^\+?\d{8,15}$/.test(searchKeyTrimmed);
+    const normSearchKey = isPhoneSearch ? normalizePhoneNumber(searchKeyTrimmed) : null;
+
     // Iterate through the data rows to find a matching record.
     for (const row of data) {
       const serial = String(row[serialNoIndex] || '').trim();
       const phone = String(row[phoneNoIndex] || '').trim();
 
+      const isSerialMatch = (serial === searchKeyTrimmed);
+      const isPhoneMatch = (normSearchKey && normalizePhoneNumber(phone) === normSearchKey);
+
       // Check if the user's input matches either the serial number or the phone number.
-      if (serial === searchKeyTrimmed || phone === searchKeyTrimmed) {
+      if (isSerialMatch || isPhoneMatch) {
         
         // Match found! Create a clean result object by mapping headers to their corresponding row values.
         let resultData = {};
