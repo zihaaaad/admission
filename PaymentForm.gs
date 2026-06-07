@@ -336,7 +336,7 @@ function initializeSystemSheets() {
         }
       }
 
-      if (def.isConfig && sheet.getLastRow() <= 1) {
+      if (def.isConfig) {
         const defaultSettings = [
           ["appTitle", "আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট"],
           ["instituteName", "আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট"],
@@ -354,10 +354,27 @@ function initializeSystemSheets() {
           ["admitCardTemplateId", "YOUR_DOC_TEMPLATE_ID_HERE"],
           ["admitCardFolderId", "YOUR_PDF_OUTPUT_FOLDER_ID_HERE"]
         ];
-        
-        sheet.getRange(2, 1, defaultSettings.length, 2).setValues(defaultSettings);
-        sheet.autoResizeColumn(1);
-        sheet.autoResizeColumn(2);
+
+        if (sheet.getLastRow() <= 1) {
+          sheet.getRange(2, 1, defaultSettings.length, 2).setValues(defaultSettings);
+          sheet.autoResizeColumn(1);
+          sheet.autoResizeColumn(2);
+        } else {
+          // Check for missing keys and append them dynamically
+          const existingData = sheet.getRange(2, 1, sheet.getLastRow() - 1, 1).getValues();
+          const existingKeys = existingData.map(row => String(row[0]).trim());
+          
+          const missingSettings = defaultSettings.filter(setting => {
+            const key = setting[0];
+            return !existingKeys.includes(key);
+          });
+
+          if (missingSettings.length > 0) {
+            sheet.getRange(sheet.getLastRow() + 1, 1, missingSettings.length, 2).setValues(missingSettings);
+            sheet.autoResizeColumn(1);
+            sheet.autoResizeColumn(2);
+          }
+        }
       }
     });
 
