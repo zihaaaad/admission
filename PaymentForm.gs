@@ -554,7 +554,7 @@ function processSingleRow(rowNum) {
     // 2. Send Email with PDF attachment
     const appSettings = getAppSettings();
     GmailApp.sendEmail(candidateEmail, `আপনার পরীক্ষার প্রবেশপত্র - ${appSettings.instituteName}`, "", {
-        htmlBody: createHtmlEmailBody(candidateName, appSettings),
+        htmlBody: createHtmlEmailBody(candidateName, rollNumber, appSettings),
         attachments: [pdfFile]
     });
     
@@ -580,40 +580,135 @@ function processSingleRow(rowNum) {
  * This template is designed for maximum compatibility across email clients.
  *
  * @param {string} candidateName The name of the candidate receiving the email.
+ * @param {string} rollNumber The roll number of the candidate.
  * @param {object} settings The application settings object, containing instituteName, logoUrl, social links, etc.
  * @return {string} The complete HTML string for the email body.
  */
-function createHtmlEmailBody(candidateName, settings) {
-  const instituteName = settings.instituteName || "আপনার প্রতিষ্ঠান";
+function createHtmlEmailBody(candidateName, rollNumber, settings) {
+  const instituteName = settings.instituteName || "আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট";
   
-  // Social links and icons - Add more here if needed
+  // Social links and icons
   const social = {
       facebook: { link: 'https://www.facebook.com/assunnahskill', icon: 'https://img.icons8.com/fluency/48/facebook-new.png' },
       youtube: { link: 'https://www.youtube.com/@assunnahskill', icon: 'https://img.icons8.com/fluency/48/youtube-play.png' },
       whatsapp: { link: 'https://wa.me/8801409979967', icon: 'https://img.icons8.com/color/48/whatsapp.png' }
   };
 
+  // Check if logo is valid
+  const hasLogo = settings.logoUrl && 
+                  settings.logoUrl.trim() !== "" && 
+                  !settings.logoUrl.toLowerCase().includes("your_") &&
+                  !settings.logoUrl.toLowerCase().includes("placeholder");
+
   return `
   <!DOCTYPE html>
   <html lang="bn">
   <head>
     <meta charset="UTF-8">
-    <title>আপনার পরীক্ষার প্রবেশপত্র</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>পরীক্ষার প্রবেশপত্র - ${instituteName}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   </head>
-  <body style="margin:0;padding:0;background-color:#f4f7f9;font-family:Arial, sans-serif;">
-    <div style="max-width:600px;margin:20px auto;background:#fff;padding:20px;border-radius:8px;border-top:5px solid #00684A;">
-        <h2 style="color:#00684A;text-align:center;">${instituteName}</h2>
-        <p>প্রিয় <strong>${candidateName}</strong>,</p>
-        <p>আপনার প্রবেশপত্রটি ফি পেমেন্ট সম্পন্ন হওয়ায় সফলভাবে জেনারেট হয়েছে এবং এই ইমেইলের সাথে পিডিএফ (PDF) ফরম্যাটে সংযুক্ত করা হয়েছে।</p>
-        <p>অনুগ্রহ করে ফাইলটি ডাউনলোড করে কালার প্রিন্ট করে নিন এবং পরীক্ষার দিন সাথে নিয়ে আসুন।</p>
-        <hr style="border:0;border-top:1px dashed #eee;margin:20px 0;">
-        <p style="font-size:12px;color:#777;text-align:center;">যোগাযোগ ও বিস্তারিত জানতে আমাদের সোশ্যাল মিডিয়া বা হোয়াটসঅ্যাপ নাম্বারে যোগাযোগ করতে পারেন।</p>
-        <div style="text-align:center;margin-top:10px;">
-            <a href="${social.facebook.link}"><img src="${social.facebook.icon}" width="30" style="margin:0 5px;"></a>
-            <a href="${social.youtube.link}"><img src="${social.youtube.icon}" width="30" style="margin:0 5px;"></a>
-            <a href="${social.whatsapp.link}"><img src="${social.whatsapp.icon}" width="30" style="margin:0 5px;"></a>
-        </div>
-    </div>
+  <body style="margin:0;padding:0;background-color:#F0F3F1;font-family:'Noto Sans Bengali', SolaimanLipi, Kalpurush, Arial, sans-serif;-webkit-font-smoothing:antialiased;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#F0F3F1;padding:20px 0;">
+      <tr>
+        <td align="center">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;background-color:#FFFFFF;border-radius:12px;border-top:6px solid #00684A;box-shadow:0 4px 12px rgba(26,62,47,0.05);overflow:hidden;margin:0 10px;">
+            
+            <!-- HEADER SECTION -->
+            <tr>
+              <td style="padding:25px 30px;background-color:#F9FAF9;text-align:center;border-bottom:1px solid #ECEFEC;">
+                ${hasLogo ? `<img src="${settings.logoUrl}" alt="${instituteName} Logo" style="max-height:60px;margin-bottom:10px;display:inline-block;vertical-align:middle;">` : ""}
+                <h2 style="color:#00684A;margin:0;font-size:20px;font-weight:700;line-height:1.4;">${instituteName}</h2>
+              </td>
+            </tr>
+            
+            <!-- CONTENT SECTION -->
+            <tr>
+              <td style="padding:30px 30px 20px 30px;">
+                <p style="margin:0 0 15px 0;font-size:16px;color:#1A3E2F;font-weight:600;">সম্মানিত ${candidateName},</p>
+                <p style="margin:0 0 20px 0;font-size:15px;color:#52635A;line-height:1.7;text-align:justify;">
+                  আস-সালামু আলাইকুম। অত্যন্ত আনন্দের সাথে জানাচ্ছি যে, আপনার পেমেন্টটি সফলভাবে যাচাই করা হয়েছে। আপনার পরীক্ষার প্রবেশপত্র (Admit Card) সফলভাবে তৈরি হয়েছে এবং এই ইমেইলের সাথে পিডিএফ (PDF) ফরম্যাটে সংযুক্ত করা হলো।
+                </p>
+                
+                <!-- EXAM DETAILS CARD -->
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#F4F7F5;border-left:4px solid #B27A23;border-radius:6px;margin:25px 0;padding:20px;">
+                  <tr>
+                    <td style="padding-bottom:12px;border-bottom:1px solid #E0E6E2;">
+                      <h4 style="margin:0;color:#1A3E2F;font-size:16px;font-weight:700;">পরীক্ষার বিবরণ (Exam Details)</h4>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-top:12px;">
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size:14px;color:#333;">
+                        <tr>
+                          <td style="padding:5px 0;font-weight:600;color:#52635A;width:120px;">রোল নম্বর:</td>
+                          <td style="padding:5px 0;color:#1A3E2F;font-weight:700;font-size:15px;">${rollNumber}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding:5px 0;font-weight:600;color:#52635A;">পরীক্ষার তারিখ:</td>
+                          <td style="padding:5px 0;color:#1A3E2F;font-weight:600;">${settings.examDate || "প্রবেশপত্র দেখুন"}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding:5px 0;font-weight:600;color:#52635A;">পরীক্ষার সময়:</td>
+                          <td style="padding:5px 0;color:#1A3E2F;font-weight:600;">${settings.examTime || "প্রবেশপত্র দেখুন"}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding:5px 0;font-weight:600;color:#52635A;">পরীক্ষার কেন্দ্র:</td>
+                          <td style="padding:5px 0;color:#1A3E2F;font-weight:600;">${settings.examVenue || "প্রবেশপত্র দেখুন"}</td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+                
+                <!-- INSTRUCTIONS SECTION -->
+                <div style="margin:25px 0 10px 0;">
+                  <h4 style="margin:0 0 12px 0;color:#1A3E2F;font-size:15px;font-weight:700;">পরীক্ষার্থীদের জন্য জরুরি নির্দেশনা:</h4>
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size:14px;color:#52635A;line-height:1.6;">
+                    <tr>
+                      <td valign="top" style="width:20px;color:#B27A23;font-weight:bold;">১.</td>
+                      <td style="padding-bottom:8px;">প্রবেশপত্রটি (Admit Card) অবশ্যই রঙিন (Color) প্রিন্ট করে পরীক্ষা কেন্দ্রে সাথে নিয়ে আসতে হবে।</td>
+                    </tr>
+                    <tr>
+                      <td valign="top" style="color:#B27A23;font-weight:bold;">২.</td>
+                      <td style="padding-bottom:8px;">পরীক্ষা শুরু হওয়ার কমপক্ষে ৩০ মিনিট পূর্বে পরীক্ষা কেন্দ্রে উপস্থিত হতে হবে।</td>
+                    </tr>
+                    <tr>
+                      <td valign="top" style="color:#B27A23;font-weight:bold;">৩.</td>
+                      <td style="padding-bottom:8px;">পরীক্ষার হলে লেখার জন্য প্রয়োজনীয় কলম, পেন্সিল ও আনুষঙ্গিক সামগ্রী সাথে নিয়ে আসবেন।</td>
+                    </tr>
+                    <tr>
+                      <td valign="top" style="color:#C0392B;font-weight:bold;">৪.</td>
+                      <td style="padding-bottom:8px;color:#C0392B;font-weight:bold;">পরীক্ষা কেন্দ্রে কোনো প্রকার মোবাইল ফোন, স্মার্টওয়াচ বা ইলেকট্রনিক ডিভাইস আনা সম্পূর্ণ নিষিদ্ধ।</td>
+                    </tr>
+                  </table>
+                </div>
+              </td>
+            </tr>
+            
+            <!-- FOOTER SIGNATURE SECTION -->
+            <tr>
+              <td style="padding:20px 30px;background-color:#F9FAF9;border-top:1px solid #ECEFEC;text-align:center;">
+                <p style="margin:0 0 5px 0;font-size:14px;color:#52635A;">শুভেচ্ছান্তে,</p>
+                <p style="margin:0 0 15px 0;font-size:16px;color:#1A3E2F;font-weight:700;">${instituteName}</p>
+                
+                <!-- SOCIAL MEDIA LINKS -->
+                <div style="margin-top:10px;">
+                  <a href="${social.facebook.link}" target="_blank" style="text-decoration:none;margin:0 6px;"><img src="${social.facebook.icon}" width="24" height="24" alt="Facebook" style="display:inline-block;vertical-align:middle;border:0;"></a>
+                  <a href="${social.youtube.link}" target="_blank" style="text-decoration:none;margin:0 6px;"><img src="${social.youtube.icon}" width="24" height="24" alt="YouTube" style="display:inline-block;vertical-align:middle;border:0;"></a>
+                  <a href="${social.whatsapp.link}" target="_blank" style="text-decoration:none;margin:0 6px;"><img src="${social.whatsapp.icon}" width="24" height="24" alt="WhatsApp" style="display:inline-block;vertical-align:middle;border:0;"></a>
+                </div>
+              </td>
+            </tr>
+            
+          </table>
+          <p style="margin:15px 0 0 0;font-size:11px;color:#8B9B90;text-align:center;">এটি একটি সিস্টেম জেনারেটেড ইমেইল। সরাসরি উত্তর দেওয়ার প্রয়োজন নেই।</p>
+        </td>
+      </tr>
+    </table>
   </body>
   </html>
   `;
