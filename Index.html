@@ -50,6 +50,12 @@
             min-height: 100vh;
         }
 
+        .font-numeric {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
         /* --- Container: Edge-to-edge on phones --- */
         .container {
             max-width: 580px;
@@ -59,25 +65,74 @@
             box-shadow: none;
             overflow: hidden;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- Header --- */
+        /* --- Header & Navigation Bar --- */
         .header {
-            text-align: center;
-            padding: 2rem 1.5rem 1.8rem;
+            position: relative;
+            padding: 1.5rem 1.25rem;
             border-bottom: 1px solid var(--border-light);
             background: linear-gradient(180deg, #FAFCFA 0%, #FFFFFF 100%);
         }
-        .header img {
-            max-width: 140px;
-            margin-bottom: 0.8rem;
+        .header-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
         }
-        .header h3 {
-            font-size: 1.25rem;
+        .header-back-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .header-back-btn:hover {
+            background-color: var(--primary-subtle);
+            color: var(--primary-color);
+        }
+        .header-back-btn:active {
+            transform: scale(0.9);
+        }
+        .header-brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            text-align: center;
+        }
+        .header-brand img {
+            max-height: 54px;
+            width: auto;
+            margin-bottom: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+        .header-brand img:hover {
+            transform: scale(1.05);
+        }
+        .header-brand h3 {
+            font-size: 1.15rem;
             font-weight: 700;
             color: var(--primary-color);
             letter-spacing: -0.01em;
-            line-height: 1.4;
+            line-height: 1.3;
+        }
+        .header-nav-placeholder {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
         }
 
         /* --- Views --- */
@@ -85,6 +140,7 @@
             display: none;
             padding: 1.5rem 1.25rem 2rem;
             animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-grow: 1;
         }
         .view > h3 {
             font-size: 1.15rem;
@@ -107,29 +163,40 @@
         .app-input, .app-select {
             width: 100%;
             padding: 0.85rem 1rem;
-            font-size: 1rem;
-            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            border-radius: var(--radius-md);
             border: 1.5px solid var(--border-color);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.2s ease;
             font-family: 'Noto Sans Bengali', sans-serif;
             background-color: #FCFDFC;
             color: var(--text-dark);
-            -webkit-appearance: none;
+            outline: none;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
         }
         .app-input:focus, .app-select:focus {
-            outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(26, 62, 47, 0.08);
+            box-shadow: 0 0 0 4px rgba(26, 62, 47, 0.1), inset 0 1px 2px rgba(0,0,0,0.02);
             background-color: #FFFFFF;
         }
         .app-input::placeholder { color: var(--text-muted); }
+
+        .app-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2352635A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.1rem;
+            padding-right: 2.5rem;
+        }
 
         /* --- Buttons --- */
         .app-button {
             width: 100%;
             margin-top: 0.75rem;
-            padding: 0.85rem 1rem;
-            font-size: 1rem;
+            padding: 0.85rem 1.25rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: white;
             border: none;
@@ -139,18 +206,24 @@
             background-color: var(--primary-color);
             min-height: 48px;
             font-family: 'Noto Sans Bengali', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(26, 62, 47, 0.08);
         }
         .app-button:hover:not(:disabled) {
             background-color: var(--primary-light);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(26, 62, 47, 0.15);
+            transform: translateY(-1.5px);
+            box-shadow: 0 6px 16px rgba(26, 62, 47, 0.16);
         }
         .app-button:active:not(:disabled) {
-            transform: translateY(0);
-            box-shadow: none;
+            transform: translateY(0.5px) scale(0.98);
+            box-shadow: 0 2px 4px rgba(26, 62, 47, 0.08);
         }
         .app-button:disabled {
             background-color: #C3CDC7;
+            color: #7A8B82;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
@@ -159,13 +232,13 @@
         /* --- Loader --- */
         .loader {
             display: none;
-            border: 3px solid var(--border-light);
+            border: 3.5px solid var(--border-light);
             border-radius: 50%;
-            border-top: 3px solid var(--primary-color);
-            width: 28px;
-            height: 28px;
-            animation: spin 0.7s linear infinite;
-            margin: 1rem auto;
+            border-top: 3.5px solid var(--primary-color);
+            width: 32px;
+            height: 32px;
+            animation: spin 0.8s linear infinite;
+            margin: 1.5rem auto;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
@@ -173,17 +246,18 @@
         .back-button {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            padding: 0.6rem 0;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
             font-weight: 600;
-            color: var(--text-light);
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s ease;
+            font-size: 0.95rem;
         }
-        .back-button:hover { color: var(--primary-color); }
-        .back-nav { margin-top: 1.5rem; text-align: center; padding-top: 1rem; border-top: 1px solid var(--border-light); }
+        .back-nav { 
+            margin-top: 2rem; 
+            text-align: center; 
+            padding-top: 1.5rem; 
+            border-top: 1px solid var(--border-light); 
+        }
 
         /* --- Status & Label --- */
         .status-text { font-weight: 500; margin-top: 0.5rem; min-height: 20px; font-size: 0.85rem; line-height: 1.5; }
@@ -207,30 +281,38 @@
             margin-bottom: 1.5rem;
         }
         .nav-button {
-            padding: 0.95rem;
+            padding: 0.95rem 1.25rem;
             font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.75rem;
             border: 1.5px solid transparent;
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-md);
         }
-        .btn-primary { background-color: var(--primary-color); }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%); 
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #366B53 100%);
+        }
         .btn-secondary {
             background-color: transparent;
-            border-color: var(--primary-color);
+            border: 1.5px solid var(--primary-color);
             color: var(--primary-color);
+            box-shadow: none;
         }
         .btn-secondary:hover:not(:disabled) {
             background-color: var(--primary-subtle);
             color: var(--primary-color);
+            border-color: var(--primary-color);
         }
         .btn-tertiary {
             background-color: transparent;
-            border-color: var(--border-color);
+            border: 1.5px solid var(--border-color);
             color: var(--text-light);
+            box-shadow: none;
         }
         .btn-tertiary:hover:not(:disabled) {
-            background-color: #F5F7F6;
+            background-color: #F0F3F1;
             color: var(--text-dark);
             border-color: var(--text-light);
         }
@@ -249,43 +331,121 @@
         }
 
         /* ================================================
-           RESULT & STATUS CARDS
+           RESULT & STATUS CARDS (Premium UI Upgrade)
            ================================================ */
         .info-card {
             margin-top: 1.25rem;
-            padding: 1.25rem;
-            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
             border: 1.5px solid var(--border-color);
-            background-color: #FAFCFA;
+            background-color: #FFFFFF;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .info-card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .status-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .status-icon {
+            width: 24px;
+            height: 24px;
+        }
+        .info-card-title {
+            flex-grow: 1;
         }
         .info-card h3 {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            margin-bottom: 0.4rem;
             color: var(--primary-color);
+            margin-bottom: 0.2rem;
+            line-height: 1.4;
         }
-        .info-card p { color: var(--text-light); font-size: 0.9rem; line-height: 1.6; }
+        .info-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.55;
+        }
         
-        .status-final { border-color: var(--success-color); background-color: #F2FAF6; }
-        .status-final h3 { color: var(--success-color); }
-        .status-viva, .status-waiting { border-color: var(--primary-light); background-color: #F6FAF8; }
-        .status-viva h3, .status-waiting h3 { color: var(--primary-light); }
-        .status-not-selected { border-color: var(--danger-color); background-color: #FDF6F5; }
-        .status-not-selected h3 { color: var(--danger-color); }
+        .status-final {
+            border-color: #A3D9C9;
+            background: linear-gradient(145deg, #F2FAF6 0%, #FFFFFF 100%);
+        }
+        .status-final .status-icon-wrapper {
+            background-color: #D2F0E6;
+            color: var(--success-color);
+        }
+        .status-final h3 {
+            color: var(--success-color);
+        }
         
-        .info-grid { margin-top: 1rem; border-top: 1px dashed var(--border-color); padding-top: 0.8rem; }
+        .status-viva, .status-waiting {
+            border-color: #B2D8C6;
+            background: linear-gradient(145deg, #F5FAF7 0%, #FFFFFF 100%);
+        }
+        .status-viva .status-icon-wrapper, .status-waiting .status-icon-wrapper {
+            background-color: #D6EFE3;
+            color: var(--primary-light);
+        }
+        .status-viva h3, .status-waiting h3 {
+            color: var(--primary-light);
+        }
+        
+        .status-not-selected {
+            border-color: #F5C6BC;
+            background: linear-gradient(145deg, #FDF6F5 0%, #FFFFFF 100%);
+        }
+        .status-not-selected .status-icon-wrapper {
+            background-color: #FADAD2;
+            color: var(--danger-color);
+        }
+        .status-not-selected h3 {
+            color: var(--danger-color);
+        }
+        
+        .info-grid {
+            margin-top: 0.5rem;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 0.5rem;
+        }
         .info-item {
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
-            padding: 0.55rem 0;
+            align-items: center;
+            padding: 0.65rem 0;
             font-size: 0.9rem;
             border-bottom: 1px solid var(--border-light);
             gap: 0.75rem;
         }
-        .info-item:last-child { border-bottom: none; }
-        .info-item .label { font-weight: 500; color: var(--text-light); white-space: nowrap; flex-shrink: 0; }
-        .info-item span:last-child { text-align: right; word-break: break-word; }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .info-item .label {
+            font-weight: 600;
+            color: var(--text-light);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .info-item .val {
+            text-align: right;
+            word-break: break-all;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
 
         /* ================================================
            PAYMENT FORM
@@ -373,9 +533,7 @@
                 flex-shrink: 0;
             }
             .view { padding: 2rem 1.75rem 2.5rem; }
-            .header { padding: 2.5rem 2rem 2rem; }
-            .header img { max-width: 160px; }
-            .header h3 { font-size: 1.35rem; }
+            .header { padding: 2rem 1.75rem; }
             .info-card { padding: 1.5rem; }
             .details-box { padding: 1.5rem; }
         }
@@ -393,9 +551,8 @@
                 margin: 0 auto;
             }
             .view { padding: 2.5rem 2.5rem 3rem; }
-            .header { padding: 2.5rem 2rem; }
-            .header img { max-width: 180px; }
-            .header h3 { font-size: 1.5rem; }
+            .header { padding: 2.2rem 2.5rem 1.8rem; }
+            .header-brand h3 { font-size: 1.35rem; }
             .view > h3 { font-size: 1.25rem; }
         }
     </style>
@@ -403,8 +560,16 @@
 <body>
     <div class="container">
         <header class="header">
-            <img id="logo" src="" alt="Institute Logo">
-            <h3 id="appTitle"></h3>
+            <div class="header-nav">
+                <button id="headerBackBtn" class="header-back-btn" onclick="goBackHome()" style="visibility: hidden;" aria-label="ফিরে যান">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <div class="header-brand">
+                    <img id="logo" src="" alt="Institute Logo">
+                    <h3 id="appTitle"></h3>
+                </div>
+                <div class="header-nav-placeholder"></div>
+            </div>
         </header>
 
         <main id="app-content">
@@ -483,10 +648,24 @@
             if (btn) btn.style.display = 'none';
         }
 
-        // Hide back buttons when only a single view is directly loaded
+        // Set up input key event filters (digits only) and capitalize TrxID
+        restrictDigitsOnly('phone');
+        restrictDigitsOnly('statusSearchInput');
+        restrictDigitsOnly('paymentSource');
+        restrictUppercase('trxId');
+
+        // Initial setup and back button controls
         const initialView = '<?= initialView ?>';
-        if (initialView !== 'landingView') {
-            document.querySelectorAll('.back-button').forEach(btn => btn.style.display = 'none');
+        showView(initialView);
+
+        // Hide back buttons when only a single view is directly loaded
+        let activeCount = 0;
+        if (settings.resultCheckerActive) activeCount++;
+        if (settings.paymentFormActive) activeCount++;
+        if (settings.statusCheckActive) activeCount++;
+        
+        if (activeCount <= 1) {
+            document.querySelectorAll('.back-nav, .back-button').forEach(btn => btn.style.display = 'none');
         }
 
         // Populate footer
@@ -497,13 +676,63 @@
     });
 
     /**
+     * Navigates back to the landing page.
+     */
+    function goBackHome() {
+        showView('landingView');
+    }
+
+    /**
+     * Filters phone number inputs to allow only numeric digits.
+     */
+    function restrictDigitsOnly(elementId) {
+        const input = document.getElementById(elementId);
+        if (input) {
+            input.addEventListener('input', function(e) {
+                this.value = this.value.replace(/\D/g, '');
+            });
+        }
+    }
+
+    /**
+     * Automatically converts input to uppercase (useful for TrxIDs).
+     */
+    function restrictUppercase(elementId) {
+        const input = document.getElementById(elementId);
+        if (input) {
+            input.addEventListener('input', function(e) {
+                this.value = this.value.toUpperCase();
+            });
+        }
+    }
+
+    /**
      * Handles navigation between different views/pages of the app.
      * @param {string} viewId The ID of the view to display.
      */
     function showView(viewId) {
         document.querySelectorAll('.view').forEach(view => view.style.display = 'none');
         const view = document.getElementById(viewId);
-        if (view) view.style.display = 'block';
+        if (view) {
+            view.style.display = 'block';
+            
+            // Dynamic header back button toggle
+            const backBtn = document.getElementById('headerBackBtn');
+            if (backBtn) {
+                let activeCount = 0;
+                if (settings.resultCheckerActive) activeCount++;
+                if (settings.paymentFormActive) activeCount++;
+                if (settings.statusCheckActive) activeCount++;
+                
+                if (viewId !== 'landingView' && activeCount > 1) {
+                    backBtn.style.visibility = 'visible';
+                    backBtn.style.opacity = '1';
+                } else {
+                    backBtn.style.visibility = 'hidden';
+                    backBtn.style.opacity = '0';
+                }
+            }
+        }
     }
 
     // ================================================
@@ -535,35 +764,83 @@
 
         if (response.status === 'found') {
             const student = response.data;
-            let statusClass = 'info-card status-viva'; // Default class
-            if (String(student.Status).toLowerCase().includes('finally')) statusClass = 'info-card status-final';
-            if (String(student.Status).toLowerCase().includes('not selected')) statusClass = 'info-card status-not-selected';
-            if (String(student.Status).toLowerCase().includes('waiting')) statusClass = 'info-card status-waiting';
+            let statusClass = 'status-viva'; // Default class
+            let statusIcon = `<div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>`;
+
+            const statusLower = String(student.Status || '').toLowerCase();
+            if (statusLower.includes('finally')) {
+                statusClass = 'status-final';
+                statusIcon = `<div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>`;
+            } else if (statusLower.includes('not selected') || statusLower.includes('reject')) {
+                statusClass = 'status-not-selected';
+                statusIcon = `<div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>`;
+            } else if (statusLower.includes('waiting')) {
+                statusClass = 'status-waiting';
+            }
 
             let detailsHtml = '';
             for (const key in student) {
                 if (student[key] && key !== 'Name' && key !== 'Message') {
-                    const value = (key === 'Phone Number') ? maskPhoneNumber(student[key]) : student[key];
-                    detailsHtml += `<div class="info-item"><span class="label">${key}</span><span>${value}</span></div>`;
+                    let value = student[key];
+                    let valClass = 'val';
+                    if (key === 'Phone Number') {
+                        value = maskPhoneNumber(value);
+                        valClass += ' font-numeric';
+                    } else if (key === 'Serial No' || key === 'Roll No' || key === 'TrxID' || key === 'SerialNumber' || key === 'RegisteredPhoneNumber') {
+                        valClass += ' font-numeric';
+                    }
+                    detailsHtml += `<div class="info-item"><span class="label">${key}</span><span class="${valClass}">${value}</span></div>`;
                 }
             }
             resultDiv.innerHTML = `
-                <div class="${statusClass}">
-                    <h3>${student.Name || 'নাম পাওয়া যায়নি'}</h3>
-                    <p>${student.Message || 'আপনার স্ট্যাটাস নিচে দেখুন।'}</p>
+                <div class="info-card ${statusClass}">
+                    <div class="info-card-header">
+                        ${statusIcon}
+                        <div class="info-card-title">
+                            <h3>${student.Name || 'নাম পাওয়া যায়নি'}</h3>
+                            <p>${student.Message || 'আপনার ফলাফল নিচে দেখুন।'}</p>
+                        </div>
+                    </div>
                     <div class="info-grid">${detailsHtml}</div>
                 </div>`;
         } else if (response.status === 'not_found') {
-            resultDiv.innerHTML = `<div class="info-card status-not-selected"><h3>দুঃখিত, আপনি নির্বাচিত হননি</h3><p>আপনার দেওয়া তথ্যটি আমাদের তালিকায় পাওয়া যায়নি। আমাদের প্রতিষ্ঠানে আগ্রহ প্রকাশের জন্য ধন্যবাদ। আপনার জন্য শুভকামনা রইল।</p></div>`;
+            resultDiv.innerHTML = `
+                <div class="info-card status-not-selected">
+                    <div class="info-card-header">
+                        <div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>
+                        <div class="info-card-title">
+                            <h3>দুঃখিত, আপনি নির্বাচিত হননি</h3>
+                            <p>আপনার দেওয়া তথ্যটি আমাদের তালিকায় পাওয়া যায়নি। আমাদের প্রতিষ্ঠানে আগ্রহ প্রকাশের জন্য ধন্যবাদ। আপনার জন্য শুভকামনা রইল।</p>
+                        </div>
+                    </div>
+                </div>`;
         } else {
-             resultDiv.innerHTML = `<div class="info-card status-not-selected"><h3>সিস্টেম ত্রুটি</h3><p>${response.message}</p></div>`;
+            resultDiv.innerHTML = `
+                <div class="info-card status-not-selected">
+                    <div class="info-card-header">
+                        <div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>
+                        <div class="info-card-title">
+                            <h3>ত্রুটি</h3>
+                            <p>${response.message}</p>
+                        </div>
+                    </div>
+                </div>`;
         }
     }
     
     function onResultFailure(error) {
          document.getElementById('resultLoader').style.display = 'none';
          document.getElementById('resultSearchForm').querySelector('button').disabled = false;
-         document.getElementById('resultDisplay').innerHTML = `<div class="info-card status-not-selected"><h3>সংযোগ বিচ্ছিন্ন</h3><p>সার্ভারের সাথে সংযোগে সমস্যা হচ্ছে। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</p></div>`;
+         document.getElementById('resultDisplay').innerHTML = `
+            <div class="info-card status-not-selected">
+                <div class="info-card-header">
+                    <div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>
+                    <div class="info-card-title">
+                        <h3>সংযোগ বিচ্ছিন্ন</h3>
+                        <p>সার্ভারের সাথে সংযোগে সমস্যা হচ্ছে। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</p>
+                    </div>
+                </div>
+            </div>`;
     }
 
     function maskPhoneNumber(number) {
@@ -644,42 +921,55 @@
         });
     }
 
-    /**
-     * CRITICAL FIX: This function now correctly handles the structured JSON object
-     * received from the server, preventing the 'undefined' error.
-     */
     function onPaymentSuccess(response) {
-        // Check if the response object has a 'success' key
         if (response && response.success) {
             document.getElementById('paymentView').innerHTML = `
-                <div id="successMessage">
-                    <h4>ধন্যবাদ!</h4>
-                    <p>${response.success}</p>
+                <div class="info-card status-final">
+                    <div class="info-card-header">
+                        <div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+                        <div class="info-card-title">
+                            <h3>ধন্যবাদ!</h3>
+                            <p>${response.success}</p>
+                        </div>
+                    </div>
                 </div>`;
         } 
-        // Otherwise, check if it has an 'error' key
         else if (response && response.error) {
             document.getElementById('paymentView').innerHTML = `
-                <div id="successMessage" style="background-color: #F9EBEA;">
-                    <h4 style="color: var(--danger-color);">ত্রুটি</h4>
-                    <p>${response.error}</p>
+                <div class="info-card status-not-selected">
+                    <div class="info-card-header">
+                        <div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>
+                        <div class="info-card-title">
+                            <h3>ত্রুটি</h3>
+                            <p>${response.error}</p>
+                        </div>
+                    </div>
                 </div>`;
         }
-        // Fallback for any unexpected response format
         else {
             document.getElementById('paymentView').innerHTML = `
-                <div id="successMessage">
-                    <h4>সম্পন্ন হয়েছে</h4>
-                    <p>আপনার অনুরোধটি প্রক্রিয়া করা হয়েছে।</p>
+                <div class="info-card status-final">
+                    <div class="info-card-header">
+                        <div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+                        <div class="info-card-title">
+                            <h3>সম্পন্ন হয়েছে</h3>
+                            <p>আপনার অনুরোধটি প্রক্রিয়া করা হয়েছে।</p>
+                        </div>
+                    </div>
                 </div>`;
         }
     }
 
     function onPaymentFailure(error) {
         document.getElementById('paymentView').innerHTML = `
-            <div id="successMessage" style="background-color: #F9EBEA;">
-                <h4 style="color: var(--danger-color);">সংযোগ বিচ্ছিন্ন</h4>
-                <p>সার্ভারের সাথে সংযোগে সমস্যা হচ্ছে। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</p>
+            <div class="info-card status-not-selected">
+                <div class="info-card-header">
+                    <div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>
+                    <div class="info-card-title">
+                        <h3>সংযোগ বিচ্ছিন্ন</h3>
+                        <p>সার্ভারের সাথে সংযোগে সমস্যা হচ্ছে। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</p>
+                    </div>
+                </div>
             </div>`;
     }
 
@@ -710,23 +1000,62 @@
         document.getElementById('statusSearchForm').querySelector('button').disabled = false;
         const statusDiv = document.getElementById('statusDisplay');
 
-        let statusClass = 'info-card status-waiting'; // Default
-        if (response.found) {
-            if (response.status === 'Approved') statusClass = 'info-card status-final';
-            if (response.status === 'Rejected') statusClass = 'info-card status-not-selected';
-        } else {
-            statusClass = 'info-card status-not-selected';
-        }
+        let statusClass = 'status-waiting'; // Default
+        let statusIcon = `<div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>`;
+        let title = "পেমেন্ট যাচাইকরণ";
 
-        statusDiv.innerHTML = `<div class="${statusClass}"><p style="margin:0;">${response.message}</p></div>`;
+        if (response.found) {
+            if (response.status === 'Approved') {
+                statusClass = 'status-final';
+                statusIcon = `<div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>`;
+                title = "পেমেন্ট অনুমোদিত";
+            } else if (response.status === 'Rejected') {
+                statusClass = 'status-not-selected';
+                statusIcon = `<div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>`;
+                title = "পেমেন্ট বাতিল";
+            } else {
+                title = "যাচাইকরণাধীন";
+            }
+            statusDiv.innerHTML = `
+                <div class="info-card ${statusClass}">
+                    <div class="info-card-header">
+                        ${statusIcon}
+                        <div class="info-card-title">
+                            <h3>${title}</h3>
+                            <p>${response.message}</p>
+                        </div>
+                    </div>
+                </div>`;
+        } else {
+            statusClass = 'status-not-selected';
+            statusIcon = `<div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>`;
+            statusDiv.innerHTML = `
+                <div class="info-card ${statusClass}">
+                    <div class="info-card-header">
+                        ${statusIcon}
+                        <div class="info-card-title">
+                            <h3>রেকর্ড পাওয়া যায়নি</h3>
+                            <p>${response.message}</p>
+                        </div>
+                    </div>
+                </div>`;
+        }
     }
 
     function onStatusCheckFailure(error) {
         document.getElementById('statusLoader').style.display = 'none';
         document.getElementById('statusSearchForm').querySelector('button').disabled = false;
-        document.getElementById('statusDisplay').innerHTML = '<div class="info-card status-not-selected"><p style="margin:0;">সার্ভারের সাথে সংযোগে সমস্যা হচ্ছে। অনুগ্রহ করে আবার চেষ্টা করুন।</p></div>';
+        document.getElementById('statusDisplay').innerHTML = `
+            <div class="info-card status-not-selected">
+                <div class="info-card-header">
+                    <div class="status-icon-wrapper"><svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>
+                    <div class="info-card-title">
+                        <h3>সংযোগ বিচ্ছিন্ন</h3>
+                        <p>সার্ভারের সাথে সংযোগে সমস্যা হচ্ছে। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</p>
+                    </div>
+                </div>
+            </div>`;
     }
-
 </script>
 </body>
 </html>
