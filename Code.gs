@@ -12,7 +12,7 @@ function doGet(e) {
   
   const isResultActive = settings.resultCheckerActive;
   const isPaymentActive = settings.paymentFormActive;
-  const isStatusCheckActive = settings.statusCheckActive;
+  const isStatusCheckActive = false; // Status check is disabled in web views as requested
 
   // Scenario 1: More than one system is active, show the landing page.
   if ((isResultActive && isPaymentActive) || (isResultActive && isStatusCheckActive) || (isPaymentActive && isStatusCheckActive)) {

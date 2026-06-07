@@ -555,6 +555,77 @@
             .header-brand h3 { font-size: 1.35rem; }
             .view > h3 { font-size: 1.25rem; }
         }
+
+        /* --- Custom Modal Dialog --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(26, 62, 47, 0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+            animation: modalFadeIn 0.25s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            max-width: 400px;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalSlideUp {
+            from { transform: translateY(15px); }
+            to { transform: translateY(0); }
+        }
+        .modal-header {
+            padding: 1.25rem 1.25rem 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .modal-header h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .modal-body {
+            padding: 1.25rem;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        .modal-footer {
+            padding: 0.75rem 1.25rem 1.25rem;
+            text-align: right;
+        }
+        .modal-footer .app-button {
+            margin-top: 0;
+            width: auto;
+            min-width: 100px;
+            padding: 0.6rem 1.5rem;
+            min-height: 40px;
+        }
+        
+        .header-brand.no-logo h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            padding: 0.4rem 0;
+            color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
@@ -579,7 +650,6 @@
                 <p>অনুগ্রহ করে নিচের অপশন থেকে আপনার প্রয়োজনীয় সেবাটি নির্বাচন করুন।</p>
                 <button id="resultBtn" class="app-button nav-button btn-primary" onclick="showView('resultView')">ফলাফল দেখুন</button>
                 <button id="paymentBtn" class="app-button nav-button btn-secondary" onclick="showView('paymentView')">অ্যাডমিট কার্ড ফি দিন</button>
-                <button id="statusBtn" class="app-button nav-button btn-tertiary" onclick="showView('statusCheckView')">পেমেন্ট স্ট্যাটাস দেখুন</button>
             </div>
         
             <!-- VIEW 2: RESULT CHECKER -->
@@ -590,11 +660,6 @@
             <!-- VIEW 3: PAYMENT FORM -->
             <div id="paymentView" class="view" style="display: <?= initialView === 'paymentView' ? 'block' : 'none' ?>;">
                 <?!= include('PaymentView'); ?>
-            </div>
-
-            <!-- VIEW 4: PAYMENT STATUS CHECKER -->
-            <div id="statusCheckView" class="view" style="display: <?= initialView === 'statusCheckView' ? 'block' : 'none' ?>;">
-                <?!= include('StatusCheckView'); ?>
             </div>
         </main>
 
@@ -611,8 +676,22 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         // Populate header and other dynamic content that isn't part of a specific view
-        document.getElementById('logo').src = settings.logoUrl;
-        document.getElementById('appTitle').innerText = settings.appTitle;
+        const logoEl = document.getElementById('logo');
+        const headerBrandEl = document.querySelector('.header-brand');
+        const hasLogo = settings.logoUrl && 
+                        settings.logoUrl.trim() !== "" && 
+                        !settings.logoUrl.toLowerCase().includes("your_") &&
+                        !settings.logoUrl.toLowerCase().includes("placeholder");
+                        
+        if (hasLogo) {
+            logoEl.src = settings.logoUrl;
+            logoEl.style.display = 'block';
+            if (headerBrandEl) headerBrandEl.classList.remove('no-logo');
+        } else {
+            logoEl.style.display = 'none';
+            if (headerBrandEl) headerBrandEl.classList.add('no-logo');
+        }
+        document.getElementById('appTitle').innerText = settings.appTitle || settings.instituteName || '';
         
         // Populate the instructions box for the payment view
         const instructionsEl = document.getElementById('instructions');
@@ -643,10 +722,6 @@
             const btn = document.getElementById('paymentBtn');
             if (btn) btn.style.display = 'none';
         }
-        if (!settings.statusCheckActive) {
-            const btn = document.getElementById('statusBtn');
-            if (btn) btn.style.display = 'none';
-        }
 
         // Set up input key event filters (digits only) and capitalize TrxID
         restrictDigitsOnly('phone');
@@ -662,7 +737,6 @@
         let activeCount = 0;
         if (settings.resultCheckerActive) activeCount++;
         if (settings.paymentFormActive) activeCount++;
-        if (settings.statusCheckActive) activeCount++;
         
         if (activeCount <= 1) {
             document.querySelectorAll('.back-nav, .back-button').forEach(btn => btn.style.display = 'none');
@@ -722,7 +796,6 @@
                 let activeCount = 0;
                 if (settings.resultCheckerActive) activeCount++;
                 if (settings.paymentFormActive) activeCount++;
-                if (settings.statusCheckActive) activeCount++;
                 
                 if (viewId !== 'landingView' && activeCount > 1) {
                     backBtn.style.visibility = 'visible';
@@ -860,6 +933,7 @@
         
         if (!/^01[3-9]\d{8}$/.test(phone)) {
             statusDiv.innerHTML = `<span class="text-danger">সঠিক ১১-ডিজিটের মোবাইল নম্বর দিন (যেমন: 017...)</span>`;
+            showModal("অবৈধ মোবাইল নম্বর", "অনুগ্রহ করে একটি সঠিক ১১-ডিজিটের মোবাইল নম্বর প্রদান করুন (যেমন: 017xxxxxxxx)।", "error");
             return;
         }
 
@@ -904,7 +978,7 @@
             
             const paymentSource = document.getElementById('paymentSource').value;
             if (!/^01[3-9]\d{8}$/.test(paymentSource)) {
-                 alert("অনুগ্রহ করে 'যে নম্বর থেকে টাকা পাঠিয়েছেন' ফিল্ডে একটি সঠিক ১১-ডিজিটের মোবাইল নম্বর দিন।");
+                 showModal("অবৈধ মোবাইল নম্বর", "অনুগ্রহ করে 'যে নম্বর থেকে টাকা পাঠিয়েছেন' ফিল্ডে একটি সঠিক ১১-ডিজিটের মোবাইল নম্বর দিন (যেমন: 017xxxxxxxx)।", "error");
                  return;
             }
 
@@ -1056,6 +1130,46 @@
                 </div>
             </div>`;
     }
+    /* ================================================
+       CUSTOM MODAL POPUP DIALOG
+       ================================================ */
+    function showModal(title, message, type = 'info') {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalMessage').innerText = message;
+        
+        const iconWrapper = document.getElementById('modalIcon');
+        if (type === 'error') {
+            iconWrapper.innerHTML = `<svg style="color: var(--danger-color); width: 28px; height: 28px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`;
+        } else if (type === 'success') {
+            iconWrapper.innerHTML = `<svg style="color: var(--success-color); width: 28px; height: 28px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
+        } else {
+            iconWrapper.innerHTML = `<svg style="color: var(--primary-light); width: 28px; height: 28px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+        }
+        
+        const modal = document.getElementById('customModal');
+        modal.style.display = 'flex';
+    }
+    
+    function closeModal() {
+        document.getElementById('customModal').style.display = 'none';
+    }
 </script>
+
+<!-- Custom Modal Popup -->
+<div id="customModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <span id="modalIcon"></span>
+            <h4 id="modalTitle">বিজ্ঞপ্তি</h4>
+        </div>
+        <div class="modal-body">
+            <p id="modalMessage"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="app-button" onclick="closeModal()">ঠিক আছে</button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
