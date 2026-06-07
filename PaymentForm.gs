@@ -407,14 +407,7 @@ function setupTriggerAutomatically() {
   }
   
   try {
-    let ss;
-    try {
-      ss = SpreadsheetApp.getActiveSpreadsheet();
-    } catch(err) {}
-    
-    if (!ss) {
-      ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    }
+    const ss = getSpreadsheet();
     
     ScriptApp.newTrigger('handleEditTrigger')
       .forSpreadsheet(ss)
@@ -540,7 +533,7 @@ function updateDashboardSheet() {
  */
 function processAllApprovedManually() {
   try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const ss = getSpreadsheet();
     const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
     if (!paymentSheet) return;
 
@@ -665,7 +658,10 @@ function sendRejectionEmail(rowNum) {
         }
 
         const registeredPhone = String(rowData[phoneColIdx]).trim();
-        const rejectionReason = reasonColIdx !== -1 ? String(rowData[reasonColIdx]).trim() : "অনির্দিষ্ট কারণে";
+        let rejectionReason = reasonColIdx !== -1 ? String(rowData[reasonColIdx]).trim() : "";
+        if (!rejectionReason) {
+            rejectionReason = "পেমেন্ট তথ্য যাচাইয়ে অসংগতি (অনুগ্রহ করে আমাদের হেল্পলাইনে যোগাযোগ করুন)";
+        }
 
         const masterHeaders = masterSheet.getRange(1, 1, 1, masterSheet.getLastColumn()).getValues()[0];
         const mPhoneIndex = findColumnIndex(masterHeaders, ['RegisteredPhoneNumber', 'RegisteredPhone', 'PhoneNumber', 'Phone', 'Mobile']);
@@ -732,6 +728,8 @@ function processSingleRow(rowNum) {
   const currentProcessingStatus = String(rowData[statusColIndex]).trim();
   if (currentProcessingStatus === 'Success') return;
 
+  let newDocFile = null;
+
   try {
     // Fetch settings for exam details placeholders and IDs
     const appSettings = getAppSettings();
@@ -781,7 +779,7 @@ function processSingleRow(rowNum) {
     }
 
     // 1. Generate PDF from Template
-    const newDocFile = DriveApp.getFileById(templateId).makeCopy(`Admit Card - ${candidateName}`);
+    newDocFile = DriveApp.getFileById(templateId).makeCopy(`Admit Card - ${candidateName}`);
     const doc = DocumentApp.openById(newDocFile.getId());
     doc.getBody()
       .replaceText('{{FullName}}', candidateName)
@@ -796,6 +794,13 @@ function processSingleRow(rowNum) {
     
     const pdfFile = DriveApp.getFolderById(folderId).createFile(doc.getAs('application/pdf')).setName(`Admit Card - ${rollNumber}.pdf`);
     
+    // Enable anyone with the link to view the file (allows other coordinators to access PDF via link)
+    try {
+      pdfFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    } catch (shareErr) {
+      Logger.log(`Non-critical sharing setup error: ${shareErr.toString()}`);
+    }
+    
     // 2. Send Email with PDF attachment
     GmailApp.sendEmail(candidateEmail, `আপনার পরীক্ষার প্রবেশপত্র - ${appSettings.instituteName}`, "", {
         htmlBody: createHtmlEmailBody(candidateName, rollNumber, appSettings),
@@ -805,17 +810,19 @@ function processSingleRow(rowNum) {
     // 3. Update Sheet with Success Status and PDF link (columns are 1-based, so + 1)
     paymentSheet.getRange(rowNum, statusColIndex + 1).setValue('Success').setFontColor('#00684A');
     paymentSheet.getRange(rowNum, pdfLinkColIndex + 1).setValue(pdfFile.getUrl());
-    
-    // 4. Clean up the temporary Google Doc file (non-critical).
-    try {
-      DriveApp.getFileById(newDocFile.getId()).setTrashed(true);
-    } catch (cleanupErr) {
-      Logger.log(`Non-critical cleanup error for row ${rowNum}: ${cleanupErr.toString()}`);
-    }
 
   } catch (e) {
     logErrorToSheet("processSingleRow", e);
     paymentSheet.getRange(rowNum, statusColIndex + 1).setValue(`ব্যর্থ: ${e.message}`).setFontColor('#C0392B');
+  } finally {
+    // 4. Clean up the temporary Google Doc file (critical resource cleanup).
+    if (newDocFile) {
+      try {
+        newDocFile.setTrashed(true);
+      } catch (cleanupErr) {
+        Logger.log(`Resource trashing cleanup error for row ${rowNum}: ${cleanupErr.toString()}`);
+      }
+    }
   }
 }
 

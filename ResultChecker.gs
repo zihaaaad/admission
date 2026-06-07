@@ -56,7 +56,7 @@ function searchStudentData(searchKey) {
       const serial = String(row[serialNoIndex] || '').trim();
       const phone = String(row[phoneNoIndex] || '').trim();
 
-      const isSerialMatch = (serial === searchKeyTrimmed);
+      const isSerialMatch = (serial.toUpperCase() === searchKeyTrimmed.toUpperCase());
       const isPhoneMatch = (normSearchKey && normalizePhoneNumber(phone) === normSearchKey);
 
       // Check if the user's input matches either the serial number or the phone number.

@@ -147,7 +147,7 @@ function getAppSettings() {
   }
 
   try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const ss = getSpreadsheet();
     const sheet = ss.getSheetByName(SHEET_CONFIG);
 
     if (!sheet) {
@@ -244,7 +244,7 @@ function handlePost(request) {
  */
 function logErrorToSheet(context, errorObj) {
   try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const ss = getSpreadsheet();
     let logSheet = ss.getSheetByName(SHEET_ERROR_LOG);
     if (!logSheet) {
       logSheet = ss.insertSheet(SHEET_ERROR_LOG);

@@ -678,7 +678,7 @@
     // ================================================
     //      GLOBAL APP LOGIC & NAVIGATION
     // ================================================
-    const settings = <?!= JSON.stringify(settings) ?>;
+    const settings = <?!= JSON.stringify(settings).replace(/</g, '\\u003c') ?>;
 
     document.addEventListener('DOMContentLoaded', function() {
         // Populate header and other dynamic content that isn't part of a specific view
@@ -991,6 +991,12 @@
             const paymentSource = document.getElementById('paymentSource').value;
             if (!/^01[3-9]\d{8}$/.test(paymentSource)) {
                  showModal("মোবাইল নম্বরটি সঠিক নয়", "দয়া করে 'যে নম্বর থেকে টাকা পাঠিয়েছেন' ফিল্ডে একটি সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 017xxxxxxxx)।", "error");
+                 return;
+            }
+
+            const trxId = document.getElementById('trxId').value.trim();
+            if (trxId.length < 8) {
+                 showModal("Transaction ID সঠিক নয়", "দয়া করে একটি সঠিক Transaction ID (কমপক্ষে ৮ অক্ষরের) দিন।", "error");
                  return;
             }
 
