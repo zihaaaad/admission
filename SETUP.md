@@ -1,85 +1,280 @@
 # Setup and Configuration Manual
 
+**আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট**
+
 ---
 
 ### Developer Profile
-*   **Developer Name:** Zihad Hasan
-*   **Email Address:** zihad.connects@gmail.com
-*   **Note:** This portal was developed to provide a seamless admission and payment validation interface for As-Sunnah Skill Development Institute. For technical support or modifications, please get in touch via email.
+
+| Field | Details |
+|-------|---------|
+| **Developer** | Zihad Hasan |
+| **Email** | zihad.connects@gmail.com |
 
 ---
 
-This guide describes how to configure the Google Sheets spreadsheet, generate a Google Docs template for the Admit Cards, and run this application.
+## Prerequisites
 
-## 1. Sheet Tabs & Columns
+- A Google account with access to Google Drive, Google Sheets, Google Docs, and Gmail
+- Basic familiarity with Google Sheets column headers
 
-You must create a Google Sheet and add the following sheet tabs (case-sensitive) with their respective column headers:
+---
+
+## Step 1: Create the Google Spreadsheet
+
+Create a new Google Spreadsheet. This single spreadsheet will serve as your entire database. You need to create **5 sheet tabs** with exact names (case-sensitive):
+
+---
 
 ### Tab 1: `Candidate_Master_List`
-*Contains the baseline registry of candidates allowed to pay for admit cards.*
 
-*   **Column A:** `SerialNumber` (e.g. 1001, 1002)
-*   **Column B:** `FullName` (e.g. John Doe)
-*   **Column C:** `RegisteredPhoneNumber` (e.g. 01712345678 - format strictly as 11 digits starting with 01)
-*   **Column D:** `District` (e.g. Dhaka)
-*   **Column E:** `EmailAddress` (e.g. john@example.com - where the PDF Admit Card will be sent)
+> The baseline registry of all candidates allowed to submit payment.
 
-### Tab 2: `Payment_Verification_Log`
-*Stores student submissions and approval/processing state.*
+| Column | Header | Format | Example |
+|--------|--------|--------|---------|
+| A | `SerialNumber` | Number or text | `1001` |
+| B | `FullName` | Text | `মোহাম্মদ আলী` |
+| C | `RegisteredPhoneNumber` | 11-digit string starting with `01` | `01712345678` |
+| D | `District` | Text | `ঢাকা` |
+| E | `EmailAddress` | Valid email | `ali@example.com` |
 
-*   **Column A:** `Timestamp`
-*   **Column B:** `RegisteredPhoneNumber`
-*   **Column C:** `FullName`
-*   **Column D:** `SerialNumber`
-*   **Column E:** `District`
-*   **Column F:** `PaymentMethod`
-*   **Column G:** `PaymentPhoneNumber`
-*   **Column H:** `TransactionID`
-*   **Column I:** `ApprovalStatus` (Must be manually marked as `Approved` or `Rejected` by the administrator)
-*   **Column J:** `ProcessingStatus` (Populates with `Success` or `Failed: <error>` automatically)
-*   **Column K:** `AdmitCardLink` (Populates with the Google Drive PDF URL automatically)
-*   **Column L:** `Rejection_Reason` (Used to state the reason if `ApprovalStatus` is set to `Rejected`)
-
-### Tab 3: `Results`
-*Contains student search results if the result checker view is enabled.*
-
-*   **Column A:** `Serial No` (Match key)
-*   **Column B:** `Phone Number` (Match key)
-*   **Column C:** `Name`
-*   **Column D:** `Status` (e.g. Selected, Finally Selected, Waiting, Not Selected)
-*   **Column E:** `Message` (Custom text shown to the candidate)
-
-### Tab 4: `_Configuration`
-*Application settings.*
-
-*   **Column A:** `Key`
-*   **Column B:** `Value`
-
-#### Keys required in Column A:
-*   `appTitle`: (e.g. *আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট*)
-*   `instituteName`: (e.g. *আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট*)
-*   `logoUrl`: (Direct link to logo image)
-*   `resultCheckerActive`: `TRUE` or `FALSE`
-*   `paymentFormActive`: `TRUE` or `FALSE`
-*   `statusCheckActive`: `TRUE` or `FALSE`
-*   `paymentOptions`: (Add multiple rows with this key to populate bkash, Nagad, Rocket, etc.)
-*   `instructions`: (Detailed text supporting bolding via `*bold text*` markdown syntax)
-
-### Tab 5: `Dashboard`
-*An administrative statistics dashboard formatted dynamically with deep forest natural themes.*
-
-*   Contains merged headers for overview titles, latest timestamps, metrics tables, and color-coded status breakdowns (Submissions, Pending, Approved, Rejected). Automatically updated by selecting the custom menu option `ড্যাশবোর্ড আপডেট করুন` in the Google Sheet UI.
+> **Important:** Column C must be exactly 11 digits starting with `01`. The system validates this format strictly.
 
 ---
 
-## 2. Google Docs Admit Card Template
+### Tab 2: `Payment_Verification_Log`
 
-Create a new Google Doc and use it as your layout template. Place the following exact placeholders inside the document text. The automation will search for and replace them during generation:
+> Auto-populated when candidates submit payment. Admins manually set `ApprovalStatus`.
 
-*   `{{FullName}}` -> Candidate name
-*   `{{SerialNumber}}` -> Serial or roll number
-*   `{{District}}` -> Home district
-*   `{{EmailAddress}}` -> Registered email address
-*   `{{PhoneNumber}}` -> Candidate registered phone number
+| Column | Header | Auto/Manual | Notes |
+|--------|--------|-------------|-------|
+| A | `Timestamp` | Auto | Submission date/time |
+| B | `RegisteredPhoneNumber` | Auto | From verified candidate |
+| C | `FullName` | Auto | From master list |
+| D | `SerialNumber` | Auto | From master list |
+| E | `District` | Auto | From master list |
+| F | `PaymentMethod` | Auto | bKash/Nagad/Rocket etc. |
+| G | `PaymentPhoneNumber` | Auto | Sender's mobile number |
+| H | `TransactionID` | Auto | TrxID from payment |
+| I | `ApprovalStatus` | **Manual** | Set to `Approved` or `Rejected` |
+| J | `ProcessingStatus` | Auto | `Success`, `ব্যর্থ: ...`, or `প্রসেসিং চলছে...` |
+| K | `AdmitCardLink` | Auto | Google Drive PDF URL |
+| L | `Rejection_Reason` | **Manual** | Required if status is `Rejected` |
 
-Ensure you copy the Google Doc's ID from the URL and paste it as `TEMPLATE_ID` in `Config.gs`. Also, create a folder in Google Drive to store generated PDF Admit Cards and set its ID as `FOLDER_ID` in `Config.gs`.
+> **Critical:** Column I (`ApprovalStatus`) is the trigger column. When you type `Approved` or `Rejected` here, the installable trigger automatically processes the row.
+
+---
+
+### Tab 3: `Results`
+
+> Student results for the result checker feature.
+
+| Column | Header | Example |
+|--------|--------|---------|
+| A | `Serial No` | `1001` |
+| B | `Phone Number` | `01712345678` |
+| C | `Name` | `মোহাম্মদ আলী` |
+| D | `Status` | `Finally Selected` / `Waiting` / `Not Selected` |
+| E | `Message` | Custom message shown to the candidate |
+
+> **Status Keywords:** The UI applies different card colors based on status text:
+> - Contains `finally` → Green (selected)
+> - Contains `waiting` → Blue-green (pending)
+> - Contains `not selected` → Red (rejected)
+
+---
+
+### Tab 4: `_Configuration`
+
+> Key-value settings that control the entire application behavior.
+
+| Column A (Key) | Column B (Value) | Required |
+|-----------------|------------------|----------|
+| `appTitle` | আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট | Yes |
+| `instituteName` | আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট | Yes |
+| `logoUrl` | Direct URL to your logo image (PNG/JPG) | Yes |
+| `resultCheckerActive` | `TRUE` or `FALSE` | Yes |
+| `paymentFormActive` | `TRUE` or `FALSE` | Yes |
+| `statusCheckActive` | `TRUE` or `FALSE` | Yes |
+| `paymentOptions` | `bKash` | Yes (one per row) |
+| `paymentOptions` | `Nagad` | Yes (one per row) |
+| `paymentOptions` | `Rocket` | Optional |
+| `instructions` | Payment instructions text (supports `*bold*` syntax) | Yes |
+
+> **Multiple Payment Options:** Add multiple rows with the key `paymentOptions` — each one becomes a dropdown option in the payment form.
+>
+> **Instructions Formatting:** Use `*text*` for bold and newlines for line breaks. Example:
+> ```
+> *bKash নম্বর:* 01712345678
+> *টাকার পরিমাণ:* ৫০০ টাকা
+> Send Money করে Transaction ID জমা দিন।
+> ```
+
+---
+
+### Tab 5: `Dashboard`
+
+> Auto-generated admin dashboard. No manual setup needed — it is created automatically when you click the custom menu item.
+
+---
+
+## Step 2: Create the Admit Card Template
+
+1. Create a new **Google Doc** in your Drive
+2. Design your admit card layout with the following **exact placeholders** in the document body:
+
+| Placeholder | Replaced With |
+|-------------|---------------|
+| `{{FullName}}` | Candidate's full name |
+| `{{SerialNumber}}` | Serial or roll number |
+| `{{District}}` | Home district |
+| `{{EmailAddress}}` | Registered email |
+| `{{PhoneNumber}}` | Registered phone number |
+
+3. Create an empty **Google Drive folder** where PDF admit cards will be stored
+
+> See [AdmitCardTemplateDemo.md](AdmitCardTemplateDemo.md) for a visual layout reference.
+
+---
+
+## Step 3: Copy the IDs
+
+You need three IDs from Google. Here's how to find each:
+
+| ID | Where to Find |
+|----|---------------|
+| **Spreadsheet ID** | From the spreadsheet URL: `https://docs.google.com/spreadsheets/d/`**THIS_PART**`/edit` |
+| **Template ID** | From the Google Doc URL: `https://docs.google.com/document/d/`**THIS_PART**`/edit` |
+| **Folder ID** | From the folder URL: `https://drive.google.com/drive/folders/`**THIS_PART** |
+
+---
+
+## Step 4: Set Up Apps Script
+
+1. Open your Google Spreadsheet
+2. Go to **Extensions > Apps Script**
+3. Delete the default `Code.gs` content
+4. Create the following files in the Apps Script editor:
+
+| File Name | Type | Source |
+|-----------|------|--------|
+| `Config.gs` | Script (.gs) | Copy from [Config.gs](Config.gs) |
+| `Code.gs` | Script (.gs) | Copy from [Code.gs](Code.gs) |
+| `PaymentForm.gs` | Script (.gs) | Copy from [PaymentForm.gs](PaymentForm.gs) |
+| `ResultChecker.gs` | Script (.gs) | Copy from [ResultChecker.gs](ResultChecker.gs) |
+| `Index.html` | HTML | Copy from [Index.html](Index.html) |
+| `ResultView.html` | HTML | Copy from [ResultView.html](ResultView.html) |
+| `PaymentView.html` | HTML | Copy from [PaymentView.html](PaymentView.html) |
+| `StatusCheckView.html` | HTML | Copy from [StatusCheckView.html](StatusCheckView.html) |
+
+5. **Open `Config.gs`** and replace the three placeholder values:
+
+```javascript
+const SPREADSHEET_ID = "YOUR_SPREADSHEET_ID_HERE";  // ← Replace
+const TEMPLATE_ID = "YOUR_DOC_TEMPLATE_ID_HERE";     // ← Replace
+const FOLDER_ID = "YOUR_PDF_OUTPUT_FOLDER_ID_HERE";   // ← Replace
+```
+
+---
+
+## Step 5: Install the onEdit Trigger
+
+This step is **critical** — without it, approve/reject automation will not work.
+
+1. In the Apps Script editor, click the **clock icon** (Triggers) in the left sidebar
+2. Click **+ Add Trigger** at the bottom right
+3. Configure the trigger:
+
+| Setting | Value |
+|---------|-------|
+| Function to run | `handleEditTrigger` |
+| Deployment | `Head` |
+| Event source | `From spreadsheet` |
+| Event type | `On edit` |
+
+4. Click **Save** and approve the permission prompts
+
+> **Why installable?** Simple `onEdit` triggers cannot send emails, access Drive, or call external services. The installable trigger runs with your full account permissions.
+
+---
+
+## Step 6: Deploy the Web App
+
+1. In the Apps Script editor, click **Deploy > New deployment**
+2. Click the gear icon and select **Web app**
+3. Configure:
+
+| Setting | Value |
+|---------|-------|
+| Description | Admission Portal v1.0 |
+| Execute as | **Me (your-email@gmail.com)** |
+| Who has access | **Anyone** |
+
+4. Click **Deploy**
+5. Authorize all permission prompts
+6. **Copy the Web App URL** — this is your portal link to share with candidates
+
+---
+
+## Step 7: Test the System
+
+Run through this checklist to verify everything works:
+
+| Test | How to Verify |
+|------|---------------|
+| Portal loads | Open the Web App URL on your phone |
+| Result checker | Search for a serial number from your `Results` sheet |
+| Payment form | Enter a phone number from `Candidate_Master_List` and submit |
+| Duplicate check | Try submitting the same phone number again (should block) |
+| Approval flow | Set `ApprovalStatus` to `Approved` for the submitted row |
+| Admit card email | Check the candidate's email for the PDF attachment |
+| Rejection flow | Set `ApprovalStatus` to `Rejected` with a reason in column L |
+| Status checker | Search for the phone number in the status checker view |
+| Dashboard | Click **অটোমেশন > ড্যাশবোর্ড আপডেট করুন** in the spreadsheet menu |
+
+---
+
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| Portal shows "কার্যক্রম সাময়িকভাবে বন্ধ" | At least one of `resultCheckerActive`, `paymentFormActive`, or `statusCheckActive` must be `TRUE` in `_Configuration` |
+| `404` error in console | The `logoUrl` in `_Configuration` is invalid. Use a publicly accessible direct image URL |
+| Sandbox warning in console | This is a normal Google Apps Script warning. It does not affect functionality |
+| Admit card not generated | Check that `TEMPLATE_ID` and `FOLDER_ID` in `Config.gs` are correct. Check `Error_Log` tab for details |
+| Email not sent | Ensure the candidate has a valid email in `Candidate_Master_List`. Check Gmail sending quota |
+| Settings not updating | Configuration is cached for 10 minutes. Wait or clear cache by redeploying |
+| Phone number not found | Verify the number in `Candidate_Master_List` is exactly 11 digits starting with `01` |
+
+---
+
+## Admin Workflow Summary
+
+```
+1. Candidate submits payment info via Web Portal
+         ↓
+2. Row appears in Payment_Verification_Log (Status: Pending)
+         ↓
+3. Admin verifies the TrxID manually with bKash/Nagad/Rocket
+         ↓
+4a. Valid → Set Column I to "Approved"
+         ↓ (automatic)
+    → PDF Admit Card generated from template
+    → PDF saved to Drive folder
+    → Email sent to candidate with PDF attached
+    → Column J set to "Success"
+    → Column K filled with Drive PDF link
+
+4b. Invalid → Set Column I to "Rejected", Column L to reason
+         ↓ (automatic)
+    → Rejection email sent to candidate with reason
+    → Column J set to "Rejected"
+```
+
+---
+
+## Notes
+
+- The system caches `_Configuration` settings for **10 minutes**. After changing settings, wait for the cache to expire or redeploy
+- `handleEditTrigger` watches **Column I** (9th column) of `Payment_Verification_Log`. Do not reorder the columns
+- Google Apps Script has daily email quotas (100 for free accounts, 1500 for Workspace). Plan batch approvals accordingly

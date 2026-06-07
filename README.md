@@ -1,99 +1,158 @@
-# Admission & Result Checker Web Portal (Google Apps Script)
+# Admission & Result Checker Web Portal
+
+**আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট**
 
 ---
 
 ### Developer Profile
-*   **Developer Name:** Zihad Hasan
-*   **Email Address:** zihad.connects@gmail.com
-*   **Note:** This portal was developed to provide a seamless admission and payment validation interface for As-Sunnah Skill Development Institute. For technical support or modifications, please get in touch via email.
+
+| Field | Details |
+|-------|---------|
+| **Developer** | Zihad Hasan |
+| **Email** | zihad.connects@gmail.com |
+| **Project** | Online Admission & Payment Verification Portal |
 
 ---
-A beautiful, performant, and responsive web portal built with **Google Apps Script** for handling student result checking, registered candidate payment submission logs, and automated PDF Admit Card generation with email verification.
+
+## Overview
+
+A production-ready, mobile-first web portal built with **Google Apps Script** that handles:
+
+- Student result checking
+- Payment fee submission with candidate verification
+- Automated PDF Admit Card generation and email delivery
+- Payment status tracking
+- Admin dashboard with real-time metrics
+
+The portal is designed primarily for **mobile phone users** with a responsive Deep Forest Natural theme, Bengali typography (Noto Sans Bengali), and clean professional UI.
+
+---
 
 ## Features
-1. **Dynamic Navigation Router:** Server-side evaluation shows/hides individual panels or lands onto a multi-utility dashboard depending on admin configuration.
-2. **Beautiful Bengali Typography & UI:** Sleek styling tailored with *Noto Sans Bengali*, custom theme schemes, animations, and micro-interactions.
-3. **Candidate Verification & Duplicate Lockout:** Ensures only registered candidates can submit payment credentials, and locks users from double-submitting details.
-4. **Automated Admit Card Compiler:** Compiles a custom template Doc, turns it into a PDF, links it directly back to the database sheet, and mails it using the Gmail API.
-5. **Auto-Rejection Email Dispatcher:** Sends notification emails listing the custom rejection reason to the candidate if marked `Rejected`.
+
+| Feature | Description |
+|---------|-------------|
+| **Dynamic Router** | Server-side routing shows single views directly or a multi-option landing page based on admin configuration |
+| **Candidate Verification** | Phone number lookup against master list with duplicate submission prevention |
+| **Payment Logging** | Secure form submission with server-side validation, LockService for concurrency, and race condition protection |
+| **Automated Admit Cards** | PDF generation from Google Docs template, email delivery via Gmail API, and Drive storage |
+| **Rejection Emails** | Automatic notification email with custom rejection reason when admin marks a payment as `Rejected` |
+| **Status Checker** | Real-time payment verification status lookup (Pending / Approved / Rejected) |
+| **Admin Dashboard** | One-click spreadsheet dashboard with payment metrics (total, pending, approved, rejected) |
+| **Error Logging** | Centralized error logging to `Error_Log` sheet tab for admin visibility |
+| **Caching** | `CacheService` for configuration settings (10-min TTL) to reduce spreadsheet reads |
+| **Mobile-First UI** | Edge-to-edge on phones, responsive breakpoints at 480px and 640px |
 
 ---
 
-## Step-by-Step Installation Guide
+## Quick Start
 
-Follow these steps to set up the system from scratch:
+> For detailed step-by-step instructions, see **[SETUP.md](SETUP.md)**.
 
-### Step 1: Create a Google Spreadsheet & Setup Tabs
-Create a new Google Spreadsheet and configure four tabs named exactly as follows (case-sensitive):
-
-1. **`Candidate_Master_List`** (Columns A to E)
-   * `SerialNumber`
-   * `FullName`
-   * `RegisteredPhoneNumber` (11-digit string starting with 01)
-   * `District`
-   * `EmailAddress`
-
-2. **`Payment_Verification_Log`** (Columns A to L)
-   * `Timestamp`, `RegisteredPhoneNumber`, `FullName`, `SerialNumber`, `District`, `PaymentMethod`, `PaymentPhoneNumber`, `TransactionID`, `ApprovalStatus`, `ProcessingStatus`, `AdmitCardLink`, `Rejection_Reason`
-
-3. **`Results`** (Columns A to E)
-   * `Serial No`, `Phone Number`, `Name`, `Status`, `Message`
-
-4. **`_Configuration`** (Columns A to B)
-   * Key-value settings matching properties like `appTitle`, `instituteName`, `logoUrl`, `resultCheckerActive` (`TRUE`/`FALSE`), `paymentFormActive` (`TRUE`/`FALSE`), `statusCheckActive` (`TRUE`/`FALSE`), `paymentOptions` (multiple entries for bkash, Rocket, Nagad), and `instructions`.
-
-*Detailed columns structure is documented in [SETUP.md](file:///SETUP.md).*
+1. Create a Google Spreadsheet with required tabs (see SETUP.md)
+2. Open **Extensions > Apps Script**
+3. Copy all `.gs` and `.html` files from this repository into the Apps Script editor
+4. Update the three placeholder IDs in `Config.gs`
+5. Install the `handleEditTrigger` as an installable onEdit trigger
+6. Deploy as a Web App (**Execute as: Me**, **Access: Anyone**)
 
 ---
 
-### Step 2: Configure Google Docs Template & Output Folder
-1. Create a Google Doc in your Drive with the layout styled to your choice. Include the visual placeholders shown in [AdmitCardTemplateDemo.md](file:///AdmitCardTemplateDemo.md).
-2. Create an empty folder in your Drive where PDF admit cards will be saved.
-3. Extract the IDs from both the Google Doc URL and Folder URL.
+## Architecture
 
----
-
-### Step 3: Write Script Code inside Google Apps Script (GAS)
-1. On your Google Spreadsheet, click **Extensions > Apps Script**.
-2. Rename `Code.gs` or add script files matching the repository files:
-   * **[Code.gs](file:///Code.gs)**
-   * **[Config.gs](file:///Config.gs)** *(Replace the template IDs, Folder ID, and Spreadsheet ID constants here)*
-   * **[PaymentForm.gs](file:///PaymentForm.gs)**
-   * **[ResultChecker.gs](file:///ResultChecker.gs)**
-3. Create HTML files inside Apps Script:
-   * **`Index.html`** (Copy content from [Index.html](file:///Index.html))
-   * **`ResultView.html`** (Copy content from [ResultView.html](file:///ResultView.html))
-   * **`PaymentView.html`** (Copy content from [PaymentView.html](file:///PaymentView.html))
-   * **`StatusCheckView.html`** (Copy content from [StatusCheckView.html](file:///StatusCheckView.html))
-
----
-
-### Step 4: Install the onEdit Trigger
-To automate admit card generation whenever you set a status to `Approved` or `Rejected` on the `Payment_Verification_Log` sheet:
-1. In the Apps Script editor interface, click the **Triggers (clock icon)** in the left sidebar.
-2. Click **+ Add Trigger** in the bottom right corner.
-3. Choose **`handleEditTrigger`** as the function to run.
-4. Set event source to **From spreadsheet** and event type to **On edit**.
-5. Save the trigger (you will need to approve permissions).
-
----
-
-### Step 5: Deploy the Web Application
-1. Click **Deploy > New deployment** in the top right corner of the Apps Script page.
-2. Select **Web app** as the deployment type.
-3. Set *Execute as:* **Me (your-email)** and *Who has access:* **Anyone**.
-4. Click **Deploy**, authorize permissions, and copy the provided Web App URL.
+```
+User's Browser (Phone/Desktop)
+        |
+        v
+  Google Apps Script Web App
+        |
+        ├── doGet() ──── Routes to correct view based on _Configuration
+        |                    |
+        |                    ├── Index.html (SPA shell)
+        |                    |     ├── ResultView.html
+        |                    |     ├── PaymentView.html
+        |                    |     └── StatusCheckView.html
+        |                    |
+        |                    └── "Currently Closed" page (all systems off)
+        |
+        ├── google.script.run ──── Client calls to server functions
+        |     ├── searchStudentData()      → ResultChecker.gs
+        |     ├── getUserDetails()         → PaymentForm.gs
+        |     ├── handlePost()             → Code.gs → doPost() → PaymentForm.gs
+        |     └── getPaymentStatus()       → PaymentForm.gs
+        |
+        └── Installable Trigger
+              └── handleEditTrigger()      → PaymentForm.gs
+                    ├── Approved → processSingleRow() → PDF + Email
+                    └── Rejected → sendRejectionEmail()
+```
 
 ---
 
 ## Repository File Structure
-*   **[Code.gs](file:///Code.gs):** Master router, HTML evaluation and central backend utilities.
-*   **[Config.gs](file:///Config.gs):** Centralized constant IDs and configurations.
-*   **[PaymentForm.gs](file:///PaymentForm.gs):** Form validations, duplicate checks, manually processing menu, and automated email operations.
-*   **[ResultChecker.gs](file:///ResultChecker.gs):** Query backend for student results.
-*   **[Index.html](file:///Index.html):** SPA dashboard interface layout, stylesheet core, and front-end logic.
-*   **[PaymentView.html](file:///PaymentView.html):** Sub-view for registration checking & payment credential inputs.
-*   **[ResultView.html](file:///ResultView.html):** Sub-view for candidate search results.
-*   **[StatusCheckView.html](file:///StatusCheckView.html):** Sub-view for verification log query tracking.
-*   **[SETUP.md](file:///SETUP.md):** In-depth structural database requirements.
-*   **[AdmitCardTemplateDemo.md](file:///AdmitCardTemplateDemo.md):** visual reference template representing placeholders syntax.
+
+| File | Purpose |
+|------|---------|
+| **[Config.gs](Config.gs)** | Centralized constants: Spreadsheet ID, Sheet names, Template ID, Folder ID, Defaults |
+| **[Code.gs](Code.gs)** | Main router (`doGet`), settings loader with cache, `handlePost` dispatcher, error logger |
+| **[PaymentForm.gs](PaymentForm.gs)** | Payment verification, form submission, admit card generation, rejection emails, dashboard |
+| **[ResultChecker.gs](ResultChecker.gs)** | Student result search by serial number or phone |
+| **[Index.html](Index.html)** | SPA shell: CSS design system, all client-side JavaScript, view navigation |
+| **[ResultView.html](ResultView.html)** | Partial: Result search form |
+| **[PaymentView.html](PaymentView.html)** | Partial: Phone verification + payment credential form |
+| **[StatusCheckView.html](StatusCheckView.html)** | Partial: Payment status lookup form |
+| **[SETUP.md](SETUP.md)** | Complete setup and configuration manual |
+| **[AdmitCardTemplateDemo.md](AdmitCardTemplateDemo.md)** | Visual reference for Google Docs admit card template |
+
+---
+
+## Function Reference
+
+### Code.gs
+
+| Function | Type | Description |
+|----------|------|-------------|
+| `doGet(e)` | Web App Entry | Routes users to the correct view based on active system flags |
+| `getAppSettings()` | Internal | Reads `_Configuration` sheet, parses settings, caches for 10 min |
+| `include(filename)` | Internal | Includes HTML partials into Index.html |
+| `handlePost(request)` | Client-callable | Dispatches form submissions to `doPost()` |
+| `logErrorToSheet(context, errorObj)` | Internal | Writes error records to `Error_Log` sheet tab |
+
+### PaymentForm.gs
+
+| Function | Type | Description |
+|----------|------|-------------|
+| `getUserDetails(phone)` | Client-callable | Verifies candidate in master list, checks for duplicate submissions |
+| `getPaymentStatus(phone)` | Client-callable | Returns current payment status (Pending/Approved/Rejected) |
+| `doPost(formObject)` | Internal | Validates and logs payment submission with LockService |
+| `onOpen()` | Simple Trigger | Creates the custom admin menu in the spreadsheet |
+| `updateDashboardSheet()` | Admin Menu | Generates/refreshes the Dashboard tab with payment metrics |
+| `processAllApprovedManually()` | Admin Menu | Batch-processes all approved payments that haven't been processed yet |
+| `handleEditTrigger(e)` | Installable Trigger | Auto-processes approved rows and sends rejection emails |
+| `sendRejectionEmail(rowNum)` | Internal | Sends HTML rejection email to candidate |
+| `processSingleRow(rowNum)` | Internal | Generates PDF admit card, emails it, updates sheet status |
+| `createHtmlEmailBody(name, settings)` | Internal | Returns branded HTML email template |
+
+### ResultChecker.gs
+
+| Function | Type | Description |
+|----------|------|-------------|
+| `searchStudentData(searchKey)` | Client-callable | Searches Results sheet by serial number or phone number |
+
+---
+
+## Console Warnings (Expected)
+
+### `allow-scripts and allow-same-origin` Warning
+
+This is a **standard Google Apps Script warning** that appears in the browser console for all GAS-served web apps. Google serves your HTML inside a sandboxed iframe — this warning is expected and **cannot be fixed** from your code. It does not affect functionality.
+
+### `404 Failed to load resource`
+
+This typically occurs when the favicon or logo URL is unreachable. Ensure the `logoUrl` in your `_Configuration` sheet points to a valid, publicly accessible image URL. The default favicon URL in `Index.html` should also be updated to match your logo.
+
+---
+
+## License
+
+This project was developed exclusively for **আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট**. For technical support or modifications, contact Zihad Hasan at zihad.connects@gmail.com.
