@@ -179,10 +179,18 @@ const FOLDER_ID = "YOUR_PDF_OUTPUT_FOLDER_ID_HERE";   // ← Replace
 
 ## Step 5: Install the onEdit Trigger
 
-This step is **critical** — without it, approve/reject automation will not work.
+This step is **critical** — without it, approve/reject automation will not work. You have two options to set this up:
 
-1. In the Apps Script editor, click the **clock icon** (Triggers) in the left sidebar
-2. Click **+ Add Trigger** at the bottom right
+### Option A: Automatic Setup (Recommended)
+1. Open your Google Spreadsheet.
+2. In the top menu bar, click on **অটোমেশন** (Automation).
+3. Select **অন-এডিট ট্রিগার সক্রিয় করুন (Enable Trigger)**.
+4. Click **OK** on the permission prompts if they appear. The system will programmatically build and bind the trigger for you!
+
+### Option B: Manual Setup (Fallback)
+Use this option if you prefer to set it up manually or if the menu option is not visible:
+1. In the Apps Script editor, click the **clock icon** (Triggers) in the left sidebar.
+2. Click **+ Add Trigger** at the bottom right.
 3. Configure the trigger:
 
 | Setting | Value |
@@ -192,7 +200,12 @@ This step is **critical** — without it, approve/reject automation will not wor
 | Event source | `From spreadsheet` |
 | Event type | `On edit` |
 
-4. Click **Save** and approve the permission prompts
+4. Click **Save** and approve the permission prompts.
+
+> [!IMPORTANT]
+> **Why is "From spreadsheet" or "On edit" missing?**
+> If you do not see the "From spreadsheet" option under *Event source* in the manual trigger dialog, it means your Apps Script project is created as a **standalone script** (created from script.google.com). 
+> **To fix this:** You must copy your code into a **container-bound script** (created by opening your Google Sheet and clicking **Extensions > Apps Script** in the sheet menu). Container-bound scripts have full access to spreadsheet events.
 
 > **Why installable?** Simple `onEdit` triggers cannot send emails, access Drive, or call external services. The installable trigger runs with your full account permissions.
 
