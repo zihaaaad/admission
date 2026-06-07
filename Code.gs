@@ -147,7 +147,11 @@ function getAppSettings() {
         throw new Error(`Configuration sheet named "${SHEET_CONFIG}" not found.`);
     }
 
-    const data = sheet.getRange("A2:B" + sheet.getLastRow()).getValues();
+    const lastRow = sheet.getLastRow();
+    if (lastRow < 2) {
+      throw new Error("Configuration sheet is empty.");
+    }
+    const data = sheet.getRange("A2:B" + lastRow).getValues();
     const settings = {};
     let paymentOptions = [];
 

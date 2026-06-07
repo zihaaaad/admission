@@ -31,22 +31,43 @@ function getUserDetails(phone) {
     // 1. DUPLICATE CHECK: Prevent resubmission.
     const lastRow = paymentSheet.getLastRow();
     if (lastRow > 1) {
-      const paymentData = paymentSheet.getRange(2, 2, lastRow - 1, 1).getValues().flat();
-      if (paymentData.map(p => String(p).trim()).includes(phoneTrimmed)) {
-        return { 
-          found: false, 
-          message: 'এই নম্বর থেকে ফি প্রদানের তথ্য ইতিমধ্যে জমা দেওয়া হয়েছে। কোনো পরিবর্তনের জন্য অফিসে যোগাযোগ করুন।' 
-        };
+      const paymentHeaders = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
+      const phoneColIndex = paymentHeaders.indexOf('RegisteredPhoneNumber');
+      if (phoneColIndex !== -1) {
+        const paymentData = paymentSheet.getRange(2, phoneColIndex + 1, lastRow - 1, 1).getValues().flat();
+        if (paymentData.map(p => String(p).trim()).includes(phoneTrimmed)) {
+          return { 
+            found: false, 
+            message: 'এই নম্বর থেকে ফি প্রদানের তথ্য ইতিমধ্যে জমা দেওয়া হয়েছে। কোনো পরিবর্তনের জন্য অফিসে যোগাযোগ করুন।' 
+          };
+        }
       }
     }
 
     // 2. SEARCH MASTER LIST: Verify the candidate exists.
+    const masterHeaders = masterSheet.getRange(1, 1, 1, masterSheet.getLastColumn()).getValues()[0];
+    const serialIndex = masterHeaders.indexOf('SerialNumber');
+    const nameIndex = masterHeaders.indexOf('FullName');
+    const phoneIndex = masterHeaders.indexOf('RegisteredPhoneNumber');
+    const districtIndex = masterHeaders.indexOf('District');
+    const emailIndex = masterHeaders.indexOf('EmailAddress');
+
+    if (serialIndex === -1 || nameIndex === -1 || phoneIndex === -1) {
+      throw new Error("Master list missing required columns ('SerialNumber', 'FullName', 'RegisteredPhoneNumber').");
+    }
+
     const masterLastRow = masterSheet.getLastRow();
     if (masterLastRow > 1) {
-      const masterData = masterSheet.getRange(2, 1, masterLastRow - 1, 5).getValues();
+      const masterData = masterSheet.getRange(2, 1, masterLastRow - 1, masterHeaders.length).getValues();
       for (const row of masterData) {
-        if (String(row[2]).trim() === phoneTrimmed) { // Column C is RegisteredPhoneNumber
-          return { found: true, serial: row[0], name: row[1], district: row[3], email: row[4] };
+        if (String(row[phoneIndex]).trim() === phoneTrimmed) {
+          return { 
+            found: true, 
+            serial: row[serialIndex], 
+            name: row[nameIndex], 
+            district: districtIndex !== -1 ? row[districtIndex] : '', 
+            email: emailIndex !== -1 ? row[emailIndex] : '' 
+          };
         }
       }
     }
@@ -149,19 +170,32 @@ function doPost(formObject) {
 
     const paymentSheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_PAYMENT_LOG);
     
-    // Append data safely to the log sheet
-    paymentSheet.appendRow([
-      new Date(),
-      "'" + phone,
-      userCheck.name,
-      userCheck.serial,
-      userCheck.district,
-      formObject.paymentMethod,
-      "'" + paymentSource,
-      trxId,
-      'Pending',
-      '', '' 
-    ]);
+    // Get headers dynamically to support any column order
+    const headers = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
+    const newRow = new Array(headers.length).fill("");
+    
+    const mappings = {
+      'Timestamp': new Date(),
+      'RegisteredPhoneNumber': "'" + phone,
+      'FullName': userCheck.name,
+      'SerialNumber': userCheck.serial,
+      'District': userCheck.district,
+      'PaymentMethod': formObject.paymentMethod,
+      'PaymentPhoneNumber': "'" + paymentSource,
+      'TransactionID': trxId,
+      'ApprovalStatus': 'Pending',
+      'ProcessingStatus': '',
+      'AdmitCardLink': '',
+      'Rejection_Reason': ''
+    };
+    
+    headers.forEach((header, index) => {
+      if (mappings.hasOwnProperty(header)) {
+        newRow[index] = mappings[header];
+      }
+    });
+    
+    paymentSheet.appendRow(newRow);
 
     return { 
       success: "আপনার তথ্য সফলভাবে জমা হয়েছে। পেমেন্ট যাচাই করার পর ২৪ ঘণ্টার মধ্যে আপনার ইমেইলে অ্যাডমিট কার্ড পাঠানো হবে। ধন্যবাদ।" 
@@ -329,25 +363,29 @@ function handleEditTrigger(e) {
   const newValue = e.value;
 
   const TARGET_SHEET = SHEET_PAYMENT_LOG;
-  // WARNING: This index is hardcoded to Column I (9th column) of Payment_Verification_Log.
-  // If you reorder the columns in the spreadsheet, you MUST update this value.
-  const TRIGGER_COLUMN_INDEX = 9; // Column I is 'ApprovalStatus'
 
-  if (sheet.getName() === TARGET_SHEET && editedColumn === TRIGGER_COLUMN_INDEX && editedRow > 1) {
-    const statusCell = sheet.getRange(editedRow, TRIGGER_COLUMN_INDEX + 1);
+  if (sheet.getName() === TARGET_SHEET && editedRow > 1) {
+    // Dynamically retrieve column indices from the headers
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    const approvalColIndex = headers.indexOf('ApprovalStatus') + 1;
+    const processingColIndex = headers.indexOf('ProcessingStatus') + 1;
 
-    if (newValue === 'Approved') {
-      const currentStatus = statusCell.getValue();
-      if (currentStatus === 'Success' || currentStatus === 'প্রসেসিং চলছে...') return;
-      statusCell.setValue('প্রসেসিং চলছে...').setFontColor('#E67E22');
-      SpreadsheetApp.flush();
-      processSingleRow(editedRow);
+    if (approvalColIndex > 0 && processingColIndex > 0 && editedColumn === approvalColIndex) {
+      const statusCell = sheet.getRange(editedRow, processingColIndex);
 
-    } else if (newValue === 'Rejected') {
-      const currentStatus = statusCell.getValue();
-      if (currentStatus === 'Rejected') return;
-      statusCell.setValue('Rejected').setFontColor('#C0392B');
-      sendRejectionEmail(editedRow);
+      if (newValue === 'Approved') {
+        const currentStatus = statusCell.getValue();
+        if (currentStatus === 'Success' || currentStatus === 'প্রসেসিং চলছে...') return;
+        statusCell.setValue('প্রসেসিং চলছে...').setFontColor('#E67E22');
+        SpreadsheetApp.flush();
+        processSingleRow(editedRow);
+
+      } else if (newValue === 'Rejected') {
+        const currentStatus = statusCell.getValue();
+        if (currentStatus === 'Rejected') return;
+        statusCell.setValue('Rejected').setFontColor('#C0392B');
+        sendRejectionEmail(editedRow);
+      }
     }
   }
 }
@@ -366,11 +404,20 @@ function sendRejectionEmail(rowNum) {
         let rowObject = {};
         headers.forEach((header, i) => rowObject[header] = rowData[i]);
 
+        const masterHeaders = masterSheet.getRange(1, 1, 1, masterSheet.getLastColumn()).getValues()[0];
+        const mPhoneIndex = masterHeaders.indexOf('RegisteredPhoneNumber');
+        const mEmailIndex = masterHeaders.indexOf('EmailAddress');
+        const mNameIndex = masterHeaders.indexOf('FullName');
+
+        if (mPhoneIndex === -1 || mEmailIndex === -1 || mNameIndex === -1) {
+            throw new Error("Master list missing required columns.");
+        }
+
         const masterLastRow = masterSheet.getLastRow();
         if (masterLastRow < 2) throw new Error("Master list is empty.");
-        const masterData = masterSheet.getRange(2, 1, masterLastRow - 1, 5).getValues();
+        const masterData = masterSheet.getRange(2, 1, masterLastRow - 1, masterHeaders.length).getValues();
         const emailMap = new Map();
-        masterData.forEach(row => emailMap.set(String(row[2]).trim(), {email: row[4], name: row[1]}));
+        masterData.forEach(row => emailMap.set(String(row[mPhoneIndex]).trim(), {email: row[mEmailIndex], name: row[mNameIndex]}));
 
         const registeredPhone = String(rowObject['RegisteredPhoneNumber']).trim();
         const candidateInfo = emailMap.get(registeredPhone);
@@ -393,7 +440,7 @@ function sendRejectionEmail(rowNum) {
         GmailApp.sendEmail(candidateInfo.email, subject, "", { htmlBody: body });
 
     } catch (e) {
-        Logger.log(`Failed to send rejection email for row ${rowNum}: ${e.toString()}`);
+        logErrorToSheet("sendRejectionEmail", e);
     }
 }
 
@@ -415,13 +462,25 @@ function processSingleRow(rowNum) {
   const statusColIndex = headers.indexOf('ProcessingStatus') + 1;
   const pdfLinkColIndex = headers.indexOf('AdmitCardLink') + 1;
 
+  if (statusColIndex === 0 || pdfLinkColIndex === 0) {
+    throw new Error("Missing 'ProcessingStatus' or 'AdmitCardLink' column in Payment_Verification_Log sheet.");
+  }
+
   try {
     const masterSheet = ss.getSheetByName(SHEET_MASTER_LIST);
+    const masterHeaders = masterSheet.getRange(1, 1, 1, masterSheet.getLastColumn()).getValues()[0];
+    const mPhoneIndex = masterHeaders.indexOf('RegisteredPhoneNumber');
+    const mEmailIndex = masterHeaders.indexOf('EmailAddress');
+    
+    if (mPhoneIndex === -1 || mEmailIndex === -1) {
+      throw new Error("Master list missing required columns.");
+    }
+
     const masterLastRow = masterSheet.getLastRow();
     if (masterLastRow < 2) throw new Error("Master list is empty.");
-    const masterData = masterSheet.getRange(2, 1, masterLastRow - 1, 5).getValues();
+    const masterData = masterSheet.getRange(2, 1, masterLastRow - 1, masterHeaders.length).getValues();
     const emailMap = new Map();
-    masterData.forEach(row => emailMap.set(String(row[2]).trim(), row[4]));
+    masterData.forEach(row => emailMap.set(String(row[mPhoneIndex]).trim(), row[mEmailIndex]));
 
     const candidateName = rowObject['FullName'];
     const rollNumber = rowObject['SerialNumber'];
