@@ -255,10 +255,10 @@ function doPost(formObject) {
 function onOpen() {
   SpreadsheetApp.getUi()
       .createMenu('অটোমেশন')
-      .addItem('শিট ও কনফিগারেশন ডাটাবেজ তৈরি করুন (Initialize System)', 'initializeSystemSheets')
-      .addItem('ড্যাশবোর্ড আপডেট করুন', 'updateDashboardSheet')
-      .addItem('অন-এডিট ট্রিগার সক্রিয় করুন (Enable Trigger)', 'setupTriggerAutomatically')
-      .addItem('সকল অনুমোদিত পেমেন্ট প্রসেস করুন', 'processAllApprovedManually')
+      .addItem('নতুন ডাটাবেজ প্রস্তুত করুন (Initialize System)', 'initializeSystemSheets')
+      .addItem('ড্যাশবোর্ড রিফ্রেশ করুন', 'updateDashboardSheet')
+      .addItem('অটো-অ্যাকশন চালু করুন (Enable Trigger)', 'setupTriggerAutomatically')
+      .addItem('অনুমোদিত পেমেন্ট সম্পন্ন করুন', 'processAllApprovedManually')
       .addToUi();
 }
 
