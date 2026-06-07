@@ -46,8 +46,15 @@ function doGet(e) {
   // If no systems are active, generate and return a beautiful "Currently Closed" page.
   else {
     const instituteName = settings.instituteName || DEFAULTS.INSTITUTE_NAME;
-    const logoUrl = settings.logoUrl || DEFAULTS.LOGO_URL;
+    const hasLogo = settings.logoUrl && 
+                    settings.logoUrl.trim() !== "" && 
+                    !settings.logoUrl.toLowerCase().includes("your_") &&
+                    !settings.logoUrl.toLowerCase().includes("placeholder");
     
+    const logoHtml = hasLogo 
+      ? `<img src="${settings.logoUrl}" alt="${instituteName} Logo">` 
+      : `<h1 style="color:#00684A;font-size:1.4rem;font-weight:700;margin-bottom:1.2rem;">${instituteName}</h1>`;
+
     // Create the HTML content directly here
     let htmlOutput = `
       <!DOCTYPE html>
@@ -111,7 +118,7 @@ function doGet(e) {
       </head>
       <body>
         <div class="card">
-          <img src="${logoUrl}" alt="${instituteName} Logo">
+          ${logoHtml}
           <h2>কার্যক্রম সাময়িকভাবে বন্ধ আছে</h2>
           <p>
             এই মুহূর্তে আমাদের অনলাইন ভর্তি বা ফলাফল সংক্রান্ত কোনো কার্যক্রম চালু নেই। 
