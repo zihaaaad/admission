@@ -133,6 +133,9 @@ Create a new Google Spreadsheet. This single spreadsheet will serve as your enti
 | `{{District}}` | Home district |
 | `{{EmailAddress}}` | Registered email |
 | `{{PhoneNumber}}` | Registered phone number |
+| `{{ExamDate}}` | Exam date (from `_Configuration` sheet) |
+| `{{ExamTime}}` | Exam time (from `_Configuration` sheet) |
+| `{{ExamVenue}}` | Exam venue (from `_Configuration` sheet) |
 
 3. Create an empty **Google Drive folder** where PDF admit cards will be stored
 

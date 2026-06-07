@@ -538,6 +538,9 @@ function processSingleRow(rowNum) {
       throw new Error(`এই ফোন নম্বরের জন্য সঠিক ইমেইল পাওয়া যায়নি: ${registeredPhone}`);
     }
 
+    // Fetch settings for exam details placeholders
+    const appSettings = getAppSettings();
+
     // 1. Generate PDF from Template
     const newDocFile = DriveApp.getFileById(TEMPLATE_ID).makeCopy(`Admit Card - ${candidateName}`);
     const doc = DocumentApp.openById(newDocFile.getId());
@@ -546,13 +549,15 @@ function processSingleRow(rowNum) {
       .replaceText('{{SerialNumber}}', rollNumber)
       .replaceText('{{District}}', rowObject['District'])
       .replaceText('{{EmailAddress}}', candidateEmail)
-      .replaceText('{{PhoneNumber}}', registeredPhone);
+      .replaceText('{{PhoneNumber}}', registeredPhone)
+      .replaceText('{{ExamDate}}', appSettings.examDate || "প্রবেশপত্র দেখুন")
+      .replaceText('{{ExamTime}}', appSettings.examTime || "প্রবেশপত্র দেখুন")
+      .replaceText('{{ExamVenue}}', appSettings.examVenue || "প্রবেশপত্র দেখুন");
     doc.saveAndClose();
     
     const pdfFile = DriveApp.getFolderById(FOLDER_ID).createFile(doc.getAs('application/pdf')).setName(`Admit Card - ${rollNumber}.pdf`);
     
     // 2. Send Email with PDF attachment
-    const appSettings = getAppSettings();
     GmailApp.sendEmail(candidateEmail, `আপনার পরীক্ষার প্রবেশপত্র - ${appSettings.instituteName}`, "", {
         htmlBody: createHtmlEmailBody(candidateName, rollNumber, appSettings),
         attachments: [pdfFile]
