@@ -17,7 +17,7 @@ function getUserDetails(phone) {
     
     // Server-side validation for the phone number format.
     if (!/^01[3-9]\d{8}$/.test(phoneTrimmed)) {
-        return { found: false, message: "অবৈধ ফোন নম্বর ফরম্যাট। সঠিক ১১-ডিজিটের নম্বর দিন।" };
+        return { found: false, message: "মোবাইল নম্বরটি সঠিক নয়। সঠিক ১১ ডিজিটের নম্বর দিন।" };
     }
       
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -38,7 +38,7 @@ function getUserDetails(phone) {
         if (paymentData.map(p => String(p).trim()).includes(phoneTrimmed)) {
           return { 
             found: false, 
-            message: 'এই নম্বর থেকে ফি প্রদানের তথ্য ইতিমধ্যে জমা দেওয়া হয়েছে। কোনো পরিবর্তনের জন্য অফিসে যোগাযোগ করুন।' 
+            message: 'এই নম্বর থেকে ফি দেওয়ার তথ্য ইতিমধ্যেই জমা দেওয়া হয়েছে। কোনো পরিবর্তনের জন্য অফিসে যোগাযোগ করুন।' 
           };
         }
       }
@@ -72,10 +72,10 @@ function getUserDetails(phone) {
       }
     }
     
-    return { found: false, message: 'দুঃখিত, এই নম্বরের কোনো তথ্য আমাদের প্রাথমিক তালিকায় পাওয়া যায়নি।' };
+    return { found: false, message: 'দুঃখিত, এই নম্বরটি আমাদের তালিকায় পাওয়া যায়নি।' };
   } catch (e) {
     logErrorToSheet("getUserDetails", e);
-    return { found: false, message: "সিস্টেমের ত্রুটির কারণে তথ্য যাচাই করা সম্ভব হচ্ছে না।" };
+    return { found: false, message: "সিস্টেমের সমস্যার কারণে তথ্য চেক করা যাচ্ছে না।" };
   }
 }
 
@@ -95,12 +95,12 @@ function getPaymentStatus(phone) {
     const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
 
     if (!paymentSheet) {
-      return { found: false, message: "সিস্টেম ত্রুটি: পেমেন্ট তথ্য সংরক্ষণ টেবিল পাওয়া যায়নি।" };
+      return { found: false, message: "সিস্টেমের সমস্যা: পেমেন্টের তথ্য রাখার টেবিল পাওয়া যায়নি।" };
     }
 
     const lastRow = paymentSheet.getLastRow();
     if (lastRow < 2) {
-      return { found: false, message: "কোনো পেমেন্ট রেকর্ড খুঁজে পাওয়া যায়নি।" };
+      return { found: false, message: "কোনো পেমেন্টের তথ্য পাওয়া যায়নি।" };
     }
 
     const headers = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
@@ -111,27 +111,27 @@ function getPaymentStatus(phone) {
     const rejectReasonColIndex = headers.indexOf('Rejection_Reason');
 
     if (phoneColIndex === -1 || statusColIndex === -1) {
-      return { found: false, message: "সিস্টেম কলাম ত্রুটি: প্রয়োজনীয় কলামসমূহ পাওয়া যায়নি।" };
+      return { found: false, message: "সিস্টেমের সমস্যা: প্রয়োজনীয় কলাম পাওয়া যায়নি।" };
     }
 
     for (let i = 0; i < data.length; i++) {
       if (String(data[i][phoneColIndex]).trim() === phoneTrimmed) {
         const status = data[i][statusColIndex] || 'Pending';
         if (status === 'Approved') {
-          return { found: true, status: 'Approved', message: "আপনার পেমেন্ট অনুমোদিত হয়েছে! আপনার প্রবেশপত্র ইমেইলে পাঠিয়ে দেওয়া হয়েছে।" };
+          return { found: true, status: 'Approved', message: "আপনার পেমেন্ট অনুমোদন করা হয়েছে! প্রবেশপত্রটি আপনার ইমেইলে পাঠানো হয়েছে।" };
         } else if (status === 'Rejected') {
           const reason = rejectReasonColIndex !== -1 ? data[i][rejectReasonColIndex] : '';
           return { found: true, status: 'Rejected', message: `আপনার পেমেন্ট বাতিল করা হয়েছে। কারণ: ${reason || 'অনির্দিষ্ট'}` };
         } else {
-          return { found: true, status: 'Pending', message: "আপনার পেমেন্ট যাচাইকরণাধীন রয়েছে। অনুগ্রহ করে অপেক্ষা করুন।" };
+          return { found: true, status: 'Pending', message: "আপনার পেমেন্ট চেক করা হচ্ছে। দয়া করে অপেক্ষা করুন।" };
         }
       }
     }
 
-    return { found: false, message: "আপনার মোবাইল নম্বরের বিপরীতে কোনো পেমেন্ট রেকর্ড পাওয়া যায়নি।" };
+    return { found: false, message: "আপনার মোবাইল নম্বরের কোনো পেমেন্ট রেকর্ড পাওয়া যায়নি।" };
   } catch (e) {
     logErrorToSheet("getPaymentStatus", e);
-    return { found: false, message: "স্ট্যাটাস লোড করার সময় একটি ত্রুটি ঘটেছে।" };
+    return { found: false, message: "স্ট্যাটাস লোড করার সময় সমস্যা হয়েছে।" };
   }
 }
 
@@ -153,19 +153,19 @@ function doPost(formObject) {
 
     // 1. Back-end Validation checks
     if (!/^01[3-9]\d{8}$/.test(phone)) {
-      return { error: "অবৈধ মোবাইল নম্বর ফরম্যাট।" };
+      return { error: "মোবাইল নম্বরটি সঠিক নয়।" };
     }
     if (!/^01[3-9]\d{8}$/.test(paymentSource)) {
-      return { error: "অবৈধ প্রেরক মোবাইল নম্বর ফরম্যাট।" };
+      return { error: "টাকা পাঠানোর নম্বরটি সঠিক নয়।" };
     }
     if (trxId.length < 8) {
-      return { error: "অবৈধ Transaction ID। অনুগ্রহ করে সঠিক TrxID দিন।" };
+      return { error: "Transaction ID সঠিক নয়। সঠিক TrxID দিন।" };
     }
 
     // 2. Re-Verify candidate in master list to prevent form spoofing
     const userCheck = getUserDetails(phone);
     if (!userCheck.found) {
-      return { error: "দুঃখিত, তথ্য যাচাই করা সম্ভব হয়নি: " + userCheck.message };
+      return { error: "দুঃখিত, তথ্য চেক করা যায়নি: " + userCheck.message };
     }
 
     const paymentSheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_PAYMENT_LOG);
@@ -198,13 +198,13 @@ function doPost(formObject) {
     paymentSheet.appendRow(newRow);
 
     return { 
-      success: "আপনার তথ্য সফলভাবে জমা হয়েছে। পেমেন্ট যাচাই করার পর ২৪ ঘণ্টার মধ্যে আপনার ইমেইলে অ্যাডমিট কার্ড পাঠানো হবে। ধন্যবাদ।" 
+      success: "আপনার তথ্য জমা নেওয়া হয়েছে। পেমেন্ট চেক করে ২৪ ঘণ্টার মধ্যে আপনার ইমেইলে প্রবেশপত্র পাঠানো হবে। ধন্যবাদ।" 
     };
 
   } catch (e) {
     logErrorToSheet("doPost", e);
     return { 
-      error: "একটি অপ্রত্যাশিত ত্রুটি দেখা দিয়েছে। তথ্য জমা দেওয়া সম্ভব হয়নি। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।" 
+      error: "একটি সমস্যা হয়েছে। তথ্য জমা নেওয়া যায়নি। দয়া করে কিছুক্ষণ পর আবার চেষ্টা করুন।" 
     };
   } finally {
     lock.releaseLock();
@@ -241,7 +241,7 @@ function setupTriggerAutomatically() {
   }
   
   if (found) {
-    ui.alert("স্ট্যাটাস", "অন-এডিট ট্রিগার ইতিমধ্যে আপনার স্ক্রিপ্টে সক্রিয় রয়েছে!", ui.ButtonSet.OK);
+    ui.alert("স্ট্যাটাস", "অন-এডিট ট্রিগার ইতিমধ্যেই চালু আছে!", ui.ButtonSet.OK);
     return;
   }
   
@@ -260,9 +260,9 @@ function setupTriggerAutomatically() {
       .onEdit()
       .create();
       
-    ui.alert("সফলতা", "অন-এডিট ট্রিগার সফলভাবে সক্রিয় করা হয়েছে! এখন পেমেন্ট লগে ApprovalStatus পরিবর্তন করলে প্রবেশপত্র স্বয়ংক্রিয়ভাবে জেনারেট হয়ে ইমেইলে চলে যাবে।", ui.ButtonSet.OK);
+    ui.alert("সফলতা", "অন-এডিট ট্রিগার চালু করা হয়েছে! এখন পেমেন্ট লগে ApprovalStatus পরিবর্তন করলে প্রবেশপত্র অটোমেটিক তৈরি হয়ে ইমেইলে চলে যাবে।", ui.ButtonSet.OK);
   } catch (e) {
-    ui.alert("ত্রুটি", "ট্রিগার তৈরি করা সম্ভব হয়নি:\n" + e.message + "\n\nসম্ভাব্য কারণ: স্ক্রিপ্টটি স্প্রেডশিট থেকে ওপেন করা হয়নি (Standalone Script)। অনুগ্রহ করে নিশ্চিত করুন যে আপনি শিটের 'Extensions > Apps Script' থেকে স্ক্রিপ্টটি ওপেন করেছেন।", ui.ButtonSet.OK);
+    ui.alert("ত্রুটি", "ট্রিগার তৈরি করা যায়নি:\n" + e.message + "\n\nসম্ভাব্য কারণ: স্ক্রিপ্টটি স্প্রেডশিট থেকে ওপেন করা হয়নি (Standalone Script)। অনুগ্রহ করে নিশ্চিত করুন যে আপনি শিটের 'Extensions > Apps Script' থেকে স্ক্রিপ্টটি ওপেন করেছেন।", ui.ButtonSet.OK);
   }
 }
 
@@ -472,14 +472,14 @@ function sendRejectionEmail(rowNum) {
             throw new Error("Candidate email not found.");
         }
         
-        const rejectionReason = rowObject['Rejection_Reason'] || "অনির্দিষ্ট কোনো কারণে";
+        const rejectionReason = rowObject['Rejection_Reason'] || "অনির্দিষ্ট কারণে";
         const appSettings = getAppSettings();
 
-        const subject = `আপনার আবেদন সংক্রান্ত জরুরি তথ্য - ${appSettings.instituteName}`;
+        const subject = `আপনার আবেদন নিয়ে জরুরি তথ্য - ${appSettings.instituteName}`;
         const body = `
-            <p>প্রিয় ${candidateInfo.name},</p>
-            <p>দুঃখের সাথে জানাচ্ছি যে, আপনার অ্যাডমিট কার্ড ফি প্রদানের আবেদনটি "${rejectionReason}" এর জন্য গ্রহণ করা সম্ভব হয়নি।</p>
-            <p>বিস্তারিত জানতে বা কোনো প্রশ্ন থাকলে অনুগ্রহ করে আমাদের অফিসে সরাসরি যোগাযোগ করুন।</p>
+            <p>প্রিয় ${candidateInfo.name},</p>
+            <p>আপনার প্রবেশপত্রের ফি জমা দেওয়ার আবেদনটি "${rejectionReason}" এর জন্য নেওয়া সম্ভব হয়নি।</p>
+            <p>বিস্তারিত জানতে বা কোনো প্রশ্ন থাকলে সরাসরি আমাদের অফিসে যোগাযোগ করুন।</p>
             <p>শুভেচ্ছান্তে,<br><strong>${appSettings.instituteName}</strong></p>
         `;
 
@@ -633,9 +633,9 @@ function createHtmlEmailBody(candidateName, rollNumber, settings) {
             <!-- CONTENT SECTION -->
             <tr>
               <td style="padding:30px 30px 20px 30px;">
-                <p style="margin:0 0 15px 0;font-size:16px;color:#1A3E2F;font-weight:600;">সম্মানিত ${candidateName},</p>
+                <p style="margin:0 0 15px 0;font-size:16px;color:#1A3E2F;font-weight:600;">প্রিয় ${candidateName},</p>
                 <p style="margin:0 0 20px 0;font-size:15px;color:#52635A;line-height:1.7;text-align:justify;">
-                  আস-সালামু আলাইকুম। অত্যন্ত আনন্দের সাথে জানাচ্ছি যে, আপনার পেমেন্টটি সফলভাবে যাচাই করা হয়েছে। আপনার পরীক্ষার প্রবেশপত্র (Admit Card) সফলভাবে তৈরি হয়েছে এবং এই ইমেইলের সাথে পিডিএফ (PDF) ফরম্যাটে সংযুক্ত করা হলো।
+                  আস-সালামু আলাইকুম। অত্যন্ত আনন্দের সাথে জানাচ্ছি যে, আপনার পেমেন্টটি চেক করা হয়েছে। আপনার পরীক্ষার প্রবেশপত্র (Admit Card) তৈরি করে এই ইমেইলে পিডিএফ (PDF) আকারে পাঠানো হলো।
                 </p>
                 
                 <!-- EXAM DETAILS CARD -->
@@ -675,19 +675,19 @@ function createHtmlEmailBody(candidateName, rollNumber, settings) {
                   <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size:14px;color:#52635A;line-height:1.6;">
                     <tr>
                       <td valign="top" style="width:20px;color:#B27A23;font-weight:bold;">১.</td>
-                      <td style="padding-bottom:8px;">প্রবেশপত্রটি (Admit Card) অবশ্যই রঙিন (Color) প্রিন্ট করে পরীক্ষা কেন্দ্রে সাথে নিয়ে আসতে হবে।</td>
+                      <td style="padding-bottom:8px;">প্রবেশপত্রটি (Admit Card) অবশ্যই রঙিন প্রিন্ট করে পরীক্ষা কেন্দ্রে সাথে নিয়ে আসতে হবে।</td>
                     </tr>
                     <tr>
                       <td valign="top" style="color:#B27A23;font-weight:bold;">২.</td>
-                      <td style="padding-bottom:8px;">পরীক্ষা শুরু হওয়ার কমপক্ষে ৩০ মিনিট পূর্বে পরীক্ষা কেন্দ্রে উপস্থিত হতে হবে।</td>
+                      <td style="padding-bottom:8px;">পরীক্ষা শুরুর অন্তত ৩০ মিনিট আগে পরীক্ষা কেন্দ্রে উপস্থিত হতে হবে।</td>
                     </tr>
                     <tr>
                       <td valign="top" style="color:#B27A23;font-weight:bold;">৩.</td>
-                      <td style="padding-bottom:8px;">পরীক্ষার হলে লেখার জন্য প্রয়োজনীয় কলম, পেন্সিল ও আনুষঙ্গিক সামগ্রী সাথে নিয়ে আসবেন।</td>
+                      <td style="padding-bottom:8px;">পরীক্ষার হলে লেখার জন্য প্রয়োজনীয় কলম, পেন্সিল ও অন্যান্য জিনিস সাথে নিয়ে আসবেন।</td>
                     </tr>
                     <tr>
                       <td valign="top" style="color:#C0392B;font-weight:bold;">৪.</td>
-                      <td style="padding-bottom:8px;color:#C0392B;font-weight:bold;">পরীক্ষা কেন্দ্রে কোনো প্রকার মোবাইল ফোন, স্মার্টওয়াচ বা ইলেকট্রনিক ডিভাইস আনা সম্পূর্ণ নিষিদ্ধ।</td>
+                      <td style="padding-bottom:8px;color:#C0392B;font-weight:bold;">পরীক্ষা কেন্দ্রে কোনো প্রকার মোবাইল ফোন, স্মার্টওয়াচ বা ইলেকট্রনিক ডিভাইস আনা সম্পূর্ণ নিষেধ।</td>
                     </tr>
                   </table>
                 </div>

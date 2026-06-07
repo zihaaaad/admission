@@ -20,7 +20,7 @@ function searchStudentData(searchKey) {
     // Defensive check: Ensure the sheet actually exists.
     if (!sheet) {
       Logger.log(`CRITICAL ERROR: The sheet named "${SHEET_RESULTS}" was not found.`);
-      return { status: 'error', message: `সিস্টেম কনফিগারেশন ত্রুটি: "${SHEET_RESULTS}" নামে কোনো শিট খুঁজে পাওয়া যায়নি।` };
+      return { status: 'error', message: `সিস্টেমের সমস্যা: "${SHEET_RESULTS}" নামের শিটটি পাওয়া যায়নি।` };
     }
 
     const data = sheet.getDataRange().getValues();
@@ -41,7 +41,7 @@ function searchStudentData(searchKey) {
     // Defensive check: Ensure the required columns exist. If not, inform the admin.
     if (serialNoIndex === -1 || phoneNoIndex === -1) {
        Logger.log(`CRITICAL ERROR: Required columns ('Serial No' or 'Phone Number') not found in the "${SHEET_RESULTS}" sheet.`);
-       return { status: 'error', message: 'সিস্টেম কনফিগারেশন ত্রুটি: শিটে প্রয়োজনীয় কলাম (Serial No / Phone Number) খুঁজে পাওয়া যায়নি।' };
+       return { status: 'error', message: 'সিস্টেমের সমস্যা: শিটে প্রয়োজনীয় কলাম (Serial No / Phone Number) পাওয়া যায়নি।' };
     }
 
     // Iterate through the data rows to find a matching record.
@@ -74,6 +74,6 @@ function searchStudentData(searchKey) {
   } catch (e) {
     // Catch any unexpected errors during execution (e.g., permissions issues, invalid sheet ID).
     logErrorToSheet("searchStudentData", e);
-    return { status: 'error', message: 'একটি অপ্রত্যাশিত সার্ভার ত্রুটি ঘটেছে। অনুগ্রহ করে আবার চেষ্টা করুন।' };
+    return { status: 'error', message: 'সার্ভারে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।' };
   }
 }

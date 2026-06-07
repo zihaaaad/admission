@@ -1,28 +1,23 @@
-# 🎓 Admission & Result Checker Web Portal
+# Admission and Result Checker Web Portal
 
-### **আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট**
-> A production-ready, mobile-first Web Application built on **Google Apps Script** for handling cohort admissions, fee submissions, automated admit card issuance, and result checking.
-
-[![Google Apps Script](https://img.shields.io/badge/Google%20Apps%20Script-4285F4?style=for-the-badge&logo=google-apps-script&logoColor=white)](https://developers.google.com/apps-script)
-[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge)](#)
+### As-Sunnah Skill Development Institute
+> A production-ready, mobile-first Web Application built on Google Apps Script for handling cohort admissions, fee submissions, automated admit card issuance, and result checking.
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
-| Feature Area | Description |
-| :--- | :--- |
-| **📱 Mobile-First UI/UX** | Styled with a premium Forest Green & Warm Gold theme. Offers edge-to-edge layouts, smooth transitions, and Noto Sans Bengali typography. |
-| **🔒 Secure Submission** | Front-end numeric key filters, Transaction ID validation, and Google Script `LockService` to prevent double-submissions or race conditions. |
-| **📄 Auto Admit Cards** | Generates PDF admit cards dynamically from a Google Docs template, stores them in Drive, and updates candidate logs with the file link. |
-| **✉️ Branded HTML Emails** | Sends responsive HTML emails with Noto Sans Bengali typography, social links, custom instructions, and the PDF admit card attached. |
-| **🔔 Custom Modal Dialogs** | Professional, matching modal popups replace native browser `alert()` prompts for all validation messages and confirmations. |
-| **⚙️ Automated Trigger Menu** | A custom menu inside Google Sheets (**অটোমেশন > অন-এডিট ট্রিগার সক্রিয় করুন**) installs triggers programmatically, bypassing the complex GAS dashboard. |
-| **💡 Zero-Header Resilience** | Reads the `_Configuration` sheet starting at Row 1, meaning settings work perfectly even if column headers are deleted. |
+*   **Mobile-First UI/UX**: Styled with a premium Forest Green & Warm Gold theme. Offers edge-to-edge layouts, smooth transitions, and Noto Sans Bengali typography.
+*   **Secure Submission**: Front-end numeric key filters, Transaction ID validation, and Google Script `LockService` to prevent double-submissions or race conditions.
+*   **Auto Admit Cards**: Generates PDF admit cards dynamically from a Google Docs template, stores them in Drive, and updates candidate logs with the file link.
+*   **Branded HTML Emails**: Sends responsive HTML emails with Noto Sans Bengali typography, social links, custom instructions, and the PDF admit card attached.
+*   **Custom Modal Dialogs**: Professional, matching modal popups replace native browser `alert()` prompts for all validation messages and confirmations.
+*   **Automated Trigger Menu**: A custom menu inside Google Sheets (**অটোমেশন > অন-এডিট ট্রিগার সক্রিয় করুন**) installs triggers programmatically, bypassing the complex GAS dashboard.
+*   **Zero-Header Resilience**: Reads the `_Configuration` sheet starting at Row 1, meaning settings work perfectly even if column headers are deleted.
 
 ---
 
-## 🗺️ System Architecture
+## System Architecture
 
 ```
                     ┌──────────────────────────────┐
@@ -59,7 +54,7 @@
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 *   **`Config.gs`**: Configuration parameters (Spreadsheet ID, Docs Template ID, Output Folder ID, fallback defaults).
 *   **`Code.gs`**: Main router (`doGet`), web-app renderer, settings parsing with caching, and error logging.
@@ -72,7 +67,7 @@
 
 ---
 
-## 🛠️ Dynamic Placeholders
+## Dynamic Placeholders
 
 ### 1. In Google Docs Admit Card Template
 You can place these tags inside your Google Doc template; the script will replace them at runtime when generating the PDF:
@@ -94,8 +89,8 @@ Configure these key-value rows to customize web app states and email details:
 
 ---
 
-## 💻 Developer Profile
+## Developer Profile
 
 *   **Developer:** Zihad Hasan
-*   **Email:** [zihad.connects@gmail.com](mailto:zihad.connects@gmail.com)
+*   **Email:** zihad.connects@gmail.com
 *   **Project Context:** Customized Admission Portal for আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট.

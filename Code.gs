@@ -65,7 +65,7 @@ function doGet(e) {
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <title>কার্যক্রম সাময়িকভাবে বন্ধ</title>
+        <title>ভর্তি কার্যক্রম সাময়িকভাবে বন্ধ</title>
         <style>
           * { box-sizing: border-box; margin: 0; padding: 0; }
           body { 
@@ -119,10 +119,10 @@ function doGet(e) {
       <body>
         <div class="card">
           ${logoHtml}
-          <h2>কার্যক্রম সাময়িকভাবে বন্ধ আছে</h2>
+          <h2>ভর্তি কার্যক্রম সাময়িকভাবে বন্ধ আছে</h2>
           <p>
-            এই মুহূর্তে আমাদের অনলাইন ভর্তি বা ফলাফল সংক্রান্ত কোনো কার্যক্রম চালু নেই। 
-            অনুগ্রহ করে পরবর্তী আপডেটের জন্য অপেক্ষা করুন অথবা আমাদের অফিসের সাথে যোগাযোগ করুন।
+            এই মুহূর্তে ভর্তি বা ফলাফল চেক করার কার্যক্রম বন্ধ আছে। 
+            পরবর্তী আপডেটের জন্য অপেক্ষা করুন অথবা আমাদের অফিসে যোগাযোগ করুন।
           </p>
         </div>
       </body>
@@ -212,7 +212,7 @@ function getAppSettings() {
           paymentFormActive: false,
           statusCheckActive: false,
           paymentOptions: [],
-          instructions: "দুঃখিত, সিস্টেমের নির্দেশনা এই মুহূর্তে লোড করা সম্ভব হচ্ছে না।"
+          instructions: "দুঃখিত, সিস্টেমের নির্দেশনাবলী এখন লোড করা যাচ্ছে না।"
       };
   }
 }
