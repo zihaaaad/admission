@@ -531,7 +531,7 @@ function updateDashboardSheet() {
     configureKPICard(7, "বাতিল করা হয়েছে", rejectedLogs, "#FDF3F1", "#8C2D19", "#F5C6BC");
     
     // Hide standard gridlines in this sheet for clean dashboard look
-    dashSheet.setGridlines(false);
+    dashSheet.setHideGridlines(true);
     
     // Auto-fit columns
     for (let c = 1; c <= 8; c++) {
