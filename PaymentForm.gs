@@ -1,8 +1,8 @@
 // =================================================================
 //      BACKEND LOGIC FOR PAYMENT & ADMIT CARD SYSTEM
+//      All sheet name constants are defined in Config.gs
 // =================================================================
-const MASTER_SHEET_NAME = 'Candidate_Master_List';
-const PAYMENT_SHEET_NAME = 'Payment_Verification_Log';
+
 
 
 /**
@@ -302,9 +302,9 @@ function processAllApprovedManually() {
       }
     }
 
-    SpreadsheetApp.getUi().alert(`প্রক্রিয়া সম্পন্ন হয়েছে! মোট ${processedCount} টি অনুমোদিত প্রবেশপত্র পাঠানো হয়েছে।`);
+    SpreadsheetApp.getUi().alert(`প্রক্রিয়া সম্পন্ন হয়েছে! মোট ${processedCount} টি অনুমোদিত প্রবেশপত্র পাঠানো হয়েছে।`);
   } catch (e) {
-    Logger.log("ERROR in processAllApprovedManually: " + e.toString());
+    logErrorToSheet("processAllApprovedManually", e);
     if (typeof SpreadsheetApp !== 'undefined') {
       SpreadsheetApp.getUi().alert("ত্রুটি ঘটেছে: " + e.message);
     }
@@ -329,6 +329,8 @@ function handleEditTrigger(e) {
   const newValue = e.value;
 
   const TARGET_SHEET = SHEET_PAYMENT_LOG;
+  // WARNING: This index is hardcoded to Column I (9th column) of Payment_Verification_Log.
+  // If you reorder the columns in the spreadsheet, you MUST update this value.
   const TRIGGER_COLUMN_INDEX = 9; // Column I is 'ApprovalStatus'
 
   if (sheet.getName() === TARGET_SHEET && editedColumn === TRIGGER_COLUMN_INDEX && editedRow > 1) {
@@ -364,7 +366,9 @@ function sendRejectionEmail(rowNum) {
         let rowObject = {};
         headers.forEach((header, i) => rowObject[header] = rowData[i]);
 
-        const masterData = masterSheet.getRange(2, 1, masterSheet.getLastRow(), 5).getValues();
+        const masterLastRow = masterSheet.getLastRow();
+        if (masterLastRow < 2) throw new Error("Master list is empty.");
+        const masterData = masterSheet.getRange(2, 1, masterLastRow - 1, 5).getValues();
         const emailMap = new Map();
         masterData.forEach(row => emailMap.set(String(row[2]).trim(), {email: row[4], name: row[1]}));
 
@@ -413,7 +417,9 @@ function processSingleRow(rowNum) {
 
   try {
     const masterSheet = ss.getSheetByName(SHEET_MASTER_LIST);
-    const masterData = masterSheet.getRange(2, 1, masterSheet.getLastRow(), 5).getValues();
+    const masterLastRow = masterSheet.getLastRow();
+    if (masterLastRow < 2) throw new Error("Master list is empty.");
+    const masterData = masterSheet.getRange(2, 1, masterLastRow - 1, 5).getValues();
     const emailMap = new Map();
     masterData.forEach(row => emailMap.set(String(row[2]).trim(), row[4]));
 
@@ -451,11 +457,15 @@ function processSingleRow(rowNum) {
     paymentSheet.getRange(rowNum, statusColIndex).setValue('Success').setFontColor('#00684A');
     paymentSheet.getRange(rowNum, pdfLinkColIndex).setValue(pdfFile.getUrl());
     
-    // 4. Clean up the temporary Google Doc file.
-    DriveApp.getFileById(newDocFile.getId()).setTrashed(true);
+    // 4. Clean up the temporary Google Doc file (non-critical).
+    try {
+      DriveApp.getFileById(newDocFile.getId()).setTrashed(true);
+    } catch (cleanupErr) {
+      Logger.log(`Non-critical cleanup error for row ${rowNum}: ${cleanupErr.toString()}`);
+    }
 
   } catch (e) {
-    Logger.log(`ERROR processing row ${rowNum}: ${e.toString()}`);
+    logErrorToSheet("processSingleRow", e);
     paymentSheet.getRange(rowNum, statusColIndex).setValue(`ব্যর্থ: ${e.message}`).setFontColor('#C0392B');
   }
 }

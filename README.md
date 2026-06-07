@@ -86,7 +86,7 @@ To automate admit card generation whenever you set a status to `Approved` or `Re
 
 ---
 
-## 📂 Repository File Structure
+## Repository File Structure
 *   **[Code.gs](file:///Code.gs):** Master router, HTML evaluation and central backend utilities.
 *   **[Config.gs](file:///Config.gs):** Centralized constant IDs and configurations.
 *   **[PaymentForm.gs](file:///PaymentForm.gs):** Form validations, duplicate checks, manually processing menu, and automated email operations.

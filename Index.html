@@ -199,6 +199,12 @@
         document.getElementById('logo').src = settings.logoUrl;
         document.getElementById('appTitle').innerText = settings.appTitle;
         
+        // Populate the instructions box for the payment view
+        const instructionsEl = document.getElementById('instructions');
+        if (instructionsEl) {
+            instructionsEl.innerHTML = settings.instructions || '';
+        }
+
         // Populate the payment options dropdown menu
         const paymentMethodSelect = document.getElementById('paymentMethod');
         if (paymentMethodSelect) {
@@ -213,7 +219,6 @@
             }
         }
 
-        // --- UPDATED LOGIC FOR DYNAMIC BUTTONS ---
         // Dynamically show/hide buttons on the landing page based on sheet settings.
         if (!settings.resultCheckerActive) {
             const btn = document.getElementById('resultBtn');
@@ -223,9 +228,15 @@
             const btn = document.getElementById('paymentBtn');
             if (btn) btn.style.display = 'none';
         }
-        if (!settings.statusCheckActive) { // FIX ADDED
+        if (!settings.statusCheckActive) {
             const btn = document.getElementById('statusBtn');
             if (btn) btn.style.display = 'none';
+        }
+
+        // Hide back buttons when only a single view is directly loaded
+        const initialView = '<?= initialView ?>';
+        if (initialView !== 'landingView') {
+            document.querySelectorAll('.back-button').forEach(btn => btn.style.display = 'none');
         }
     });
 
@@ -324,7 +335,10 @@
         statusDiv.innerText = "আপনার তথ্য খোঁজা হচ্ছে...";
         document.getElementById('detailsSection').style.display = 'none';
 
-        google.script.run.withSuccessHandler(onUserSearchSuccess).getUserDetails(phone);
+        google.script.run
+            .withSuccessHandler(onUserSearchSuccess)
+            .withFailureHandler(onUserSearchFailure)
+            .getUserDetails(phone);
     }
     
     function onUserSearchSuccess(response) {
@@ -343,6 +357,11 @@
             statusDiv.innerHTML = `<span class="text-danger">${response.message}</span>`;
             detailsSection.style.display = 'none';
         }
+    }
+
+    function onUserSearchFailure(error) {
+        document.getElementById('paymentLoader').style.display = 'none';
+        document.getElementById('paymentStatus').innerHTML = '<span class="text-danger">সার্ভারের সাথে সংযোগে সমস্যা হচ্ছে। অনুগ্রহ করে আবার চেষ্টা করুন।</span>';
     }
 
     const paymentForm = document.getElementById('paymentForm');
@@ -364,6 +383,7 @@
 
             google.script.run
                 .withSuccessHandler(onPaymentSuccess)
+                .withFailureHandler(onPaymentFailure)
                 .handlePost({ action: 'submitPayment', formData: formObject });
         });
     }
@@ -399,6 +419,14 @@
         }
     }
 
+    function onPaymentFailure(error) {
+        document.getElementById('paymentView').innerHTML = `
+            <div id="successMessage" style="background-color: #F9EBEA;">
+                <h4 style="color: var(--danger-color);">সংযোগ বিচ্ছিন্ন</h4>
+                <p>সার্ভারের সাথে সংযোগে সমস্যা হচ্ছে। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</p>
+            </div>`;
+    }
+
     // ================================================
     //      PAYMENT STATUS CHECKER - CLIENT-SIDE LOGIC
     // ================================================
@@ -416,6 +444,7 @@
 
             google.script.run
                 .withSuccessHandler(onStatusCheckSuccess)
+                .withFailureHandler(onStatusCheckFailure)
                 .getPaymentStatus(phone);
         });
     }
@@ -434,6 +463,12 @@
         }
 
         statusDiv.innerHTML = `<div class="${statusClass}"><p style="margin:0;">${response.message}</p></div>`;
+    }
+
+    function onStatusCheckFailure(error) {
+        document.getElementById('statusLoader').style.display = 'none';
+        document.getElementById('statusSearchForm').querySelector('button').disabled = false;
+        document.getElementById('statusDisplay').innerHTML = '<div class="info-card status-not-selected"><p style="margin:0;">সার্ভারের সাথে সংযোগে সমস্যা হচ্ছে। অনুগ্রহ করে আবার চেষ্টা করুন।</p></div>';
     }
 
 </script>
