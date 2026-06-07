@@ -100,6 +100,9 @@ Create a new Google Spreadsheet. This single spreadsheet will serve as your enti
 | `paymentOptions` | `Nagad` | Yes (one per row) |
 | `paymentOptions` | `Rocket` | Optional |
 | `instructions` | Payment instructions text (supports `*bold*` syntax) | Yes |
+| `examDate` | ১৫ জুন, ২০২৬ (Exam Date in Bengali) | No (defaults to "প্রবেশপত্র দেখুন") |
+| `examTime` | সকাল ১০:০০ টা (Exam Time in Bengali) | No (defaults to "প্রবেশপত্র দেখুন") |
+| `examVenue` | আস-সুন্নাহ ইনস্টিটিউট ক্যাম্পাস (Exam Venue) | No (defaults to "প্রবেশপত্র দেখুন") |
 
 > **Multiple Payment Options:** Add multiple rows with the key `paymentOptions` — each one becomes a dropdown option in the payment form.
 >
