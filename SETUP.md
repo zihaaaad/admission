@@ -108,6 +108,9 @@ Create a new Google Spreadsheet.
 | `examDate` | ১৫ জুন, ২০২৬ (Exam Date in Bengali) | No (defaults to "প্রবেশপত্র দেখুন") |
 | `examTime` | সকাল ১০:০০ টা (Exam Time in Bengali) | No (defaults to "প্রবেশপত্র দেখুন") |
 | `examVenue` | আস-সুন্নাহ ইনস্টিটিউট ক্যাম্পাস (Exam Venue) | No (defaults to "প্রবেশপত্র দেখুন") |
+| `spreadsheetId` | Google Spreadsheet ID of the host spreadsheet | Optional (acts as a backup configurations reference) |
+| `admitCardTemplateId` | Google Doc Template ID used for generating admit cards | Yes |
+| `admitCardFolderId` | Google Drive Folder ID where the generated PDF admit cards are saved | Yes |
 
 > **Multiple Payment Options:** Add multiple rows with the key `paymentOptions` — each one becomes a dropdown option in the payment form.
 >

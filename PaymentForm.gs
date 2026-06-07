@@ -350,6 +350,7 @@ function initializeSystemSheets() {
           ["instructions", "*জরুরি পেমেন্ট নির্দেশনাবলী:*\n১. বিকাশ বা নগদ পার্সোনাল নম্বরে ভর্তি ফি পাঠান।\n২. টাকা পাঠানোর পর TrxID এবং পেমেন্ট নাম্বার দিয়ে ফর্মটি পূরণ করুন।"],
           ["paymentOptions", "bKash (Personal)"],
           ["paymentOptions", "Nagad (Personal)"],
+          ["spreadsheetId", "YOUR_SPREADSHEET_ID_HERE"],
           ["admitCardTemplateId", "YOUR_DOC_TEMPLATE_ID_HERE"],
           ["admitCardFolderId", "YOUR_PDF_OUTPUT_FOLDER_ID_HERE"]
         ];
