@@ -255,11 +255,126 @@ function doPost(formObject) {
 function onOpen() {
   SpreadsheetApp.getUi()
       .createMenu('অটোমেশন')
+      .addItem('শিট ও কনফিগারেশন ডাটাবেজ তৈরি করুন (Initialize System)', 'initializeSystemSheets')
       .addItem('ড্যাশবোর্ড আপডেট করুন', 'updateDashboardSheet')
       .addItem('অন-এডিট ট্রিগার সক্রিয় করুন (Enable Trigger)', 'setupTriggerAutomatically')
       .addItem('সকল অনুমোদিত পেমেন্ট প্রসেস করুন', 'processAllApprovedManually')
       .addToUi();
 }
+
+/**
+ * Programmatically initializes all required sheets, default headers, and configurations.
+ * Allows admins to set up a brand-new spreadsheet database in one click.
+ */
+function initializeSystemSheets() {
+  const ui = SpreadsheetApp.getUi();
+  try {
+    const ss = getSpreadsheet();
+    
+    // Define all sheets, their headers, and configuration defaults
+    const sheetDefinitions = [
+      {
+        name: SHEET_CONFIG,
+        headers: ["Setting Name", "Value"],
+        isConfig: true
+      },
+      {
+        name: SHEET_MASTER_LIST,
+        headers: ["SerialNumber", "FullName", "RegisteredPhoneNumber", "District", "EmailAddress"]
+      },
+      {
+        name: SHEET_PAYMENT_LOG,
+        headers: ["Timestamp", "RegisteredPhoneNumber", "FullName", "SerialNumber", "District", "PaymentMethod", "PaymentPhoneNumber", "TransactionID", "ApprovalStatus", "ProcessingStatus", "AdmitCardLink", "Rejection_Reason"]
+      },
+      {
+        name: SHEET_RESULTS,
+        headers: ["Serial No", "Phone Number", "Name", "Status", "Message"]
+      },
+      {
+        name: SHEET_ERROR_LOG,
+        headers: ["Timestamp", "Context/Function", "Error Message", "Stack Trace"]
+      }
+    ];
+
+    let createdSheets = [];
+    let existingSheets = [];
+
+    sheetDefinitions.forEach(def => {
+      let sheet = ss.getSheetByName(def.name);
+      let isNew = false;
+      
+      if (!sheet) {
+        sheet = ss.insertSheet(def.name);
+        isNew = true;
+        createdSheets.push(def.name);
+      } else {
+        existingSheets.push(def.name);
+      }
+
+      // If sheet is new or empty, populate headers
+      if (sheet.getLastRow() === 0) {
+        const headerRange = sheet.getRange(1, 1, 1, def.headers.length);
+        headerRange.setValues([def.headers])
+          .setFontWeight("bold")
+          .setBackground("#1A3E2F")
+          .setFontColor("#FFFFFF")
+          .setHorizontalAlignment("center");
+        sheet.setRowHeight(1, 28);
+        sheet.freezeRows(1);
+        
+        // Auto-fit headers
+        for (let i = 1; i <= def.headers.length; i++) {
+          sheet.autoResizeColumn(i);
+        }
+      }
+
+      // Populate default settings if config sheet is empty/new
+      if (def.isConfig && sheet.getLastRow() <= 1) {
+        const defaultSettings = [
+          ["appTitle", "আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট"],
+          ["instituteName", "আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট"],
+          ["logoUrl", "https://i.postimg.cc/RZ4wD83V/skill-color-logo-32x32.png"],
+          ["resultCheckerActive", "TRUE"],
+          ["paymentFormActive", "TRUE"],
+          ["statusCheckActive", "TRUE"],
+          ["examDate", "2026-07-01"],
+          ["examTime", "10:00 AM"],
+          ["examVenue", "মেইন ক্যাম্পাস"],
+          ["instructions", "*জরুরি পেমেন্ট নির্দেশনাবলী:*\n১. বিকাশ বা নগদ পার্সোনাল নম্বরে ভর্তি ফি পাঠান।\n২. টাকা পাঠানোর পর TrxID এবং পেমেন্ট নাম্বার দিয়ে ফর্মটি পূরণ করুন।"],
+          ["paymentOptions", "bKash (Personal)"],
+          ["paymentOptions", "Nagad (Personal)"]
+        ];
+        
+        sheet.getRange(2, 1, defaultSettings.length, 2).setValues(defaultSettings);
+        sheet.autoResizeColumn(1);
+        sheet.autoResizeColumn(2);
+      }
+    });
+
+    // Initialize the Dashboard as well if it is not present
+    let dashSheet = ss.getSheetByName(SHEET_DASHBOARD);
+    if (!dashSheet) {
+      updateDashboardSheet(); // This will auto-create and format it cleanly
+      createdSheets.push(SHEET_DASHBOARD);
+    }
+
+    let alertMessage = "স্প্রেডশিট ডাটাবেজ সফলভাবে প্রস্তুত করা হয়েছে!\n\n";
+    if (createdSheets.length > 0) {
+      alertMessage += `নতুন তৈরি করা শিটসমূহ: ${createdSheets.join(", ")}\n`;
+    }
+    if (existingSheets.length > 0) {
+      alertMessage += `ইতিমধ্যেই বিদ্যমান শিটসমূহ: ${existingSheets.join(", ")}\n`;
+    }
+    alertMessage += "\nএখন আপনি ডাটাবেজে তথ্য আপলোড করে পোর্টালটি ব্যবহার করতে পারবেন।";
+    
+    ui.alert("সফলতা", alertMessage, ui.ButtonSet.OK);
+
+  } catch (err) {
+    logErrorToSheet("initializeSystemSheets", err);
+    ui.alert("ত্রুটি", "শিটসমূহ তৈরি করার সময় সমস্যা হয়েছে:\n" + err.toString(), ui.ButtonSet.OK);
+  }
+}
+
 
 /**
  * Automates the setting up of the installable onEdit trigger.
