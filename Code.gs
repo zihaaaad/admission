@@ -179,8 +179,8 @@ function getAppSettings() {
         .replace(/\n/g, '<br>');
     }
 
-    // Cache configurations for 10 minutes (600 seconds)
-    cache.put("app_settings", JSON.stringify(settings), 600);
+    // Cache configurations for 1 minute (60 seconds) to allow faster updates in settings
+    cache.put("app_settings", JSON.stringify(settings), 60);
     return settings;
 
   } catch (e) {
