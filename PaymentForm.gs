@@ -215,15 +215,55 @@ function doPost(formObject) {
 //      AUTOMATION & ADMIN FUNCTIONS (Admit Card Generation)
 // =================================================================
 
-/**
- * Creates a custom menu in the spreadsheet UI for authorized users.
- */
 function onOpen() {
   SpreadsheetApp.getUi()
       .createMenu('অটোমেশন')
       .addItem('ড্যাশবোর্ড আপডেট করুন', 'updateDashboardSheet')
+      .addItem('অন-এডিট ট্রিগার সক্রিয় করুন (Enable Trigger)', 'setupTriggerAutomatically')
       .addItem('সকল অনুমোদিত পেমেন্ট প্রসেস করুন', 'processAllApprovedManually')
       .addToUi();
+}
+
+/**
+ * Automates the setting up of the installable onEdit trigger.
+ * Helps users who cannot see or select the "From spreadsheet" and "On edit" options.
+ */
+function setupTriggerAutomatically() {
+  const ui = SpreadsheetApp.getUi();
+  const triggers = ScriptApp.getProjectTriggers();
+  let found = false;
+  
+  for (let i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === 'handleEditTrigger') {
+      found = true;
+      break;
+    }
+  }
+  
+  if (found) {
+    ui.alert("স্ট্যাটাস", "অন-এডিট ট্রিগার ইতিমধ্যে আপনার স্ক্রিপ্টে সক্রিয় রয়েছে!", ui.ButtonSet.OK);
+    return;
+  }
+  
+  try {
+    let ss;
+    try {
+      ss = SpreadsheetApp.getActiveSpreadsheet();
+    } catch(err) {}
+    
+    if (!ss) {
+      ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    }
+    
+    ScriptApp.newTrigger('handleEditTrigger')
+      .forSpreadsheet(ss)
+      .onEdit()
+      .create();
+      
+    ui.alert("সফলতা", "অন-এডিট ট্রিগার সফলভাবে সক্রিয় করা হয়েছে! এখন পেমেন্ট লগে ApprovalStatus পরিবর্তন করলে প্রবেশপত্র স্বয়ংক্রিয়ভাবে জেনারেট হয়ে ইমেইলে চলে যাবে।", ui.ButtonSet.OK);
+  } catch (e) {
+    ui.alert("ত্রুটি", "ট্রিগার তৈরি করা সম্ভব হয়নি:\n" + e.message + "\n\nসম্ভাব্য কারণ: স্ক্রিপ্টটি স্প্রেডশিট থেকে ওপেন করা হয়নি (Standalone Script)। অনুগ্রহ করে নিশ্চিত করুন যে আপনি শিটের 'Extensions > Apps Script' থেকে স্ক্রিপ্টটি ওপেন করেছেন।", ui.ButtonSet.OK);
+  }
 }
 
 /**

@@ -650,6 +650,7 @@
                 <p>অনুগ্রহ করে নিচের অপশন থেকে আপনার প্রয়োজনীয় সেবাটি নির্বাচন করুন।</p>
                 <button id="resultBtn" class="app-button nav-button btn-primary" onclick="showView('resultView')">ফলাফল দেখুন</button>
                 <button id="paymentBtn" class="app-button nav-button btn-secondary" onclick="showView('paymentView')">অ্যাডমিট কার্ড ফি দিন</button>
+                <button id="statusBtn" class="app-button nav-button btn-tertiary" onclick="showView('statusCheckView')">পেমেন্ট স্ট্যাটাস দেখুন</button>
             </div>
         
             <!-- VIEW 2: RESULT CHECKER -->
@@ -660,6 +661,11 @@
             <!-- VIEW 3: PAYMENT FORM -->
             <div id="paymentView" class="view" style="display: <?= initialView === 'paymentView' ? 'block' : 'none' ?>;">
                 <?!= include('PaymentView'); ?>
+            </div>
+
+            <!-- VIEW 4: PAYMENT STATUS CHECKER -->
+            <div id="statusCheckView" class="view" style="display: <?= initialView === 'statusCheckView' ? 'block' : 'none' ?>;">
+                <?!= include('StatusCheckView'); ?>
             </div>
         </main>
 
@@ -722,6 +728,10 @@
             const btn = document.getElementById('paymentBtn');
             if (btn) btn.style.display = 'none';
         }
+        if (!settings.statusCheckActive) {
+            const btn = document.getElementById('statusBtn');
+            if (btn) btn.style.display = 'none';
+        }
 
         // Set up input key event filters (digits only) and capitalize TrxID
         restrictDigitsOnly('phone');
@@ -737,6 +747,7 @@
         let activeCount = 0;
         if (settings.resultCheckerActive) activeCount++;
         if (settings.paymentFormActive) activeCount++;
+        if (settings.statusCheckActive) activeCount++;
         
         if (activeCount <= 1) {
             document.querySelectorAll('.back-nav, .back-button').forEach(btn => btn.style.display = 'none');
@@ -796,6 +807,7 @@
                 let activeCount = 0;
                 if (settings.resultCheckerActive) activeCount++;
                 if (settings.paymentFormActive) activeCount++;
+                if (settings.statusCheckActive) activeCount++;
                 
                 if (viewId !== 'landingView' && activeCount > 1) {
                     backBtn.style.visibility = 'visible';

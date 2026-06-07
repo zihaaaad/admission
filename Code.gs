@@ -12,7 +12,7 @@ function doGet(e) {
   
   const isResultActive = settings.resultCheckerActive;
   const isPaymentActive = settings.paymentFormActive;
-  const isStatusCheckActive = false; // Status check is disabled in web views as requested
+  const isStatusCheckActive = settings.statusCheckActive;
 
   // Scenario 1: More than one system is active, show the landing page.
   if ((isResultActive && isPaymentActive) || (isResultActive && isStatusCheckActive) || (isPaymentActive && isStatusCheckActive)) {
@@ -148,16 +148,23 @@ function getAppSettings() {
     }
 
     const lastRow = sheet.getLastRow();
-    if (lastRow < 2) {
+    if (lastRow < 1) {
       throw new Error("Configuration sheet is empty.");
     }
-    const data = sheet.getRange("A2:B" + lastRow).getValues();
+    const data = sheet.getRange("A1:B" + lastRow).getValues();
     const settings = {};
     let paymentOptions = [];
 
     data.forEach(row => {
-      const key = row[0];
-      const value = row[1];
+      const key = row[0] ? row[0].toString().trim() : "";
+      const value = (row[1] !== undefined && row[1] !== null) ? row[1] : "";
+      
+      const keyLower = key.toLowerCase();
+      // Skip header rows if present
+      if (keyLower === "key" || keyLower === "setting" || keyLower === "setting name" || keyLower === "name" || keyLower === "value") {
+        return;
+      }
+      
       if (key && value !== "") {
         if (key === 'paymentOptions') {
           paymentOptions.push(value);
@@ -172,6 +179,11 @@ function getAppSettings() {
     settings.paymentFormActive = (String(settings.paymentFormActive).toUpperCase() === 'TRUE');
     settings.statusCheckActive = (String(settings.statusCheckActive).toUpperCase() === 'TRUE');
     
+    // Fallbacks from DEFAULTS
+    settings.appTitle = settings.appTitle || DEFAULTS.APP_TITLE;
+    settings.instituteName = settings.instituteName || DEFAULTS.INSTITUTE_NAME;
+    settings.logoUrl = settings.logoUrl || DEFAULTS.LOGO_URL;
+
     if (settings.instructions) {
       settings.instructions = settings.instructions
         .toString()
