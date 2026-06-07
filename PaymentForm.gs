@@ -308,14 +308,20 @@ function setupTriggerAutomatically() {
  */
 function updateDashboardSheet() {
   try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const ss = getSpreadsheet();
     let dashSheet = ss.getSheetByName(SHEET_DASHBOARD);
     if (!dashSheet) {
       dashSheet = ss.insertSheet(SHEET_DASHBOARD);
     }
     
-    // Clear old data and formats
+    // Clear old data and formatting
     dashSheet.clear();
+    dashSheet.clearFormats();
+    
+    // Unmerge existing merged cells in the target range to avoid merge conflicts
+    const maxRows = dashSheet.getMaxRows();
+    const maxCols = dashSheet.getMaxColumns();
+    dashSheet.getRange(1, 1, Math.min(maxRows, 15), Math.min(maxCols, 10)).breakApart();
     
     // Read logs
     const paymentSheet = ss.getSheetByName(SHEET_PAYMENT_LOG);
@@ -328,7 +334,7 @@ function updateDashboardSheet() {
       const lastRow = paymentSheet.getLastRow();
       if (lastRow > 1) {
         const headers = paymentSheet.getRange(1, 1, 1, paymentSheet.getLastColumn()).getValues()[0];
-        const approvalColIndex = headers.indexOf('ApprovalStatus');
+        const approvalColIndex = findColumnIndex(headers, ['ApprovalStatus', 'Status', 'Approval_Status']);
         if (approvalColIndex !== -1) {
           const approvalValues = paymentSheet.getRange(2, approvalColIndex + 1, lastRow - 1, 1).getValues().flat();
           totalLogs = approvalValues.length;
@@ -342,34 +348,60 @@ function updateDashboardSheet() {
       }
     }
     
-    // Setup and format Dashboard
-    dashSheet.getRange("A1:C1").merge().setValue("ভর্তি ও পেমেন্ট ড্যাশবোর্ড ওভারভিউ")
-      .setFontSize(16).setFontWeight("bold").setHorizontalAlignment("center")
+    // Set row heights for elegant card spacing
+    dashSheet.setRowHeight(1, 45);
+    dashSheet.setRowHeight(2, 15);
+    dashSheet.setRowHeight(3, 25);
+    dashSheet.setRowHeight(4, 20);
+    dashSheet.setRowHeight(5, 30);
+    dashSheet.setRowHeight(6, 50);
+    
+    // Title Banner
+    dashSheet.getRange("A1:H1").merge().setValue("ভর্তি ও পেমেন্ট ড্যাশবোর্ড")
+      .setFontSize(15).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle")
       .setBackground("#1A3E2F").setFontColor("#FFFFFF");
       
-    dashSheet.getRange("A3:B3").merge().setValue(`সর্বশেষ আপডেট: ${Utilities.formatDate(new Date(), "GMT+6", "yyyy-MM-dd hh:mm a")}`)
-      .setFontStyle("italic").setFontColor("#52635A");
+    // Update timestamp
+    const timeString = Utilities.formatDate(new Date(), "GMT+6", "dd MMMM yyyy, hh:mm a");
+    dashSheet.getRange("A3:H3").merge().setValue(`সর্বশেষ আপডেট করা হয়েছে: ${timeString}`)
+      .setFontSize(10).setFontStyle("italic").setFontColor("#52635A").setHorizontalAlignment("center").setVerticalAlignment("middle");
       
-    const headers = [["মেট্রিক (Metric)", "পরিমাণ (Count)"]];
-    dashSheet.getRange("A5:B5").setValues(headers).setFontWeight("bold").setBackground("#D0DCD5").setFontColor("#1A3E2F");
+    // Helper to style KPI Cards
+    const configureKPICard = (startCol, label, value, bg, textColor, borderHex) => {
+      // Header cell
+      dashSheet.getRange(5, startCol, 1, 2).merge().setValue(label)
+        .setFontSize(9).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle")
+        .setBackground(bg).setFontColor(textColor);
+        
+      // Numeric value cell
+      dashSheet.getRange(6, startCol, 1, 2).merge().setValue(value)
+        .setFontSize(22).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle")
+        .setBackground(bg).setFontColor(textColor).setFontFamily("monospace");
+        
+      // Set outer borders
+      dashSheet.getRange(5, startCol, 2, 2)
+        .setBorder(true, true, true, true, false, false, borderHex, SpreadsheetApp.BorderStyle.SOLID);
+    };
+
+    // Card 1: Total (A-B)
+    configureKPICard(1, "মোট পেমেন্ট আবেদন", totalLogs, "#F4F7F5", "#1A3E2F", "#D0DCD5");
     
-    const rows = [
-      ["মোট পেমেন্ট আবেদন (Total Submissions)", totalLogs],
-      ["যাচাইকরণাধীন (Pending Verification)", pendingLogs],
-      ["অনুমোদিত আবেদন (Approved Payments)", approvedLogs],
-      ["বাতিলকৃত আবেদন (Rejected Payments)", rejectedLogs]
-    ];
+    // Card 2: Pending (C-D)
+    configureKPICard(3, "যাচাই চলছে", pendingLogs, "#FCFAF2", "#B27A23", "#EDE2CF");
     
-    dashSheet.getRange(6, 1, rows.length, 2).setValues(rows);
-    dashSheet.getRange("A6:A9").setFontWeight("bold");
-    dashSheet.getRange("B6:B9").setHorizontalAlignment("center");
+    // Card 3: Approved (E-F)
+    configureKPICard(5, "অনুমোদিত পেমেন্ট", approvedLogs, "#EAF7F1", "#2E6B4E", "#A3D9C9");
     
-    // Add gridlines and border styles
-    dashSheet.getRange("A5:B9").setBorder(true, true, true, true, true, true, "#D0DCD5", SpreadsheetApp.BorderStyle.SOLID);
+    // Card 4: Rejected (G-H)
+    configureKPICard(7, "বাতিল করা হয়েছে", rejectedLogs, "#FDF3F1", "#8C2D19", "#F5C6BC");
+    
+    // Hide standard gridlines in this sheet for clean dashboard look
+    dashSheet.setGridlines(false);
     
     // Auto-fit columns
-    dashSheet.autoResizeColumn(1);
-    dashSheet.autoResizeColumn(2);
+    for (let c = 1; c <= 8; c++) {
+      dashSheet.autoResizeColumn(c);
+    }
     
     if (typeof SpreadsheetApp !== 'undefined') {
       SpreadsheetApp.getUi().alert("ড্যাশবোর্ড সফলভাবে আপডেট করা হয়েছে!");
