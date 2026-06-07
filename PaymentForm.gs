@@ -311,8 +311,16 @@ function initializeSystemSheets() {
         existingSheets.push(def.name);
       }
 
-      // If sheet is new or empty, populate headers
-      if (sheet.getLastRow() === 0) {
+      // If sheet is new, empty, or has a blank first row, populate headers
+      let hasHeaders = false;
+      try {
+        if (sheet.getLastRow() > 0) {
+          const firstRowValues = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), 1)).getValues()[0];
+          hasHeaders = firstRowValues.some(val => val && String(val).trim() !== "");
+        }
+      } catch (e) {}
+
+      if (!hasHeaders) {
         const headerRange = sheet.getRange(1, 1, 1, def.headers.length);
         headerRange.setValues([def.headers])
           .setFontWeight("bold")
