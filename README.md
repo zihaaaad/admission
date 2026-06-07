@@ -17,6 +17,7 @@
 *   **Branded HTML Emails**: Sends responsive HTML emails with Noto Sans Bengali typography, social links, custom instructions, and the PDF admit card attached.
 *   **Custom Modal Dialogs**: Professional, matching modal popups replace native browser `alert()` prompts for all validation messages and confirmations.
 *   **Automated Trigger Menu**: A custom menu inside Google Sheets installs triggers programmatically, bypassing the complex GAS dashboard.
+*   **QA-Hardened Reliability**: Built-in script-tag XSS configuration protection, client-side transaction ID validation, automatic public view permissions for generated PDF admit cards, and guaranteed temporary document trashing even on runtime exceptions.
 
 ---
 
@@ -90,6 +91,7 @@ Configure these key-value rows to customize web app states and email details:
 *   `logoUrl`: Direct link to your institute logo (hides and triggers text fallback if empty or invalid).
 *   `examDate` / `examTime` / `examVenue`: Dynamic metrics printed on candidate admit cards and HTML emails.
 *   `resultCheckerActive` / `paymentFormActive` / `statusCheckActive`: Toggles (`TRUE` or `FALSE`) to turn views ON/OFF.
+*   `admitCardTemplateId` / `admitCardFolderId`: Google Doc template ID and target Google Drive folder ID, allowing complete code-free configuration for admit card generation.
 
 ---
 
