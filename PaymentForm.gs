@@ -328,7 +328,6 @@ function initializeSystemSheets() {
         }
       }
 
-      // Populate default settings if config sheet is empty/new
       if (def.isConfig && sheet.getLastRow() <= 1) {
         const defaultSettings = [
           ["appTitle", "আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট"],
@@ -342,7 +341,9 @@ function initializeSystemSheets() {
           ["examVenue", "মেইন ক্যাম্পাস"],
           ["instructions", "*জরুরি পেমেন্ট নির্দেশনাবলী:*\n১. বিকাশ বা নগদ পার্সোনাল নম্বরে ভর্তি ফি পাঠান।\n২. টাকা পাঠানোর পর TrxID এবং পেমেন্ট নাম্বার দিয়ে ফর্মটি পূরণ করুন।"],
           ["paymentOptions", "bKash (Personal)"],
-          ["paymentOptions", "Nagad (Personal)"]
+          ["paymentOptions", "Nagad (Personal)"],
+          ["admitCardTemplateId", "YOUR_DOC_TEMPLATE_ID_HERE"],
+          ["admitCardFolderId", "YOUR_PDF_OUTPUT_FOLDER_ID_HERE"]
         ];
         
         sheet.getRange(2, 1, defaultSettings.length, 2).setValues(defaultSettings);
@@ -724,12 +725,18 @@ function processSingleRow(rowNum) {
   if (currentProcessingStatus === 'Success') return;
 
   try {
+    // Fetch settings for exam details placeholders and IDs
+    const appSettings = getAppSettings();
+
+    const templateId = appSettings.admitCardTemplateId || TEMPLATE_ID;
+    const folderId = appSettings.admitCardFolderId || FOLDER_ID;
+
     // Check Template & Folder Configuration values
-    if (!TEMPLATE_ID || TEMPLATE_ID === "YOUR_DOC_TEMPLATE_ID_HERE" || TEMPLATE_ID.trim() === "") {
-      throw new Error("Admit Card Template ID কনফিগার করা হয়নি। অনুগ্রহ করে Config.gs ফাইলে TEMPLATE_ID সেট করুন।");
+    if (!templateId || templateId === "YOUR_DOC_TEMPLATE_ID_HERE" || templateId.trim() === "") {
+      throw new Error("Admit Card Template ID কনফিগার করা হয়নি। অনুগ্রহ করে _Configuration শিটে admitCardTemplateId দিন।");
     }
-    if (!FOLDER_ID || FOLDER_ID === "YOUR_PDF_OUTPUT_FOLDER_ID_HERE" || FOLDER_ID.trim() === "") {
-      throw new Error("Output Folder ID কনফিগার করা হয়নি। অনুগ্রহ করে Config.gs ফাইলে FOLDER_ID সেট করুন।");
+    if (!folderId || folderId === "YOUR_PDF_OUTPUT_FOLDER_ID_HERE" || folderId.trim() === "") {
+      throw new Error("Output Folder ID কনফিগার করা হয়নি। অনুগ্রহ করে _Configuration শিটে admitCardFolderId দিন।");
     }
 
     const masterSheet = ss.getSheetByName(SHEET_MASTER_LIST);
@@ -765,11 +772,8 @@ function processSingleRow(rowNum) {
       throw new Error(`এই ফোন নম্বরের জন্য সঠিক ইমেইল পাওয়া যায়নি: ${registeredPhone}`);
     }
 
-    // Fetch settings for exam details placeholders
-    const appSettings = getAppSettings();
-
     // 1. Generate PDF from Template
-    const newDocFile = DriveApp.getFileById(TEMPLATE_ID).makeCopy(`Admit Card - ${candidateName}`);
+    const newDocFile = DriveApp.getFileById(templateId).makeCopy(`Admit Card - ${candidateName}`);
     const doc = DocumentApp.openById(newDocFile.getId());
     doc.getBody()
       .replaceText('{{FullName}}', candidateName)
@@ -782,7 +786,7 @@ function processSingleRow(rowNum) {
       .replaceText('{{ExamVenue}}', appSettings.examVenue || "প্রবেশপত্র দেখুন");
     doc.saveAndClose();
     
-    const pdfFile = DriveApp.getFolderById(FOLDER_ID).createFile(doc.getAs('application/pdf')).setName(`Admit Card - ${rollNumber}.pdf`);
+    const pdfFile = DriveApp.getFolderById(folderId).createFile(doc.getAs('application/pdf')).setName(`Admit Card - ${rollNumber}.pdf`);
     
     // 2. Send Email with PDF attachment
     GmailApp.sendEmail(candidateEmail, `আপনার পরীক্ষার প্রবেশপত্র - ${appSettings.instituteName}`, "", {

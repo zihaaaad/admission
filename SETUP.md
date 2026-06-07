@@ -178,12 +178,16 @@ You need three IDs from Google. Here's how to find each:
 | `PaymentView.html` | HTML | Copy from [PaymentView.html](PaymentView.html) |
 | `StatusCheckView.html` | HTML | Copy from [StatusCheckView.html](StatusCheckView.html) |
 
-5. **Open `Config.gs`** and replace the three placeholder values:
+5. **Configure Template and Folder IDs**:
+   > [!TIP]
+   > **Code-Free Configuration**: You can configure your Admit Card Doc Template ID and PDF Output Folder ID directly inside the **`_Configuration`** sheet tab under the keys **`admitCardTemplateId`** and **`admitCardFolderId`**. This means coordinators do not need to touch the code at all to update folders or templates!
+   
+   If you prefer to hardcode them, you can open **`Config.gs`** in Apps Script and replace the placeholder values:
 
 ```javascript
-const SPREADSHEET_ID = "YOUR_SPREADSHEET_ID_HERE";  // ← Replace
-const TEMPLATE_ID = "YOUR_DOC_TEMPLATE_ID_HERE";     // ← Replace
-const FOLDER_ID = "YOUR_PDF_OUTPUT_FOLDER_ID_HERE";   // ← Replace
+const SPREADSHEET_ID = "YOUR_SPREADSHEET_ID_HERE";  // ← Optional fallback
+const TEMPLATE_ID = "YOUR_DOC_TEMPLATE_ID_HERE";     // ← Optional fallback
+const FOLDER_ID = "YOUR_PDF_OUTPUT_FOLDER_ID_HERE";   // ← Optional fallback
 ```
 
 ---
@@ -285,7 +289,7 @@ When you are ready to reuse the system for a new batch or course:
 | Portal shows "কার্যক্রম সাময়িকভাবে বন্ধ" | At least one of `resultCheckerActive`, `paymentFormActive`, or `statusCheckActive` must be `TRUE` in `_Configuration` |
 | `404` error in console | The `logoUrl` in `_Configuration` is invalid. Use a publicly accessible direct image URL |
 | Sandbox warning in console | This is a normal Google Apps Script warning. It does not affect functionality |
-| Admit card not generated | Check that `TEMPLATE_ID` and `FOLDER_ID` in `Config.gs` are correct. Check `Error_Log` tab for details |
+| Admit card not generated | Check that `admitCardTemplateId` and `admitCardFolderId` in the `_Configuration` sheet (or `TEMPLATE_ID` / `FOLDER_ID` in `Config.gs`) are correct. Check `Error_Log` tab for details |
 | Email not sent | Ensure the candidate has a valid email in `Candidate_Master_List`. Check Gmail sending quota |
 | Settings not updating | Configuration is cached for 1 minute. Wait or clear cache by redeploying |
 | Phone number not found | Verify the number in `Candidate_Master_List` is exactly 11 digits starting with `01` |
