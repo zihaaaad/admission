@@ -234,6 +234,26 @@ Run through this checklist to verify everything works:
 
 ---
 
+## Resetting the Portal for a New Batch / Course (Every 3 Months)
+
+When you are ready to reuse the system for a new batch or course:
+
+1. **Download Backup**: Export your current sheets (`Candidate_Master_List`, `Payment_Verification_Log`, `Results`, `Error_Log`) as CSV or Excel backups to preserve the previous batch's records.
+2. **Clear Sheet Data**:
+   > [!WARNING]
+   > When clearing data from the sheet tabs, **DO NOT delete Row 1 (the Header Row)**. The Google Apps Script relies on exact column headers (like `SerialNumber`, `Phone Number`, etc.) to locate columns dynamically. If headers are deleted or modified, the code will fail.
+   - For `Candidate_Master_List`: Keep Row 1. Clear rows 2 and onwards.
+   - For `Payment_Verification_Log`: Keep Row 1. Clear rows 2 and onwards.
+   - For `Results`: Keep Row 1. Clear rows 2 and onwards.
+   - For `Error_Log`: Keep Row 1. Clear rows 2 and onwards.
+3. **Insert New Data**:
+   - Paste the new applicant list into `Candidate_Master_List`.
+   - Paste the new results into `Results`.
+4. **Update App Settings**:
+   - Adjust `appTitle`, `logoUrl`, or activation toggles in `_Configuration` as necessary for the new cohort.
+
+---
+
 ## Troubleshooting
 
 | Problem | Solution |
