@@ -15,20 +15,29 @@
     <style>
         /* ================================================
            GLOBAL STYLES & UI KIT - DEEP FOREST NATURAL THEME
+           Mobile-First Responsive Design
            ================================================ */
         :root {
-            --primary-color: #1A3E2F; /* Deep forest green */
+            --primary-color: #1A3E2F;
             --primary-light: #2D5A46;
-            --accent-color: #D4AF37; /* Forest gold */
+            --primary-subtle: #E8F0EB;
+            --accent-color: #D4AF37;
             --success-color: #2E6B4E;
             --warning-color: #B27A23;
             --danger-color: #8C2D19;
-            --bg-color: #F4F6F4;      /* Soft leaf-gray background */
-            --text-dark: #1E2722;     /* Forest charcoal */
-            --text-light: #52635A;    /* Muted foliage gray */
+            --bg-color: #F0F3F1;
+            --text-dark: #1E2722;
+            --text-light: #52635A;
+            --text-muted: #8A9690;
             --card-bg: #FFFFFF;
-            --border-color: #D0DCD5;  /* Pale forest border */
-            --shadow: 0 10px 30px rgba(26, 62, 47, 0.05);
+            --border-color: #D0DCD5;
+            --border-light: #E8EDEA;
+            --shadow-sm: 0 2px 8px rgba(26, 62, 47, 0.04);
+            --shadow-md: 0 8px 24px rgba(26, 62, 47, 0.06);
+            --shadow-lg: 0 12px 40px rgba(26, 62, 47, 0.08);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
@@ -36,122 +45,361 @@
             font-family: 'Noto Sans Bengali', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-dark);
-            padding: 2.5rem 1rem;
+            padding: 0;
             -webkit-font-smoothing: antialiased;
-            line-height: 1.6;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.65;
+            min-height: 100vh;
         }
+
+        /* --- Container: Edge-to-edge on phones --- */
         .container {
-            max-width: 620px;
-            margin: auto;
+            max-width: 580px;
+            margin: 0 auto;
             background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: var(--shadow);
+            border-radius: 0;
+            box-shadow: none;
             overflow: hidden;
-            border: 1px solid var(--border-color);
+            min-height: 100vh;
         }
+
+        /* --- Header --- */
         .header {
             text-align: center;
-            padding: 3rem 2rem;
-            border-bottom: 1px solid var(--border-color);
-            background-color: #FAFCFA;
+            padding: 2rem 1.5rem 1.8rem;
+            border-bottom: 1px solid var(--border-light);
+            background: linear-gradient(180deg, #FAFCFA 0%, #FFFFFF 100%);
         }
-        .header img { max-width: 200px; margin-bottom: 1.2rem; filter: grayscale(10%) contrast(105%); }
-        .header h3 { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); letter-spacing: -0.02em; }
+        .header img {
+            max-width: 140px;
+            margin-bottom: 0.8rem;
+        }
+        .header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: -0.01em;
+            line-height: 1.4;
+        }
+
+        /* --- Views --- */
         .view {
-            display: none; /* All views hidden by default */
-            padding: 2.5rem 3rem;
-            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: none;
+            padding: 1.5rem 1.25rem 2rem;
+            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .view > h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.4rem;
+        }
+        .view > p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+            line-height: 1.6;
         }
         @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(8px); } 
+            from { opacity: 0; transform: translateY(6px); } 
             to { opacity: 1; transform: translateY(0); } 
         }
 
-        /* --- Premium Clean UI Kit --- */
+        /* --- Form Controls --- */
         .app-input, .app-select {
-            width: 100%; padding: 0.9rem 1.1rem; font-size: 1rem;
-            border-radius: 10px; border: 1.5px solid var(--border-color);
-            transition: all 0.25s ease; font-family: 'Noto Sans Bengali', sans-serif;
+            width: 100%;
+            padding: 0.85rem 1rem;
+            font-size: 1rem;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border-color);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            font-family: 'Noto Sans Bengali', sans-serif;
             background-color: #FCFDFC;
             color: var(--text-dark);
+            -webkit-appearance: none;
         }
         .app-input:focus, .app-select:focus {
-            outline: none; border-color: var(--primary-color);
+            outline: none;
+            border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(26, 62, 47, 0.08);
             background-color: #FFFFFF;
         }
+        .app-input::placeholder { color: var(--text-muted); }
+
+        /* --- Buttons --- */
         .app-button {
-            width: 100%; margin-top: 1rem; padding: 1rem; font-size: 1.1rem;
-            font-weight: 600; color: white; border: none;
-            border-radius: 10px; cursor: pointer; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            margin-top: 0.75rem;
+            padding: 0.85rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             background-color: var(--primary-color);
+            min-height: 48px;
+            font-family: 'Noto Sans Bengali', sans-serif;
         }
         .app-button:hover:not(:disabled) {
             background-color: var(--primary-light);
             transform: translateY(-1px);
-            box-shadow: 0 6px 15px rgba(26, 62, 47, 0.12);
+            box-shadow: 0 4px 12px rgba(26, 62, 47, 0.15);
         }
         .app-button:active:not(:disabled) {
             transform: translateY(0);
+            box-shadow: none;
         }
-        .app-button:disabled { background-color: #BDC7C2; cursor: not-allowed; transform: none; box-shadow: none; }
-        
+        .app-button:disabled {
+            background-color: #C3CDC7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* --- Loader --- */
         .loader {
-            display: none; border: 3px solid #E1E8E4; border-radius: 50%; border-top: 3px solid var(--primary-color);
-            width: 24px; height: 24px; animation: spin 0.8s linear infinite;
+            display: none;
+            border: 3px solid var(--border-light);
+            border-radius: 50%;
+            border-top: 3px solid var(--primary-color);
+            width: 28px;
+            height: 28px;
+            animation: spin 0.7s linear infinite;
+            margin: 1rem auto;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
+        /* --- Back Button --- */
         .back-button {
-            display: inline-block; margin-bottom: 20px; font-weight: 600;
-            color: var(--text-light); cursor: pointer; text-decoration: none;
-            font-size: 0.95rem; transition: color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0.6rem 0;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
         }
         .back-button:hover { color: var(--primary-color); }
-        .status-text { font-weight: 500; margin-top: 8px; min-height: 20px; font-size: 0.9rem; }
+        .back-nav { margin-top: 1.5rem; text-align: center; padding-top: 1rem; border-top: 1px solid var(--border-light); }
+
+        /* --- Status & Label --- */
+        .status-text { font-weight: 500; margin-top: 0.5rem; min-height: 20px; font-size: 0.85rem; line-height: 1.5; }
         .text-success { color: var(--success-color); }
         .text-danger { color: var(--danger-color); }
-        label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.95rem; color: var(--primary-color); }
+        label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.9rem; color: var(--primary-color); }
         
         /* ================================================
-           SPECIFIC VIEW STYLES
+           LANDING PAGE
            ================================================ */
-
-        /* --- Landing Page --- */
         #landingView { text-align: center; }
-        #landingView h3 { font-size: 1.4rem; color: var(--text-light); margin-bottom: 1.5rem; font-weight: 500; }
-        .nav-button { padding: 1.1rem; font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; border: 1.5px solid transparent; }
-        
-        /* Clean Flat Theme Button Colors (Forest Tones) */
+        #landingView h3 {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+        }
+        #landingView > p {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-bottom: 1.5rem;
+        }
+        .nav-button {
+            padding: 0.95rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            border: 1.5px solid transparent;
+            border-radius: var(--radius-sm);
+        }
         .btn-primary { background-color: var(--primary-color); }
-        .btn-secondary { background-color: transparent; border-color: var(--primary-color); color: var(--primary-color); }
-        .btn-secondary:hover:not(:disabled) { background-color: #F0F4F2; color: var(--primary-color); border-color: var(--primary-color); }
-        .btn-purple { background-color: transparent; border-color: var(--border-color); color: var(--text-light); }
-        .btn-purple:hover:not(:disabled) { background-color: #F5F7F6; color: var(--text-dark); border-color: var(--text-dark); }
-        
-        /* --- Universal Premium Flat Cards --- */
-        .info-card { margin-top: 2rem; padding: 1.8rem; border-radius: 12px; border: 1.5px solid var(--border-color); background-color: #FAFCFA; }
-        .info-card h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.6rem; color: var(--primary-color); }
-        .info-card p { color: var(--text-light); font-size: 0.95rem; }
+        .btn-secondary {
+            background-color: transparent;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background-color: var(--primary-subtle);
+            color: var(--primary-color);
+        }
+        .btn-tertiary {
+            background-color: transparent;
+            border-color: var(--border-color);
+            color: var(--text-light);
+        }
+        .btn-tertiary:hover:not(:disabled) {
+            background-color: #F5F7F6;
+            color: var(--text-dark);
+            border-color: var(--text-light);
+        }
+
+        /* ================================================
+           SEARCH FORMS (Result & Status)
+           ================================================ */
+        .search-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .search-form .app-button {
+            margin-top: 0;
+        }
+
+        /* ================================================
+           RESULT & STATUS CARDS
+           ================================================ */
+        .info-card {
+            margin-top: 1.25rem;
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--border-color);
+            background-color: #FAFCFA;
+        }
+        .info-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            color: var(--primary-color);
+        }
+        .info-card p { color: var(--text-light); font-size: 0.9rem; line-height: 1.6; }
         
         .status-final { border-color: var(--success-color); background-color: #F2FAF6; }
         .status-final h3 { color: var(--success-color); }
         .status-viva, .status-waiting { border-color: var(--primary-light); background-color: #F6FAF8; }
         .status-viva h3, .status-waiting h3 { color: var(--primary-light); }
-        .status-not-selected { border-color: var(--danger-color); background-color: #FCF5F4; }
+        .status-not-selected { border-color: var(--danger-color); background-color: #FDF6F5; }
         .status-not-selected h3 { color: var(--danger-color); }
         
-        .info-grid { margin-top: 1.5rem; border-top: 1px dashed var(--border-color); padding-top: 1.2rem; }
-        .info-item { display: flex; justify-content: space-between; padding: 0.7rem 0; font-size: 0.95rem; border-bottom: 1px solid #F0F4F2; }
+        .info-grid { margin-top: 1rem; border-top: 1px dashed var(--border-color); padding-top: 0.8rem; }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.55rem 0;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-light);
+            gap: 0.75rem;
+        }
         .info-item:last-child { border-bottom: none; }
-        .info-item .label { font-weight: 500; color: var(--text-light); }
+        .info-item .label { font-weight: 500; color: var(--text-light); white-space: nowrap; flex-shrink: 0; }
+        .info-item span:last-child { text-align: right; word-break: break-word; }
 
-        /* --- Payment Form --- */
-        .instructions-box { background: #FCFAF6; border: 1.5px solid #F0E6D2; padding: 1.2rem; margin-bottom: 2rem; border-radius: 12px; font-size: 0.95rem; color: #735F3F; }
-        .details-box { background-color: #FAFCFA; padding: 1.8rem; border-radius: 12px; border: 1.5px solid var(--success-color); margin-top: 1.5rem; }
-        #successMessage { text-align:center; padding: 3rem 1.5rem; }
-        #successMessage h4 { font-size: 1.8rem; color: var(--success-color); margin-bottom: 0.5rem; }
-        #successMessage p { color: var(--text-light); }
+        /* ================================================
+           PAYMENT FORM
+           ================================================ */
+        .instructions-box {
+            background: #FCFAF6;
+            border: 1.5px solid #EDE2CF;
+            padding: 1rem 1.1rem;
+            margin-bottom: 1.5rem;
+            border-radius: var(--radius-md);
+            font-size: 0.88rem;
+            color: #735F3F;
+            line-height: 1.65;
+        }
+        .instructions-box h3 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #8B6B3D;
+            margin-bottom: 0.4rem;
+        }
+        .verify-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .verify-row .app-button {
+            margin-top: 0;
+        }
+        .form-group { margin-bottom: 1.1rem; }
+        .details-box {
+            background-color: #FAFCFA;
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--success-color);
+            margin-top: 1.25rem;
+        }
+        .candidate-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed var(--border-color);
+            font-size: 0.95rem;
+        }
+        .candidate-info p { margin: 0; }
+
+        #successMessage { text-align: center; padding: 2.5rem 1.25rem; }
+        #successMessage h4 { font-size: 1.4rem; color: var(--success-color); margin-bottom: 0.5rem; font-weight: 700; }
+        #successMessage p { color: var(--text-light); font-size: 0.9rem; line-height: 1.6; }
+
+        /* ================================================
+           FOOTER
+           ================================================ */
+        .app-footer {
+            text-align: center;
+            padding: 1.25rem 1rem;
+            border-top: 1px solid var(--border-light);
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            line-height: 1.5;
+            background-color: #FAFCFA;
+        }
+
+        /* ================================================
+           RESPONSIVE: TABLETS & DESKTOPS (min-width: 480px)
+           ================================================ */
+        @media (min-width: 480px) {
+            .search-form {
+                flex-direction: row;
+                gap: 10px;
+            }
+            .search-form .app-button {
+                width: auto;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+            .verify-row {
+                flex-direction: row;
+                gap: 10px;
+            }
+            .verify-row .app-button {
+                width: auto;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+            .view { padding: 2rem 1.75rem 2.5rem; }
+            .header { padding: 2.5rem 2rem 2rem; }
+            .header img { max-width: 160px; }
+            .header h3 { font-size: 1.35rem; }
+            .info-card { padding: 1.5rem; }
+            .details-box { padding: 1.5rem; }
+        }
+
+        /* ================================================
+           RESPONSIVE: DESKTOPS (min-width: 640px)
+           ================================================ */
+        @media (min-width: 640px) {
+            body { padding: 2rem 1rem; }
+            .container {
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-lg);
+                border: 1px solid var(--border-color);
+                min-height: auto;
+                margin: 0 auto;
+            }
+            .view { padding: 2.5rem 2.5rem 3rem; }
+            .header { padding: 2.5rem 2rem; }
+            .header img { max-width: 180px; }
+            .header h3 { font-size: 1.5rem; }
+            .view > h3 { font-size: 1.25rem; }
+        }
     </style>
 </head>
 <body>
@@ -168,7 +416,7 @@
                 <p>অনুগ্রহ করে নিচের অপশন থেকে আপনার প্রয়োজনীয় সেবাটি নির্বাচন করুন।</p>
                 <button id="resultBtn" class="app-button nav-button btn-primary" onclick="showView('resultView')">ফলাফল দেখুন</button>
                 <button id="paymentBtn" class="app-button nav-button btn-secondary" onclick="showView('paymentView')">অ্যাডমিট কার্ড ফি দিন</button>
-                <button id="statusBtn" class="app-button nav-button btn-purple" onclick="showView('statusCheckView')">পেমেন্ট স্ট্যাটাস দেখুন</button>
+                <button id="statusBtn" class="app-button nav-button btn-tertiary" onclick="showView('statusCheckView')">পেমেন্ট স্ট্যাটাস দেখুন</button>
             </div>
         
             <!-- VIEW 2: RESULT CHECKER -->
@@ -186,6 +434,10 @@
                 <?!= include('StatusCheckView'); ?>
             </div>
         </main>
+
+        <footer class="app-footer">
+            <span id="footerInstituteName"></span>
+        </footer>
     </div>
 
 <script>
@@ -237,6 +489,12 @@
         const initialView = '<?= initialView ?>';
         if (initialView !== 'landingView') {
             document.querySelectorAll('.back-button').forEach(btn => btn.style.display = 'none');
+        }
+
+        // Populate footer
+        const footerEl = document.getElementById('footerInstituteName');
+        if (footerEl) {
+            footerEl.innerText = settings.instituteName || settings.appTitle || '';
         }
     });
 

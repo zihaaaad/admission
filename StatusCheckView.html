@@ -1,14 +1,14 @@
 <h3>ফি যাচাইকরণের বর্তমান অবস্থা</h3>
-<p style="margin-bottom: 1.5rem;">আপনার নিবন্ধিত মোবাইল নম্বরটি দিয়ে আপনার ফি যাচাইকরণের স্ট্যাটাস চেক করুন।</p>
+<p>আপনার নিবন্ধিত মোবাইল নম্বরটি দিয়ে আপনার ফি যাচাইকরণের স্ট্যাটাস চেক করুন।</p>
 
-<form id="statusSearchForm" style="display: flex; gap: 10px; margin-bottom: 1.5rem;">
+<form id="statusSearchForm" class="search-form">
     <input type="tel" id="statusSearchInput" name="phone" class="app-input" placeholder="মোবাইল নম্বর লিখুন" required>
-    <button type="submit" class="app-button btn-primary" style="margin-top:0; width: auto; white-space: nowrap;">যাচাই করুন</button>
+    <button type="submit" class="app-button btn-primary">যাচাই করুন</button>
 </form>
 
-<div id="statusLoader" class="loader" style="margin: 20px auto;"></div>
+<div id="statusLoader" class="loader"></div>
 <div id="statusDisplay"></div>
 
-<div style="margin-top: 2rem; text-align: center;">
-    <a class="back-button" onclick="showView('landingView')">← মূল পাতায় ফিরে যান</a>
+<div class="back-nav">
+    <a class="back-button" onclick="showView('landingView')">← মূল পাতায় ফিরে যান</a>
 </div>

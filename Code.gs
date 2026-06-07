@@ -60,47 +60,52 @@ function doGet(e) {
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
         <title>কার্যক্রম সাময়িকভাবে বন্ধ</title>
         <style>
+          * { box-sizing: border-box; margin: 0; padding: 0; }
           body { 
             font-family: 'Noto Sans Bengali', sans-serif; 
-            background-color: #F4F7F9; 
+            background-color: #F0F3F1; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
-            margin: 0;
-            color: #2C3E50;
-            padding: 20px;
+            color: #1E2722;
+            padding: 1rem;
           }
           .card {
             background-color: #FFFFFF;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(26, 62, 47, 0.06);
             text-align: center;
-            padding: 40px 50px;
-            max-width: 500px;
+            padding: 2rem 1.5rem;
+            max-width: 440px;
             width: 100%;
-            border-top: 5px solid #E67E22;
-            animation: fadeIn 0.5s ease-out;
+            border-top: 4px solid #B27A23;
+            animation: fadeIn 0.4s ease-out;
           }
           @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
           }
           .card img {
-            max-width: 200px;
-            margin-bottom: 20px;
+            max-width: 140px;
+            margin-bottom: 1rem;
           }
           .card h2 {
-            font-size: 1.8rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            color: #E67E22;
-            margin-bottom: 15px;
+            color: #1A3E2F;
+            margin-bottom: 0.75rem;
           }
           .card p {
-            font-size: 1.1rem;
-            line-height: 1.7;
-            color: #555;
-            margin: 0;
+            font-size: 0.92rem;
+            line-height: 1.65;
+            color: #52635A;
+          }
+          @media (min-width: 480px) {
+            .card { padding: 2.5rem 2.5rem; }
+            .card img { max-width: 160px; }
+            .card h2 { font-size: 1.35rem; }
+            .card p { font-size: 0.95rem; }
           }
         </style>
       </head>
