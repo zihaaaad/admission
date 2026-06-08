@@ -3,344 +3,511 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ভর্তি পোর্টাল ও ড্যাশবোর্ড - ডকুমেন্টেশন ম্যানুয়াল</title>
+  <title>আস-সুন্নাহ ভর্তি পোর্টাল ও অটোমেশন গাইড - ডেভেলপার ম্যানুয়াল</title>
   
-  <!-- Google Fonts for Plus Jakarta Sans & Hind Siliguri -->
+  <!-- Google Web Fonts: Outfit, Noto Sans Bengali, Fira Code -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
   
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- SITE HEADER NAVIGATION (GOOGLE DEVELOPER STYLE) -->
+  <!-- SITE HEADER NAVIGATION (GOOGLE DEVELOPER PORTAL STYLE) -->
   <header class="site-header">
-    <div class="container header-container">
-      <a href="#" class="brand">
-        <img src="assets/institute_logo.png" alt="আস-সুন্নাহ লোগো" class="brand-logo">
-        <span class="brand-name">আস-সুন্নাহ ভর্তি পোর্টাল</span>
-      </a>
-      <nav>
-        <ul class="nav-links">
-          <li><a href="#overview" class="nav-link">পরিচিতি</a></li>
-          <li><a href="#simulator" class="nav-link">শীট সিমুলেটর</a></li>
-          <li><a href="#setup" class="nav-link">সেটআপ গাইড</a></li>
-          <li><a href="#code-ref" class="nav-link">কোড রেফারেন্স</a></li>
-          <li><a href="#faq" class="nav-link">এফএকিউ</a></li>
-        </ul>
-      </nav>
-      <div class="header-actions">
-        <a href="#simulator" class="btn btn-secondary">ড্যাশবোর্ড ভিউ</a>
+    <div class="header-container">
+      <div class="header-left">
+        <!-- Mobile hamburger drawer toggle -->
+        <button id="menuToggle" class="menu-toggle-btn" aria-label="Toggle Navigation Menu">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+        <a href="#" class="brand">
+          <img src="assets/institute_logo.png" alt="আস-সুন্নাহ লোগো" class="brand-logo">
+          <span class="brand-name">আস-সুন্নাহ ভর্তি পোর্টাল</span>
+          <span class="brand-badge">ডকুমেন্টেশন</span>
+        </a>
+      </div>
+      
+      <!-- Live Google-style Search Box -->
+      <div class="header-center">
+        <div class="search-box-container">
+          <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="docSearch" placeholder="ডকুমেন্টেশন খুঁজুন..." autocomplete="off">
+          <div id="searchResults" class="search-results-dropdown hidden"></div>
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <a href="https://github.com/zihaaaad/admission" target="_blank" class="github-link" title="GitHub Repository">
+          <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        </a>
+        <a href="#simulator" class="btn btn-secondary">শীট সিমুলেটর</a>
       </div>
     </div>
   </header>
 
-  <!-- HERO SECTION -->
-  <section class="hero">
-    <div class="container">
-      <span class="hero-pill">Admission Automation System</span>
-      <h1>গুগল শীটস ভিত্তিক <span>ভর্তি ও পেমেন্ট অটোমেশন</span> পোর্টাল</h1>
-      <p>গুগল স্প্রেডশিট ডেটাবেজ, ড্রাইভ অটোমেশন, ওয়ান-ক্লিক ইনিশিয়েলাইজেশন এবং অ্যাডমিট কার্ড জেনারেশন ইমেইল সিস্টেম সম্বলিত রেসপন্সিভ ওয়েব অ্যাপ্লিকেশন।</p>
+  <!-- MAIN WRAPPER FOR 3-COLUMN LAYOUT -->
+  <div class="main-wrapper">
+    
+    <!-- LEFT SIDEBAR NAVIGATION -->
+    <aside class="sidebar-nav" id="sidebarNav">
+      <nav class="sidebar-menu">
+        <div class="sidebar-section-title">পরিচিতি ও বৈশিষ্ট্য</div>
+        <a href="#overview" class="sidebar-item active" data-section="overview">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+          <span>সিস্টেম পরিচিতি</span>
+        </a>
+        
+        <div class="sidebar-section-title">শীট ডেটাবেজ</div>
+        <a href="#simulator" class="sidebar-item" data-section="simulator">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+          <span>শীট সিমুলেটর</span>
+        </a>
+        
+        <div class="sidebar-section-title">সেটআপ গাইডলাইনস</div>
+        <a href="#setup" class="sidebar-item" data-section="setup">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          <span>সিস্টেম সেটআপ</span>
+        </a>
+
+        <div class="sidebar-section-title">ডেভেলপার রিসোর্স</div>
+        <a href="#code-ref" class="sidebar-item" data-section="code-ref">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          <span>কোড রেফারেন্স</span>
+        </a>
+        <a href="#maintenance" class="sidebar-item" data-section="maintenance">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          <span>ডাটা রিসেট গাইড</span>
+        </a>
+
+        <div class="sidebar-section-title">সহায়তা</div>
+        <a href="#faq" class="sidebar-item" data-section="faq">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          <span>সাধারণ জিজ্ঞাসা</span>
+        </a>
+        <a href="#gallery" class="sidebar-item" data-section="gallery">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          <span>ইন্টারফেস গ্যালারি</span>
+        </a>
+      </nav>
+    </aside>
+    
+    <!-- MAIN CONTENT PANEL -->
+    <main class="doc-content" id="docContent">
       
-      <div class="hero-buttons">
-        <a href="#setup" class="btn btn-primary">গেট স্টার্টেড</a>
-        <a href="https://github.com/zihaaaad/admission" target="_blank" class="btn btn-secondary">কোডবেজ দেখুন</a>
-      </div>
-
-      <!-- Browser mockup containing dashboard preview -->
-      <div class="browser-mockup">
-        <div class="browser-bar">
-          <span class="browser-dot"></span>
-          <span class="browser-dot"></span>
-          <span class="browser-dot"></span>
-          <div class="browser-url-bar">https://zihaaaad.github.io/admission/</div>
-        </div>
-        <div class="browser-viewport">
-          <img src="assets/portal_dashboard_mockup.png" alt="Admission Portal Dashboard Mockup">
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FEATURES SECTION -->
-  <section id="overview" class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Engineered for Speed & Automation</span>
-        <h2 class="section-title">পোর্টাল পরিচিতি ও বৈশিষ্ট্যসমূহ</h2>
-        <p class="section-desc">গুগল অ্যাপস স্ক্রিপ্টের উপর ভিত্তি করে তৈরি একটি উৎপাদন-প্রস্তুত ও নির্ভরযোগ্য অ্যাপ্লিকেশন কাঠামো যা ভর্তি ও নোটিফিকেশন কার্যক্রম সহজ করে দেয়।</p>
-      </div>
-
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon-wrapper">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-          </div>
-          <h3>মোবাইল-ফার্স্ট ইন্টারফেস</h3>
-          <p>পরীক্ষার্থীরা যেন স্মার্টফোন থেকে সহজে ভর্তি আবেদন ও স্ট্যাটাস যাচাই করতে পারেন, তার জন্য সম্পূর্ণ রেসপন্সিভ edge-to-edge লেআউট ডিজাইন করা হয়েছে।</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon-wrapper">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          </div>
-          <h3>এক-ক্লিকে ডেটাবেজ প্রস্তুত</h3>
-          <p>মেনু বারের বিশেষ অটোমেশন ইউটিলিটি ব্যবহার করে স্প্রেডশিটের সবগুলো শীট, কলাম হেডার, কনফিগারেশন ভ্যালু এবং ড্যাশবোর্ড মাত্র এক ক্লিকে স্বয়ংক্রিয়ভাবে তৈরি হয়ে যায়।</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon-wrapper">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          </div>
-          <h3>নিরাপত্তা ও নির্ভরযোগ্যতা</h3>
-          <p>ইনপুট স্ক্রিপ্ট ইনজেকশন (XSS) রোধন, ডাবল পেমেন্ট সাবমিশন দমন, প্রবেশপত্র ভিউ এক্সেস শেয়ারিং এবং ড্রাইভে ডক মেমোরি ফাকা করার গ্যারান্টিযুক্ত সেফগার্ডস রয়েছে।</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon-wrapper">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
-          </div>
-          <h3>অটো-রিকভারি ও রিসেট</h3>
-          <p>দুর্ঘটনাবশত স্প্রেডশিটের কোনো হেডার কলাম বা ট্যাব মুছে গেলে সিস্টেম অটো-রিকভারি করে এবং পূর্ববর্তী ডাটা অক্ষত রেখে হেডারগুলো সাজিয়ে দেয়।</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- INTERACTIVE SHEETS SIMULATOR -->
-  <section id="simulator" class="section section-alt">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Real-time Sheet Simulator</span>
-        <h2 class="section-title">স্প্রেডশিট ডেটাবেজ সিমুলেটর</h2>
-        <p class="section-desc">গুগল স্প্রেডশিটের ব্যাকএন্ড টেবিলগুলোর কলাম এবং ড্যাশবোর্ডের ডিজাইন ও স্ট্রাকচার সরাসরি নিচে দেখুন:</p>
-      </div>
-
-      <div class="simulator-layout">
-        <div class="sheet-tab-bar">
-          <button class="sheet-tab active" onclick="switchTab(this, 'dashboard')">Dashboard</button>
-          <button class="sheet-tab" onclick="switchTab(this, 'masterList')">Candidate_Master_List</button>
-          <button class="sheet-tab" onclick="switchTab(this, 'paymentLog')">Payment_Verification_Log</button>
-          <button class="sheet-tab" onclick="switchTab(this, 'results')">Results</button>
-          <button class="sheet-tab" onclick="switchTab(this, 'config')">_Configuration</button>
+      <!-- HERO DOCUMENTATION HEADER -->
+      <section class="hero-doc-header">
+        <div class="hero-pill">Admission Automation System</div>
+        <h1>গুগল শীটস ভিত্তিক <span>ভর্তি ও পেমেন্ট অটোমেশন</span> পোর্টাল</h1>
+        <p class="hero-desc">গুগল স্প্রেডশিট ডেটাবেজ, গুগল ড্রাইভ ডক জেনারেশন, রিয়েল-টাইম ক্যাশড এপিআই এবং প্রবেশপত্র জিমেইল নোটিফিকেশন সিস্টেম সম্বলিত পূর্ণাঙ্গ ওয়ান-ক্লিক অ্যাডমিশন কন্ট্রোল ডেক।</p>
+        
+        <div class="hero-actions-row">
+          <a href="#setup" class="btn btn-primary">সিস্টেম সেটআপ করুন</a>
+          <a href="https://github.com/zihaaaad/admission" target="_blank" class="btn btn-secondary">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="margin-right: 6px;"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            GitHub কোডবেজ
+          </a>
         </div>
         
-        <div class="sheet-viewport" id="sheetContentContainer">
-          <!-- Rendered dynamically by script.js -->
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SPLIT TIMELINE & LAYOUT -->
-  <section id="setup" class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Symmetric System Setup</span>
-        <h2 class="section-title">সিস্টেম সেটআপ গাইডলাইনস</h2>
-        <p class="section-desc">গুগল ড্রাইভে ডাটাবেজ ও কোড কনফিগারেশন সেটআপ করতে নিচের ৪টি ধাপ অনুসরণ করুন:</p>
-      </div>
-
-      <div class="split-layout">
-        <div class="split-left">
-          <div class="setup-timeline">
-            
-            <div class="timeline-step">
-              <span class="step-num">১</span>
-              <h3>নতুন স্প্রেডশিট ও ডাটাবেজ প্রস্তুত</h3>
-              <p>গুগল ড্রাইভে একটি ফোল্ডার খুলে নতুন স্প্রেডশিট ফাইল তৈরি করুন। স্প্রেডশিটের ভিতরে মেনু বার থেকে <strong>অটোমেশন > নতুন ডাটাবেজ প্রস্তুত করুন (Initialize System)</strong> এ ক্লিক করুন। সিস্টেম স্বয়ংক্রিয়ভাবে সবগুলো শীট, কলাম হেডার ও ড্যাশবোর্ড গ্রিড প্রস্তুত করবে।</p>
-            </div>
-
-            <div class="timeline-step">
-              <span class="step-num">২</span>
-              <h3>প্রবেশপত্র ডক টেমপ্লেট ও ড্রাইভ ফোল্ডার লিংক</h3>
-              <p>ড্রাইভে প্রবেশপত্রের একটি Google Doc ডিজাইন করুন ও প্রবেশপত্রের পিডিএফ ফাইলগুলো জমা করার জন্য ড্রাইভে একটি ফোল্ডার করুন। গুগলের ডক আইডি এবং ফোল্ডার আইডি কপি করে স্প্রেডশিটের <code>_Configuration</code> শীটের <code>admitCardTemplateId</code> এবং <code>admitCardFolderId</code> কলামে বসিয়ে দিন।</p>
-            </div>
-
-            <div class="timeline-step">
-              <span class="step-num">৩</span>
-              <h3>গুগল অ্যাপস স্ক্রিপ্ট কোড স্থাপন</h3>
-              <p>গুগল স্প্রেডশিটের <strong>Extensions > Apps Script</strong>-এ যান। স্ক্রিপ্ট এডিটরে <code>Code.gs</code> এর পূর্ববর্তী কোড মুছে দিন ও নিচের ৪টি কোড ফাইল এবং ৪টি HTML ফাইল তৈরি করে সোর্স কোডগুলো পেস্ট করে সেভ করুন।</p>
-            </div>
-
-            <div class="timeline-step">
-              <span class="step-num">৪</span>
-              <h3>ট্রিগার চালুকরণ ও ওয়েব অ্যাপ স্থাপন</h3>
-              <p>স্প্রেডশিট মেনু থেকে <strong>অটোমেশন > অটো-অ্যাকশন চালু করুন (Enable Trigger)</strong> এ ক্লিক করে ট্রিগার অন করুন। এরপর স্ক্রিপ্ট এডিটরের উপরে ডানে থাকা <strong>Deploy > New deployment</strong> এ গিয়ে Deployment type হিসেবে Web app সিলেক্ট করে Deploy করুন। প্রাপ্ত URL-টি হলো আপনার ভর্তি পোর্টাল লিংক।</p>
-            </div>
-
+        <!-- Premium Google Mockup Browser -->
+        <div class="browser-mockup">
+          <div class="browser-bar">
+            <span class="browser-dot"></span>
+            <span class="browser-dot"></span>
+            <span class="browser-dot"></span>
+            <div class="browser-url-bar">https://zihaaaad.github.io/admission/</div>
+          </div>
+          <div class="browser-viewport">
+            <img src="assets/portal_dashboard_mockup.png" alt="Admission Portal Dashboard Mockup">
           </div>
         </div>
+      </section>
 
-        <div class="split-right">
-          <img src="assets/dashboard_overview_ui.png" alt="Google Sheets Dashboard Overview Mockup">
+      <!-- SYSTEM OVERVIEW SECTION -->
+      <section id="overview" class="doc-section">
+        <div class="section-heading-block">
+          <span class="section-tag">Engineered for Speed & Automation</span>
+          <h2>পোর্টাল পরিচিতি ও বৈশিষ্ট্যসমূহ</h2>
+          <p>আস-সুন্নাহ ভর্তি পোর্টালটি গুগল ড্রাইভ ও অ্যাপস স্ক্রিপ্ট ব্যাকএন্ডের সমন্বয়ে গঠিত একটি আধুনিক ভর্তি প্রক্রিয়া এবং পেমেন্ট অনুমোদন মনিটর। এটি সম্পূর্ণ মোবাইল রেসপন্সিভ এবং স্বয়ংক্রিয় অ্যাডমিট কার্ড জেনারেশন ইমেইল সিস্টেম সম্বলিত।</p>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- CODE REFERENCE SECTION -->
-  <section id="code-ref" class="section section-alt">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Source Code Reference</span>
-        <h2 class="section-title">অ্যাপস স্ক্রিপ্ট সোর্স কোড রেফারেন্স</h2>
-        <p class="section-desc">আপনার গুগল অ্যাপস স্ক্রিপ্ট এডিটর ফাইলের সোর্স কোডগুলো পেতে নিচের ট্যাবগুলোতে ক্লিক করুন:</p>
-      </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            </div>
+            <h3>মোবাইল-ফার্স্ট ইন্টারফেস</h3>
+            <p>পরীক্ষার্থীরা স্মার্টফোন থেকে সহজে ভর্তি আবেদন ও স্ট্যাটাস যাচাই করতে পারেন, তার জন্য সম্পূর্ণ রেসপন্সিভ edge-to-edge লেআউট ডিজাইন করা হয়েছে।</p>
+          </div>
 
-      <div class="code-viewer-container">
-        <div class="code-tab-bar">
-          <button class="code-tab active" onclick="loadCodeTab(this, 'Config.gs')">Config.gs</button>
-          <button class="code-tab" onclick="loadCodeTab(this, 'Code.gs')">Code.gs</button>
-          <button class="code-tab" onclick="loadCodeTab(this, 'PaymentForm.gs')">PaymentForm.gs</button>
-          <button class="code-tab" onclick="loadCodeTab(this, 'ResultChecker.gs')">ResultChecker.gs</button>
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <h3>এক-ক্লিকে ডেটাবেজ প্রস্তুত</h3>
+            <p>মেনু বারের বিশেষ অটোমেশন ইউটিলিটি ব্যবহার করে স্প্রেডশিটের সবগুলো শীট, কলাম হেডার, কনফিগারেশন ভ্যালু এবং ড্যাশবোর্ড মাত্র এক ক্লিকে স্বয়ংক্রিয়ভাবে তৈরি হয়ে যায়।</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <h3>নিরাপত্তা ও নির্ভরযোগ্যতা</h3>
+            <p>ইনপুট স্ক্রিপ্ট ইনজেকশন রোধন, ডাবল পেমেন্ট সাবমিশন দমন, প্রবেশপত্র ভিউ এক্সেস শেয়ারিং এবং ড্রাইভে ডক মেমোরি ফাকা করার গ্যারান্টিযুক্ত সেফগার্ডস রয়েছে।</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+            </div>
+            <h3>অটো-রিকভারি ও রিসেট</h3>
+            <p>দুর্ঘটনাবশত স্প্রেডশিটের কোনো হেডার কলাম বা ট্যাব মুছে গেলে সিস্টেম অটো-রিকভারি করে এবং পূর্ববর্তী ডাটা অক্ষত রেখে হেডারগুলো সাজিয়ে দেয়।</p>
+          </div>
         </div>
-        
-        <div class="code-viewport-wrapper">
-          <button class="code-copy-btn" onclick="copyCodeContent()">Copy Code</button>
-          <pre class="code-pre"><code id="codeViewer">Loading code...</code></pre>
+      </section>
+
+      <!-- INTERACTIVE SHEET SIMULATOR -->
+      <section id="simulator" class="doc-section scroll-offset">
+        <div class="section-heading-block">
+          <span class="section-tag">Interactive Database Simulator</span>
+          <h2>স্প্রেডশিট ডেটাবেজ সিমুলেটর</h2>
+          <p>ব্যাকএন্ড গুগল স্প্রেডশিটের টেবিল ও ড্যাশবোর্ডের অভ্যন্তরীণ কলাম কাঠামো, ফর্মুলা এবং ডেটা বিন্যাস সরাসরি নিচে দেখতে পারবেন। প্রতিটি ট্যাব ক্লিক করে শীটগুলো পরিবর্তন করুন:</p>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- MAINTENANCE / RESET SECTION -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Maintenance Utilities</span>
-        <h2 class="section-title">ডাটা ক্লিয়ারিং ও ব্যাচ পরিবর্তন গাইড</h2>
-        <p class="section-desc">প্রতি ৩ মাস পর পর নতুন ব্যাচ বা কোর্সের ভর্তি কার্যক্রম শুরু করার সময় নিচের নিয়ম মেনে ডাটাবেজ রিসেট করুন:</p>
-      </div>
+        <div class="simulator-layout">
+          <div class="sheet-tab-bar">
+            <button class="sheet-tab active" onclick="switchTab(this, 'dashboard')">Dashboard</button>
+            <button class="sheet-tab" onclick="switchTab(this, 'masterList')">Candidate_Master_List</button>
+            <button class="sheet-tab" onclick="switchTab(this, 'paymentLog')">Payment_Verification_Log</button>
+            <button class="sheet-tab" onclick="switchTab(this, 'results')">Results</button>
+            <button class="sheet-tab" onclick="switchTab(this, 'config')">_Configuration</button>
+          </div>
+          
+          <div class="sheet-viewport" id="sheetContentContainer">
+            <!-- Dynamic Spreadsheet Rendering from script.js -->
+          </div>
+        </div>
+      </section>
 
-      <div class="mock-dashboard-wrapper">
-        <div class="dash-instructions-panel" style="background-color: #FFFFFF; font-size: 0.94rem; line-height: 1.8;">
-          <ol style="padding-left: 20px;">
-            <li style="margin-bottom: 12px;"><strong>ডাটা ব্যাকআপ:</strong> স্প্রেডশিটের <code>File > Download > Microsoft Excel (.xlsx)</code> অপশন থেকে পূর্ববর্তী ব্যাচের ডাটা ডাউনলোড করে ড্রাইভে ব্যাকআপ হিসেবে সেভ করুন।</li>
-            <li style="margin-bottom: 12px;"><strong>শীট ক্লিয়ার করা:</strong> স্প্রেডশিটের <code>Candidate_Master_List</code>, <code>Payment_Verification_Log</code>, ও <code>Results</code> শীটগুলোর ২ নম্বর রো থেকে নিচের সব ডাটা ডিলিট করে দিন (১ নম্বর রো-এর হেডার অক্ষত রাখবেন)।</li>
-            <li style="margin-bottom: 12px;"><strong>অটো হেডার রিকভারি:</strong> যদি ভুলবশত কোনো শীটের হেডার বা সম্পূর্ণ শীট ডিলিট হয়ে যায়, স্প্রেডশিটের <strong>অটোমেশন > নতুন ডাটাবেজ প্রস্তুত করুন (Initialize System)</strong> এ ক্লিক করুন। স্ক্রিপ্টটি পূর্ববর্তী ডাটা নষ্ট না করে স্বয়ংক্রিয়ভাবে কলাম হেডারগুলো পুনর্নির্মাণ করে দেবে।</li>
-            <li style="margin-bottom: 12px;"><strong>নতুন ডাটা ইনপুট:</strong> নতুন পরীক্ষার্থীদের তালিকা <code>Candidate_Master_List</code>-এ এবং রেজাল্ট শিট <code>Results</code>-এ ইনপুট করুন। ড্যাশবোর্ড আপডেট করতে মেনু থেকে <strong>ড্যাশবোর্ড রিফ্রেশ করুন</strong> ক্লিক করুন।</li>
+      <!-- CODELABS SYSTEM SETUP GUIDE -->
+      <section id="setup" class="doc-section scroll-offset">
+        <div class="section-heading-block">
+          <span class="section-tag">Google Codelabs Setup Guideline</span>
+          <h2>সিস্টেম সেটআপ ও কনফিগারেশন</h2>
+          <p>গুগল ড্রাইভে ভর্তি ডাটাবেজ এবং ওয়েব পোর্টাল এপিআই কোড প্রথমবার সচল করতে নিচের ধাপসমূহ অনুসরণ করুন। প্রতিটি ধাপে ক্লিক করে বিস্তারিত জানতে পারবেন:</p>
+        </div>
+
+        <div class="codelab-container">
+          <div class="codelab-left">
+            <div class="codelab-steps-list">
+              
+              <div class="codelab-step-item active" onclick="selectCodelabStep(1)" id="stepItem-1">
+                <span class="step-badge">১</span>
+                <div class="step-info">
+                  <h3>নতুন স্প্রেডশিট ও ডাটাবেজ প্রস্তুতি</h3>
+                  <span class="step-dur">৩ মিনিট</span>
+                </div>
+              </div>
+
+              <div class="codelab-step-item" onclick="selectCodelabStep(2)" id="stepItem-2">
+                <span class="step-badge">২</span>
+                <div class="step-info">
+                  <h3>টেমপ্লেট ও ড্রাইভ ফোল্ডার লিংক</h3>
+                  <span class="step-dur">৫ মিনিট</span>
+                </div>
+              </div>
+
+              <div class="codelab-step-item" onclick="selectCodelabStep(3)" id="stepItem-3">
+                <span class="step-badge">৩</span>
+                <div class="step-info">
+                  <h3>অ্যাপস স্ক্রিপ্ট কোড স্থাপন</h3>
+                  <span class="step-dur">৮ মিনিট</span>
+                </div>
+              </div>
+
+              <div class="codelab-step-item" onclick="selectCodelabStep(4)" id="stepItem-4">
+                <span class="step-badge">৪</span>
+                <div class="step-info">
+                  <h3>ট্রিগার অ্যাকশন ও পাবলিশ</h3>
+                  <span class="step-dur">৪ মিনিট</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="codelab-right">
+            <div class="codelab-content-panel">
+              
+              <!-- STEP 1 PANEL -->
+              <div class="codelab-panel active" id="codelabPanel-1">
+                <h3>ধাপ ১: নতুন স্প্রেডশিট ও ডাটাবেজ প্রস্তুত</h3>
+                <p>প্রথমে আপনার গুগল ড্রাইভ অ্যাকাউন্টে লগইন করে একটি নতুন স্প্রেডশিট ফাইল তৈরি করুন। স্প্রেডশিটের ভিতর মেনু বার থেকে <code>Extensions > Apps Script</code>-এ ক্লিক করুন। <code>Code.gs</code>-এ নিচের কোড পেস্ট করে সেভ করুন এবং স্প্রেডশিট উইন্ডোটি রিফ্রেশ করুন।</p>
+                
+                <div class="callout callout-info">
+                  <strong>তথ্য:</strong> প্রথমবার স্প্রেডশিট রিলোড করলে মেনু বারে একটি কাস্টম <strong>অটোমেশন (Automation Menu)</strong> যুক্ত হবে।
+                </div>
+
+                <p>মেনু বার থেকে <strong>অটোমেশন > নতুন ডাটাবেজ প্রস্তুত করুন (Initialize System)</strong> এ ক্লিক করুন। স্ক্রিপ্টটি স্বয়ংক্রিয়ভাবে ডাটাবেজ কাঠামো প্রস্তুত করবে।</p>
+                
+                <p>ইনিশিয়েলাইজেশন প্রসেসটি সাকসেসফুল হলে গুগল স্প্রেডশিটে নিচের শীটগুলো জেনারেট হবে:</p>
+                <ul>
+                  <li><code>Dashboard</code> - ভর্তি স্ট্যাটাস, পেমেন্ট ডাটা KPI কার্ড।</li>
+                  <li><code>Candidate_Master_List</code> - মূল ভর্তি আবেদনকারীর তালিকা।</li>
+                  <li><code>Payment_Verification_Log</code> - ভর্তি ফি পেমেন্ট রিকোয়েস্ট লগ।</li>
+                  <li><code>Results</code> - পরীক্ষার্থীদের প্রাপ্ত নম্বর ও মেরিট স্ট্যাটাস।</li>
+                  <li><code>_Configuration</code> - ড্রাইভে জেনারেট হওয়া অ্যাডমিট ফোল্ডার ও টেমপ্লেট লিংকের তথ্য।</li>
+                </ul>
+              </div>
+
+              <!-- STEP 2 PANEL -->
+              <div class="codelab-panel" id="codelabPanel-2">
+                <h3>ধাপ ২: প্রবেশপত্র ডক টেমপ্লেট ও ড্রাইভ ফোল্ডার লিংক</h3>
+                <p>পরীক্ষার্থীদের স্বয়ংক্রিয় প্রবেশপত্র পিডিএফ ফরম্যাটে জেনারেট করার জন্য ড্রাইভে দুটি রিসোর্স ফাইল প্রস্তুত করতে হবে:</p>
+                
+                <ol>
+                  <li>গুগল ড্রাইভে একটি নতুন ফোল্ডার তৈরি করুন যার নাম দিন <code>Admit Cards</code>। ফোল্ডারের URL থেকে ফোল্ডার আইডি (ইউনিক স্ট্রিং) কপি করুন।</li>
+                  <li>গুগল ডক দিয়ে একটি প্রবেশপত্র টেমপ্লেট ডিজাইন করুন। এতে ডাবল থার্ড ব্র্যাকেট ব্যবহার করে ডাইনামিক ফিল্ড যুক্ত করুন (যেমন: <code>{{FullName}}</code>, <code>{{SerialNumber}}</code>, <code>{{ExamDate}}</code>)। এরপর ফাইল URL থেকে ফাইল আইডি কপি করুন।</li>
+                </ol>
+
+                <div class="callout callout-warning">
+                  <strong>গুরুত্বপূর্ণ:</strong> স্প্রেডশিটের <code>_Configuration</code> শীটটি ওপেন করুন এবং কপি করা আইডি দুটি যথাক্রমে <code>admitCardTemplateId</code> এবং <code>admitCardFolderId</code> ভ্যালু কলামে পেস্ট করুন। এটি ছাড়া ব্যাকএন্ডে প্রবেশপত্র তৈরি করা সম্ভব নয়।
+                </div>
+                
+                <p>নিশ্চিত করুন যে প্রবেশপত্র ফোল্ডারটির শেয়ার পারমিশন <strong>Anyone with link can view</strong> এ সেট করা আছে, যাতে পরীক্ষার্থীরা প্রবেশপত্র ডাউনলোড করতে পারে।</p>
+              </div>
+
+              <!-- STEP 3 PANEL -->
+              <div class="codelab-panel" id="codelabPanel-3">
+                <h3>ধাপ ৩: গুগল অ্যাপস স্ক্রিপ্ট কোড স্থাপন</h3>
+                <p>গুগল স্প্রেডশিটের <code>Extensions > Apps Script</code> উইন্ডোতে ফিরে যান। সোর্স কোড সেকশনে মোট ৪টি কোড ফাইল এবং ৪টি HTML ফাইল ফাইল তৈরি করুন:</p>
+                
+                <div class="callout callout-info">
+                  <strong>কোড ফাইলসমূহ:</strong> ফাইল আইকন <code>+</code> চিহ্নে ক্লিক করে স্ক্রিপ্ট (Script) এবং এইচটিএমএল (HTML) ফাইল যুক্ত করুন।
+                </div>
+
+                <p>তৈরি করুন:</p>
+                <ul>
+                  <li><code>Config.gs</code> (কনফিগারেশন ডাটা প্রসেসর)</li>
+                  <li><code>Code.gs</code> (মূল রাউটিং ও সার্ভার হ্যান্ডলার)</li>
+                  <li><code>PaymentForm.gs</code> (ফি ভেরিফিকেশন ও ট্রানজেকশন প্রসেসর)</li>
+                  <li><code>ResultChecker.gs</code> (ফলাফল কুয়েরি ইঞ্জিন)</li>
+                  <li><code>Index.html</code> (প্রধান ইউজার ইন্টারফেস)</li>
+                  <li><code>PaymentView.html</code> (পেমেন্ট ফর্ম ভিউ)</li>
+                  <li><code>ResultView.html</code> (ফলাফল ভিউ)</li>
+                  <li><code>StatusCheckView.html</code> (স্ট্যাটাস ট্র্যাকিং ভিউ)</li>
+                </ul>
+                <p>প্রতিটি ফাইলের সোর্স কোড নিচের <strong>কোড রেফারেন্স</strong> সেকশন থেকে কপি করে পেস্ট করুন এবং সেভ বাটনে ক্লিক করুন।</p>
+              </div>
+
+              <!-- STEP 4 PANEL -->
+              <div class="codelab-panel" id="codelabPanel-4">
+                <h3>ধাপ ৪: ট্রিগার চালুকরণ ও ওয়েব অ্যাপ স্থাপন</h3>
+                <p>স্প্রেডশিটের মেনু বার থেকে <strong>অটোমেশন > অটো-অ্যাকশন চালু করুন (Enable Trigger)</strong> এ ক্লিক করুন। এটি ব্যাকএন্ডে <code>onEdit</code> ট্রিগার সেটআপ করবে যা পেমেন্ট স্ট্যাটাস পরিবর্তনের সাথে সাথে ড্যাশবোর্ড আপডেট করবে।</p>
+                
+                <p>সবশেষে স্ক্রিপ্ট এডিটরের উপরে ডানে থাকা <strong>Deploy > New deployment</strong> এ ক্লিক করুন:</p>
+                <ul>
+                  <li><strong>Deployment Type:</strong> Web App সিলেক্ট করুন।</li>
+                  <li><strong>Execute As:</strong> Me (your-email@gmail.com) রাখুন।</li>
+                  <li><strong>Who has access:</strong> Anyone সিলেক্ট করুন (এটি গুরুত্বপূর্ণ, যাতে পরীক্ষার্থীরা ফর্ম দেখতে পারে)।</li>
+                </ul>
+                
+                <div class="callout callout-info">
+                  <strong>নিরাপত্তা চেক:</strong> ওয়েব অ্যাপটি প্রথমবারের জন্য পাবলিশ করার সময় গুগল ডাটা এক্সেস পারমিশন চাইবে। আপনার গুগল অ্যাকাউন্ট সিলেক্ট করে পারমিশন গ্রান্ট করুন।
+                </div>
+                
+                <p>ডিপ্লয়মেন্ট সম্পন্ন হলে স্ক্রিনে একটি <strong>Web App URL</strong> পাবেন। এই URL-টি কপি করে নিন। এটিই আপনার মূল ভর্তি পোর্টাল লিংক যা পরীক্ষার্থীদের সাথে শেয়ার করতে হবে।</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SOURCE CODE REFERENCE SECTION -->
+      <section id="code-ref" class="doc-section scroll-offset">
+        <div class="section-heading-block">
+          <span class="section-tag">Source Code Repository</span>
+          <h2>অ্যাপস স্ক্রিপ্ট সোর্স কোড রেফারেন্স</h2>
+          <p>আপনার গুগল অ্যাপস স্ক্রিপ্ট ফাইলে পেস্ট করার জন্য প্রয়োজনীয় কোড ফাইলসমূহ নিচে দেওয়া হলো। ট্যাব পরিবর্তন করে ফাইল সিলেক্ট করুন এবং কপি বাটনে ক্লিক করুন:</p>
+        </div>
+
+        <div class="code-viewer-container">
+          <div class="code-tab-bar">
+            <button class="code-tab active" onclick="loadCodeTab(this, 'Config.gs')">Config.gs</button>
+            <button class="code-tab" onclick="loadCodeTab(this, 'Code.gs')">Code.gs</button>
+            <button class="code-tab" onclick="loadCodeTab(this, 'PaymentForm.gs')">PaymentForm.gs</button>
+            <button class="code-tab" onclick="loadCodeTab(this, 'ResultChecker.gs')">ResultChecker.gs</button>
+          </div>
+          
+          <div class="code-viewport-wrapper">
+            <button class="code-copy-btn" onclick="copyCodeContent()">Copy Code</button>
+            <pre class="code-pre"><code id="codeViewer">Loading code...</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- MAINTENANCE / RESET SECTION -->
+      <section id="maintenance" class="doc-section scroll-offset">
+        <div class="section-heading-block">
+          <span class="section-tag">System Maintenance</span>
+          <h2>ডাটা রিসেট ও ক্লিয়ারিং গাইড</h2>
+          <p>নতুন ব্যাচ বা নতুন বছরের ভর্তি কার্যক্রম শুরু করার সময় স্প্রেডশিট ডেটাবেজ রিসেট করতে নিচের নিয়মসমূহ সতর্কতার সাথে অনুসরণ করুন:</p>
+        </div>
+
+        <div class="callout callout-danger">
+          <strong>সতর্কতা:</strong> ডাটা রিসেট করার পূর্বে অবশ্যই পূর্ববর্তী ব্যাচের সমস্ত তথ্যের ব্যাকআপ ড্রাইভ ফোল্ডারে এক্সেল ফাইল আকারে ডাউনলোড করে রাখুন।
+        </div>
+
+        <div class="maintenance-box">
+          <ol class="maintenance-list">
+            <li>
+              <strong>ডাটা ব্যাকআপ:</strong> 
+              স্প্রেডশিটের <code>File > Download > Microsoft Excel (.xlsx)</code> অপশন থেকে পূর্ববর্তী ব্যাচের ডাটা ডাউনলোড করে ড্রাইভে ব্যাকআপ হিসেবে সেভ করুন।
+            </li>
+            <li>
+              <strong>শীট ক্লিয়ার করা:</strong> 
+              স্প্রেডশিটের <code>Candidate_Master_List</code>, <code>Payment_Verification_Log</code>, ও <code>Results</code> শীটগুলোর ২ নম্বর রো থেকে নিচের সব ডাটা ডিলিট করে দিন (১ নম্বর রো-এর হেডার অক্ষত রাখবেন)।
+            </li>
+            <li>
+              <strong>অটো হেডার রিকভারি:</strong> 
+              যদি ভুলবশত কোনো শীটের হেডার বা সম্পূর্ণ শীট ডিলিট হয়ে যায়, স্প্রেডশিটের <strong>অটোমেশন > নতুন ডাটাবেজ প্রস্তুত করুন (Initialize System)</strong> এ ক্লিক করুন। স্ক্রিপ্টটি পূর্ববর্তী ডাটা নষ্ট না করে স্বয়ংক্রিয়ভাবে কলাম হেডারগুলো পুনর্নির্মাণ করে দেবে।
+            </li>
+            <li>
+              <strong>নতুন ডাটা ইনপুট:</strong> 
+              নতুন পরীক্ষার্থীদের তালিকা <code>Candidate_Master_List</code>-এ এবং রেজাল্ট শিট <code>Results</code>-এ ইনপুট করুন। ড্যাশবোর্ড আপডেট করতে মেনু থেকে <strong>ড্যাশবোর্ড রিফ্রেশ করুন</strong> ক্লিক করুন।
+            </li>
           </ol>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- TECHNICAL FAQ SECTION -->
-  <section id="faq" class="section section-alt">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Technical FAQ</span>
-        <h2 class="section-title">সাধারণ জিজ্ঞাসা ও উত্তর</h2>
-        <p class="section-desc">ভর্তি পোর্টাল ও অটোমেশন পরিচালনা করতে গিয়ে সাধারণত যে প্রশ্নগুলোর সম্মুখীন হতে পারেন:</p>
-      </div>
-
-      <div class="faq-accordion">
-        
-        <div class="faq-item">
-          <div class="faq-question" onclick="toggleFaq(this)">
-            <span>১. ভর্তি পোর্টালটি মোবাইল স্ক্রিনে কেমন দেখাবে?</span>
-            <span class="faq-icon">&#9662;</span>
-          </div>
-          <div class="faq-answer">
-            <p>ভর্তি পোর্টালটি সম্পূর্ণ মোবাইল-ফার্স্ট ডিজাইন অনুসরণ করে। এটি পরীক্ষার্থীদের জন্য edge-to-edge লেআউট, বড় টাচ বাটন এবং Noto Sans Bengali ফন্টে পরিষ্কার টেক্সট প্রদর্শন করে। নিচে ইন্টারফেস গ্যালারি থেকে মোবাইল স্ক্রিনের ভিজ্যুয়াল লেআউট দেখতে পারেন।</p>
-          </div>
+      <!-- TECHNICAL FAQ SECTION -->
+      <section id="faq" class="doc-section scroll-offset">
+        <div class="section-heading-block">
+          <span class="section-tag">Technical FAQ</span>
+          <h2>সাধারণ জিজ্ঞাসা ও উত্তর</h2>
+          <p>ভর্তি পোর্টাল ও অটোমেশন পরিচালনা করতে গিয়ে সাধারণত যে প্রশ্নগুলোর সম্মুখীন হতে পারেন:</p>
         </div>
 
-        <div class="faq-item">
-          <div class="faq-question" onclick="toggleFaq(this)">
-            <span>২. স্প্রেডশিটের কনফিগারেশন আপডেট কতক্ষণ পর পোর্টালে দৃশ্যমান হয়?</span>
-            <span class="faq-icon">&#9662;</span>
+        <div class="faq-accordion">
+          
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              <span>১. ভর্তি পোর্টালটি মোবাইল স্ক্রিনে কেমন দেখাবে?</span>
+              <span class="faq-icon">&#9662;</span>
+            </div>
+            <div class="faq-answer">
+              <p>ভর্তি পোর্টালটি সম্পূর্ণ মোবাইল-ফার্স্ট ডিজাইন অনুসরণ করে। এটি পরীক্ষার্থীদের জন্য edge-to-edge লেআউট, বড় টাচ বাটন এবং Noto Sans Bengali ফন্টে পরিষ্কার টেক্সট প্রদর্শন করে। নিচে ইন্টারফেস গ্যালারি থেকে মোবাইল স্ক্রিনের ভিজ্যুয়াল লেআউট দেখতে পারেন।</p>
+            </div>
           </div>
-          <div class="faq-answer">
-            <p>পোর্টালের স্পিড বৃদ্ধির জন্য কনফিগারেশন ডাটা ১ মিনিটের জন্য ক্যাশে রাখা হয়। কনফিগারেশন শীটে কোনো এডিট সম্পন্ন হলে স্ক্রিপ্ট ক্যাশ মেমোরি অটোম্যাটিক খালি করে দেয়, ফলে পোর্টালে নতুন তথ্য সাথে সাথে রিফ্লেক্ট হয়।</p>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              <span>২. স্প্রেডশিটের কনফিগারেশন আপডেট কতক্ষণ পর পোর্টালে দৃশ্যমান হয়?</span>
+              <span class="faq-icon">&#9662;</span>
+            </div>
+            <div class="faq-answer">
+              <p>পোর্টালের স্পিড বৃদ্ধির জন্য কনফিগারেশন ডাটা ১ মিনিটের জন্য ক্যাশে রাখা হয়। কনফিগারেশন শীটে কোনো এডিট সম্পন্ন হলে স্ক্রিপ্ট ক্যাশ মেমোরি অটোম্যাটিক খালি করে দেয়, ফলে পোর্টালে নতুন তথ্য সাথে সাথে রিফ্লেক্ট হয়।</p>
+            </div>
           </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              <span>৩. প্রবেশপত্র এবং গুগল ড্রাইভের মেমোরি কীভাবে নিরাপদ রাখা হয়?</span>
+              <span class="faq-icon">&#9662;</span>
+            </div>
+            <div class="faq-answer">
+              <p>পিডিএফ প্রবেশপত্র তৈরির পর স্ক্রিপ্টটি ড্রাইভে কপি করা গুগল ডক টেমপ্লেটটি একটি <code>finally</code> ব্লকের মাধ্যমে স্বয়ংক্রিয়ভাবে ট্র্যাশে পাঠিয়ে দেয়। এটি ড্রাইভে মেমোরি জ্যাম হতে দেয় না। এছাড়া জেনারেট হওয়া পিডিএফটির ভিউ পারমিশন <code>Anyone with link</code> সেট করা হয় যাতে অন্যান্য কো-অর্ডিনেটররা স্প্রেডশিট থেকে সরাসরি এটি ওপেন ও প্রিন্ট করতে পারেন।</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              <span>৪. গুগল অ্যাপস স্ক্রিপ্টের প্রতিদিনের কোটা কেমন?</span>
+              <span class="faq-icon">&#9662;</span>
+            </div>
+            <div class="faq-answer">
+              <p>গুগল অ্যাপস স্ক্রিপ্ট প্রতিদিন জিমেইল দিয়ে ফ্রি একাউন্টে ১০০টি এবং গুগল ওয়ার্কস্পেস একাউন্টে ১,৫০০টি ইমেইল প্রেরণের সুযোগ দেয়। প্রবেশপত্র প্রেরণের সংখ্যা এর বেশি হলে অনুমোদন প্রক্রিয়াটি ব্যাচ আকারে সম্পন্ন করার পরামর্শ দেওয়া হলো।</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- INTERFACE GALLERY SECTION -->
+      <section id="gallery" class="doc-section scroll-offset">
+        <div class="section-heading-block">
+          <span class="section-tag">Interface Gallery</span>
+          <h2>পোর্টাল ইন্টারফেস গ্যালারি</h2>
+          <p>ভর্তি পোর্টাল ও অটোমেটেড ড্যাশবোর্ডের মূল ভিজ্যুয়ালসমূহ নিচে দেওয়া হলো:</p>
         </div>
 
-        <div class="faq-item">
-          <div class="faq-question" onclick="toggleFaq(this)">
-            <span>৩. প্রবেশপত্র এবং গুগল ড্রাইভের মেমোরি কীভাবে নিরাপদ রাখা হয়?</span>
-            <span class="faq-icon">&#9662;</span>
+        <div class="gallery-grid">
+          <div class="gallery-item">
+            <div class="gallery-img-wrapper">
+              <a href="assets/portal_dashboard_mockup.png" target="_blank">
+                <img src="assets/portal_dashboard_mockup.png" alt="Dashboard View">
+              </a>
+            </div>
+            <div class="gallery-caption">মেম্বার ও পেমেন্ট আপডেট ড্যাশবোর্ড</div>
           </div>
-          <div class="faq-answer">
-            <p>পিডিএফ প্রবেশপত্র তৈরির পর স্ক্রিপ্টটি ড্রাইভে কপি করা গুগল ডক টেমপ্লেটটি একটি <code>finally</code> ব্লকের মাধ্যমে স্বয়ংক্রিয়ভাবে ট্র্যাশে পাঠিয়ে দেয়। এটি ড্রাইভে মেমোরি জ্যাম হতে দেয় না। এছাড়া জেনারেট হওয়া পিডিএফটির ভিউ পারমিশন <code>Anyone with link</code> সেট করা হয় যাতে অন্যান্য কো-অর্ডিনেটররা স্প্রেডশিট থেকে সরাসরি এটি ওপেন ও প্রিন্ট করতে পারেন।</p>
+          
+          <div class="gallery-item">
+            <div class="gallery-img-wrapper">
+              <a href="assets/dashboard_overview_ui.png" target="_blank">
+                <img src="assets/dashboard_overview_ui.png" alt="Dashboard Cards">
+              </a>
+            </div>
+            <div class="gallery-caption">ড্যাশবোর্ড ৪ কার্ড লেআউট</div>
+          </div>
+
+          <div class="gallery-item">
+            <div class="gallery-img-wrapper">
+              <a href="assets/portal_view_1.png" target="_blank">
+                <img src="assets/portal_view_1.png" alt="Payment View">
+              </a>
+            </div>
+            <div class="gallery-caption">ভর্তি পোর্টাল ফি প্রদান ফর্ম</div>
+          </div>
+
+          <div class="gallery-item">
+            <div class="gallery-img-wrapper">
+              <a href="assets/portal_view_2.png" target="_blank">
+                <img src="assets/portal_view_2.png" alt="Result View">
+              </a>
+            </div>
+            <div class="gallery-caption">মোবাইল ফলাফল অনুসন্ধান স্ক্রিন</div>
           </div>
         </div>
+      </section>
 
-        <div class="faq-item">
-          <div class="faq-question" onclick="toggleFaq(this)">
-            <span>৪. গুগল অ্যাপস স্ক্রিপ্টের প্রতিদিনের কোটা কেমন?</span>
-            <span class="faq-icon">&#9662;</span>
-          </div>
-          <div class="faq-answer">
-            <p>গুগল অ্যাপস স্ক্রিপ্ট প্রতিদিন জিমেইল দিয়ে ফ্রি একাউন্টে ১০০টি এবং গুগল ওয়ার্কস্পেস একাউন্টে ১,৫০০টি ইমেইল প্রেরণের সুযোগ দেয়। প্রবেশপত্র প্রেরণের সংখ্যা এর বেশি হলে অনুমোদন প্রক্রিয়াটি ব্যাচ আকারে সম্পন্ন করার পরামর্শ দেওয়া হলো।</p>
-          </div>
-        </div>
+      <!-- SITE FOOTER -->
+      <footer class="site-footer">
+        <p>&copy; 2026 আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট। সর্বস্বত্ব সংরক্ষিত।</p>
+        <p>ডিজাইন ও সিস্টেম ডেভেলপমেন্ট: <a href="mailto:zihad.connects@gmail.com">Zihad Hasan</a> | সোর্স কোড <a href="https://github.com/zihaaaad/admission" target="_blank">GitHub Repository</a></p>
+      </footer>
 
-      </div>
-    </div>
-  </section>
+    </main>
 
-  <!-- INTERFACE GALLERY SECTION -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Interface Showcase</span>
-        <h2 class="section-title">পোর্টাল ইন্টারফেস গ্যালারি</h2>
-        <p class="section-desc">ভর্তি পোর্টাল ও অটোমেটেড ড্যাশবোর্ডের মূল ভিজ্যুয়ালসমূহ নিচে দেওয়া হলো:</p>
-      </div>
+    <!-- RIGHT SIDEBAR: ON THIS PAGE (TABLE OF CONTENTS) -->
+    <aside class="toc-sidebar" id="tocSidebar">
+      <div class="toc-title">এই পৃষ্ঠায় কী আছে</div>
+      <ul class="toc-links">
+        <li><a href="#overview" class="toc-link active" data-toc="overview">পরিচিতি ও বৈশিষ্ট্য</a></li>
+        <li><a href="#simulator" class="toc-link" data-toc="simulator">শীট সিমুলেটর</a></li>
+        <li><a href="#setup" class="toc-link" data-toc="setup">সিস্টেম সেটআপ</a></li>
+        <li><a href="#code-ref" class="toc-link" data-toc="code-ref">কোড রেফারেন্স</a></li>
+        <li><a href="#maintenance" class="toc-link" data-toc="maintenance">ডাটা রিসেট গাইড</a></li>
+        <li><a href="#faq" class="toc-link" data-toc="faq">সাধারণ জিজ্ঞাসা</a></li>
+        <li><a href="#gallery" class="toc-link" data-toc="gallery">পোর্টাল গ্যালারি</a></li>
+      </ul>
+    </aside>
 
-      <div class="gallery-grid">
-        <div class="gallery-item">
-          <div class="gallery-img-wrapper">
-            <a href="assets/portal_dashboard_mockup.png" target="_blank">
-              <img src="assets/portal_dashboard_mockup.png" alt="Dashboard View">
-            </a>
-          </div>
-          <div class="gallery-caption">মেম্বার ও পেমেন্ট আপডেট ড্যাশবোর্ড</div>
-        </div>
-        
-        <div class="gallery-item">
-          <div class="gallery-img-wrapper">
-            <a href="assets/dashboard_overview_ui.png" target="_blank">
-              <img src="assets/dashboard_overview_ui.png" alt="Dashboard Cards">
-            </a>
-          </div>
-          <div class="gallery-caption">ড্যাশবোর্ড ৪ কার্ড লেআউট</div>
-        </div>
+  </div>
 
-        <div class="gallery-item">
-          <div class="gallery-img-wrapper">
-            <a href="assets/portal_view_1.png" target="_blank">
-              <img src="assets/portal_view_1.png" alt="Payment View">
-            </a>
-          </div>
-          <div class="gallery-caption">ভর্তি পোর্টাল ফি প্রদান ফর্ম</div>
-        </div>
-
-        <div class="gallery-item">
-          <div class="gallery-img-wrapper">
-            <a href="assets/portal_view_2.png" target="_blank">
-              <img src="assets/portal_view_2.png" alt="Result View">
-            </a>
-          </div>
-          <div class="gallery-caption">মোবাইল ফলাফল অনুসন্ধান স্ক্রিন</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SITE FOOTER -->
-  <footer class="site-footer">
-    <div class="container">
-      <p>&copy; 2026 আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট। সর্বস্বত্ব সংরক্ষিত।</p>
-      <p>ডিজাইন ও সিস্টেম ডেভেলপমেন্ট: <a href="mailto:zihad.connects@gmail.com">Zihad Hasan</a> | সোর্স কোড <a href="https://github.com/zihaaaad/admission" target="_blank">GitHub Repository</a></p>
-    </div>
-  </footer>
-
-  <!-- Script Simulator logic -->
+  <!-- JavaScript logic -->
   <script src="script.js"></script>
 </body>
 </html>
