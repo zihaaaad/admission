@@ -23,7 +23,7 @@ const SHEET_DATA = {
     subHeaders: ["Timestamp", "RegisteredPhoneNumber", "FullName", "SerialNumber", "District", "PaymentMethod", "PaymentPhoneNumber", "TransactionID", "ApprovalStatus", "ProcessingStatus", "AdmitCardLink", "Rejection_Reason"],
     rows: [
       ["08/06/2026 09:12:05", "01712345678", "মোহাম্মদ আব্দুল্লাহ", "1001", "ঢাকা", "bKash (Personal)", "01711112222", "TRX99882211", "Approved", "Success", "https://docs.google.com/viewer?url=admit_card_1001.pdf", ""],
-      ["08/06/2026 09:15:30", "01812345679", "মোসাম্মৎ ফাতিমা", "1002", "চট্টগ্রাম", "Nagad (Personal)", "01822223333", "TXID88776655", "Approved", "Success", "https://docs.google.com/viewer?url=admit_card_1002.pdf", ""],
+      ["08/06/2026 09:15:30", "01812345679", "মোসাম্মৎ ফাতিমা", "1002", "চট্টগ্রাম", "Nagad (Personal)", "01822223333", "Approved", "Success", "https://docs.google.com/viewer?url=admit_card_1002.pdf", ""],
       ["08/06/2026 09:18:45", "01912345680", "আহমেদ হাসান", "1003", "সিলেট", "bKash (Personal)", "01933334444", "Pending", "প্রসেসিং চলছে...", "", ""],
       ["08/06/2026 09:22:10", "01512345681", "খাদিজা আক্তার", "1004", "রাজশাহী", "Nagad (Personal)", "01544445555", "WRONGTRXID", "Rejected", "Rejected", "", "পেমেন্ট তথ্য যাচাইয়ে অসংগতি (মোবাইল নম্বর ও TrxID ম্যাচ করেনি)"],
       ["08/06/2026 09:25:00", "01312345682", "মো: আরিফ রহমান", "1005", "খুলনা", "bKash (Personal)", "01355556666", "Pending", "Pending", "", ""]
@@ -67,7 +67,7 @@ const SHEET_DATA = {
 
 // Toggle active tab function for sheets simulator
 function switchTab(element, tabId) {
-  document.querySelectorAll('.sheet-tab-btn').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.sheet-tab').forEach(tab => tab.classList.remove('active'));
   element.classList.add('active');
 
   const displayContainer = document.getElementById('sheetContentContainer');
@@ -140,35 +140,31 @@ function renderDashboard(container) {
       অটোমেশন ড্যাশবোর্ড (KPI view) - গ্রিডলাইনবিহীন শীট লেআউট
     </div>
     
-    <div class="mock-dashboard-card">
+    <div class="mock-dashboard-wrapper">
       <div class="mock-dash-banner">
-        <h2>ভর্তি ও পেমেন্ট প্রসেসিং ড্যাশবোর্ড</h2>
+        <h3>ভর্তি ও পেমেন্ট প্রসেসিং ড্যাশবোর্ড</h3>
         <p>আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট | রিয়েল-টাইম ডাটা আপডেট</p>
       </div>
 
-      <div class="dash-kpis-grid">
-        <div class="dash-kpi-card kpi-total">
+      <div class="dash-kpi-grid">
+        <div class="dash-kpi-card">
           <div class="kpi-title">মোট পেমেন্ট আবেদন</div>
-          <div class="kpi-number">২৪৫</div>
-          <div class="kpi-desc">মোট প্রাপ্ত ফি সাবমিশন</div>
+          <div class="kpi-value">২৪৫</div>
         </div>
 
-        <div class="dash-kpi-card kpi-pending">
+        <div class="dash-kpi-card">
           <div class="kpi-title">যাচাই চলছে</div>
-          <div class="kpi-number">১২</div>
-          <div class="kpi-desc">অপেক্ষমান ট্রানজেকশন</div>
+          <div class="kpi-value pending">১২</div>
         </div>
 
-        <div class="dash-kpi-card kpi-approved">
+        <div class="dash-kpi-card">
           <div class="kpi-title">অনুমোদিত পেমেন্ট</div>
-          <div class="kpi-number">২২৩</div>
-          <div class="kpi-desc">প্রবেশপত্র পাঠানো সম্পন্ন</div>
+          <div class="kpi-value">২২৩</div>
         </div>
 
-        <div class="dash-kpi-card kpi-rejected">
+        <div class="dash-kpi-card">
           <div class="kpi-title">বাতিল করা হয়েছে</div>
-          <div class="kpi-number">১০</div>
-          <div class="kpi-desc">রিজেক্টেড ট্রানজেকশন</div>
+          <div class="kpi-value rejected">১০</div>
         </div>
       </div>
 
@@ -193,13 +189,12 @@ function renderDashboard(container) {
 let currentCodeContent = "";
 
 function loadCodeTab(buttonElement, filename) {
-  document.querySelectorAll('.code-tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.code-tab').forEach(btn => btn.classList.remove('active'));
   buttonElement.classList.add('active');
 
   const viewer = document.getElementById('codeViewer');
   viewer.innerText = "Loading code from repository...";
   
-  // Try fetching the raw source code from parent workspace level
   fetch('../' + filename)
     .then(response => {
        if (!response.ok) throw new Error("File not found");
@@ -210,7 +205,6 @@ function loadCodeTab(buttonElement, filename) {
        viewer.innerText = text;
     })
     .catch(err => {
-       // Fallback message for local filesystem viewing
        const fallbackText = `// Local File Access Warning
 // Browser security policies block loading files dynamically when opened directly from the filesystem (via file://).
 //
@@ -232,7 +226,7 @@ function copyCodeContent() {
   navigator.clipboard.writeText(currentCodeContent)
     .then(() => {
        btn.innerText = "Copied!";
-       btn.style.backgroundColor = "#10B981"; // success green
+       btn.style.backgroundColor = "#135E3B"; // brand green
        btn.style.color = "#FFFFFF";
        
        setTimeout(() => {
@@ -247,41 +241,32 @@ function copyCodeContent() {
 }
 
 // =================================================================
-//      STICKY SIDEBAR SCROLL SPY
+//      TECHNICAL FAQ ACCORDION TOGGLE
 // =================================================================
 
-window.addEventListener('scroll', () => {
-  const sections = document.querySelectorAll('section');
-  const navItems = document.querySelectorAll('.sidebar-item');
+function toggleFaq(element) {
+  const item = element.parentElement;
+  const isActive = item.classList.contains('active');
   
-  let currentActive = "";
+  // Close all FAQ items
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
   
-  sections.forEach(section => {
-    const sectionTop = section.offsetTop;
-    // Offset threshold
-    if (window.pageYOffset >= (sectionTop - 180)) {
-      currentActive = section.getAttribute('id');
-    }
-  });
-
-  navItems.forEach(item => {
-    item.classList.remove('active');
-    if (item.getAttribute('id') === `menu-${currentActive}`) {
-      item.classList.add('active');
-    }
-  });
-});
+  // Toggle the clicked one
+  if (!isActive) {
+    item.classList.add('active');
+  }
+}
 
 // INITIAL LOADS
 document.addEventListener('DOMContentLoaded', () => {
   // Load initial simulator sheet (Dashboard)
-  const initialTab = document.querySelector('.sheet-tab-btn.active');
+  const initialTab = document.querySelector('.sheet-tab.active');
   if (initialTab) {
     switchTab(initialTab, 'dashboard');
   }
 
   // Load initial code file (Config.gs)
-  const initialCodeTab = document.querySelector('.code-tab-btn.active');
+  const initialCodeTab = document.querySelector('.code-tab.active');
   if (initialCodeTab) {
     loadCodeTab(initialCodeTab, 'Config.gs');
   }
