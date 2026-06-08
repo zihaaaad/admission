@@ -4,201 +4,256 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ভর্তি পোর্টাল ও ড্যাশবোর্ড - ডকস ও গাইড</title>
-  <!-- Google Fonts for Bengali Typography -->
+  <!-- Google Fonts for Bengali and English Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- HERO HEADER -->
+  <!-- HERO HEADER WITH MESH GRADIENT -->
   <header class="hero">
-    <div class="container">
-      <img src="assets/assunnah_dashboard_ui.png" alt="Logo" class="hero-logo" style="border-radius: 50%;">
-      <h1>ভর্তি ও ফলাফল যাচাইকরণ পোর্টাল</h1>
-      <p>আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউটের জন্য তৈরি একটি প্রফেশনাল, মোবাইল-ফার্স্ট ওয়েব অ্যাপ্লিকেশন যা গুগল স্প্রেডশিট ডেটাবেজ, অ্যাডমিট কার্ড জেনারেশন ও ইমেইল নোটিফিকেশন অটোমেশন পরিচালনা করে।</p>
+    <div class="hero-content">
+      <div class="hero-badge">আস-সুন্নাহ অটোমেশন প্রজেক্ট</div>
+      <h1>ভর্তি ও পেমেন্ট প্রসেসিং পোর্টাল</h1>
+      <p>গুগল স্প্রেডশিট, ড্রাইভ অটোমেশন, ওয়ান-ক্লিক ইনিশিয়েলাইজেশন এবং অ্যাডমিট কার্ড জেনারেশন ইমেইল সিস্টেম সম্বলিত রেসপন্সিভ ওয়েব অ্যাপ্লিকেশন।</p>
       <div class="hero-meta">
-        <span>সংস্করণ: <strong>v1.0 (QA-Hardened)</strong></span>
-        <span>ডেভেলপার: <strong>Zihad Hasan</strong></span>
+        <span>সংস্করণ: <strong>v1.0 (QA Hardened)</strong></span>
+        <span>হৃদয়গ্রাহী থিম: <strong>Emerald Green & Warm Gold</strong></span>
+        <span>গাইডলাইনস: <strong>অ্যাডমিন ম্যানুয়াল</strong></span>
       </div>
     </div>
   </header>
 
-  <main class="container">
-
-    <!-- OVERVIEW SECTION -->
-    <section class="section">
-      <h2 class="section-title">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-        পোর্টাল পরিচিতি ও বৈশিষ্ট্যসমূহ
-      </h2>
-      <p>এই অ্যাপ্লিকেশনটি গুগল অ্যাপস স্ক্রিপ্ট (Google Apps Script) প্রযুক্তির উপর ভিত্তি করে তৈরি। এটি সম্পূর্ণ সার্ভারলেস এবং বিনামূল্যে একটি স্প্রেডশিটকে রিলেশনাল ডেটাবেজে রূপান্তর করে। ভর্তি ফি প্রদান, ফি অনুমোদন, রোল নম্বর প্রদান ও ইমেইল প্রসেসিং সম্পূর্ণ স্বয়ংক্রিয়ভাবে ঘটে।</p>
+  <!-- MAIN BODY LAYOUT -->
+  <div class="container">
+    <div class="main-layout">
       
-      <div class="features-grid">
-        <div class="feature-card">
-          <h3>মোবাইল-ফার্স্ট ইন্টারফেস</h3>
-          <p>মোবাইল ফোনের জন্য অপ্টিমাইজড, দৃষ্টিনন্দন ডার্ক গ্রিন এবং গোল্ড থিম। এতে রয়েছে মসৃণ ট্রানজিশন ও রেসপন্সিভ ডিজাইন।</p>
+      <!-- LEFT SIDEBAR STICKY NAVIGATION -->
+      <aside class="sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-title">সূচিপত্র</div>
+          <ul class="sidebar-menu">
+            <li class="sidebar-item active" id="menu-overview"><a href="#overview">পরিচিতি ও বৈশিষ্ট্য</a></li>
+            <li class="sidebar-item" id="menu-simulator"><a href="#simulator">স্প্রেডশিট সিমুলেটর</a></li>
+            <li class="sidebar-item" id="menu-setup"><a href="#setup">সেটআপ গাইডলাইনস</a></li>
+            <li class="sidebar-item" id="menu-code-ref"><a href="#code-ref">কোড রেফারেন্স</a></li>
+            <li class="sidebar-item" id="menu-reset"><a href="#reset">ডাটাবেজ রিসেট গাইড</a></li>
+            <li class="sidebar-item" id="menu-gallery"><a href="#gallery">ইন্টারফেস গ্যালারি</a></li>
+          </ul>
         </div>
-        <div class="feature-card">
-          <h3>কোড-ফ্রি কনফিগারেশন</h3>
-          <p>স্প্রেডশিটের <code>_Configuration</code> ট্যাব থেকে ডক টেমপ্লেট আইডি, ইমেইল, নোটিশ ও অন্যান্য আইডি সরাসরি পরিবর্তন করা যায়। কোড এডিট করার কোনো প্রয়োজন নেই।</p>
-        </div>
-        <div class="feature-card">
-          <h3>নিরাপত্তা ও নির্ভরযোগ্যতা</h3>
-          <p>ইনপুট স্ক্রিপ্ট ইনজেকশন (XSS) প্রতিরোধক, ডাবল সাবমিশন রোধন এবং ড্রাইভের মেমোরি ক্লিপিং সেফগার্ড সহ কিউএ-সার্টিফাইড নির্ভরযোগ্যতা।</p>
-        </div>
-        <div class="feature-card">
-          <h3>অটো-রিসেট ও রিকভারি</h3>
-          <p>ভুলবশত হেডার বা ট্যাব ডিলিট হয়ে গেলে এক ক্লিকে নতুন ডাটাবেজ রিকভার বা নতুন ব্যাচের জন্য রিসেট করার স্মার্ট ইউটিলিটি।</p>
-        </div>
-      </div>
-    </section>
+      </aside>
 
-    <!-- INTERACTIVE SHEET SIMULATOR -->
-    <section class="section">
-      <h2 class="section-title">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-        স্প্রেডশিট ডেটাবেজ সিমুলেটর (ইন্টারেক্টিভ)
-      </h2>
-      <p style="margin-bottom: 20px;">সিস্টেম চালুর পর গুগল ড্রাইভে তৈরি হওয়া স্প্রেডশিটের পাঁচটি ট্যাব কীভাবে কাজ করে তা নিচে ইন্টারেক্টিভ সিমুলেটরে দেখুন। ট্যাবগুলোতে ক্লিক করে কলামের নাম ও ডাটা ফরম্যাট পরীক্ষা করতে পারেন:</p>
-      
-      <!-- Sheets Simulator Container -->
-      <div class="simulator-container">
-        <!-- Top Bar Google style -->
-        <div class="simulator-top-bar">
-          <div class="simulator-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-            Admission_Database_System - Google Sheets
+      <!-- RIGHT MAIN CONTENT AREA -->
+      <div class="content-area">
+        
+        <!-- SECTION 1: OVERVIEW & FEATURES -->
+        <section id="overview" class="section">
+          <h2 class="section-title">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            পরিচিতি ও বৈশিষ্ট্যসমূহ
+          </h2>
+          <p>এই প্রজেক্টটি আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউটের ভর্তি কার্যক্রমকে সম্পূর্ণ ডিজিটাল ও স্বয়ংক্রিয় করার লক্ষ্যে ডিজাইন করা হয়েছে। এটি স্প্রেডশিটকে ব্যাকএন্ড রিলেশনাল ডাটাবেজ হিসেবে ব্যবহার করে ফি সাবমিশন গ্রহণ, TrxID ভ্যালিডেশন, পিডিএফ প্রবেশপত্র জেনারেট এবং ইমেইলে নোটিফিকেশন পাঠানোর জটিল কাজগুলোকে সম্পন্ন করে।</p>
+          
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon-box">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              </div>
+              <h3>মোবাইল-ফার্স্ট ডিজাইন</h3>
+              <p>পরীক্ষার্থীরা যেন স্মার্টফোন থেকে সহজে ভর্তি আবেদন ও স্ট্যাটাস যাচাই করতে পারেন, তার জন্য সম্পূর্ণ রেসপন্সিভ edge-to-edge লেআউট ডিজাইন করা হয়েছে।</p>
+            </div>
+            
+            <div class="feature-card">
+              <div class="feature-icon-box">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <h3>এক-ক্লিকে ডেটাবেজ প্রস্তুত</h3>
+              <p>মেনু বারের বিশেষ অটোমেশন ইউটিলিটি ব্যবহার করে স্প্রেডশিটের সবগুলো শীট, কলাম হেডার, কনফিগারেশন ভ্যালু এবং ড্যাশবোর্ড মাত্র এক ক্লিকে স্বয়ংক্রিয়ভাবে তৈরি হয়ে যায়।</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon-box">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </div>
+              <h3>কিউএ-সার্টিফাইড সেফগার্ডস</h3>
+              <p>ইনপুট স্ক্রিপ্ট ইনজেকশন (XSS) রোধন, ডাবল পেমেন্ট সাবমিশন দমন, প্রবেশপত্র ভিউ এক্সেস শেয়ারিং এবং ড্রাইভে ডক মেমোরি ফাঁকা করার গ্যারান্টিযুক্ত সেফগার্ডস রয়েছে।</p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon-box">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+              </div>
+              <h3>অটো-রিকভারি ও রিসেট</h3>
+              <p>দুর্ঘটনাবশত স্প্রেডশিটের কোনো হেডার কলাম বা ট্যাব মুছে গেলে সিস্টেম অটো-রিকভারি করে এবং পূর্ববর্তী ডাটা অক্ষত রেখে হেডারগুলো সাজিয়ে দেয়।</p>
+            </div>
           </div>
-        </div>
-        
-        <!-- Tab selector buttons -->
-        <div class="sheet-tabs-bar">
-          <div class="sheet-tab active" onclick="switchTab(this, 'dashboard')">📊 Dashboard</div>
-          <div class="sheet-tab" onclick="switchTab(this, 'masterList')">👥 Candidate_Master_List</div>
-          <div class="sheet-tab" onclick="switchTab(this, 'paymentLog')">💳 Payment_Verification_Log</div>
-          <div class="sheet-tab" onclick="switchTab(this, 'results')">🏆 Results</div>
-          <div class="sheet-tab" onclick="switchTab(this, 'config')">⚙️ _Configuration</div>
-        </div>
-        
-        <!-- Sheet view window -->
-        <div class="sheet-content" id="sheetContentContainer">
-          <!-- Rendered by script.js -->
-        </div>
+        </section>
+
+        <!-- SECTION 2: INTERACTIVE SIMULATOR -->
+        <section id="simulator" class="section">
+          <h2 class="section-title">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+            স্প্রেডশিট ডেটাবেজ সিমুলেটর
+          </h2>
+          <p>সিস্টেম অ্যাকশনগুলো চালুর জন্য স্প্রেডশিটে পাঁচটি শীট অত্যন্ত নিখুঁতভাবে সমন্বয় করা হয়েছে। নিচের ইন্টারেক্টিভ সিমুলেটরে প্রতিটি ট্যাবে ক্লিক করে কলামগুলোর নাম, ভ্যালু ফরম্যাট ও ড্যাশবোর্ডের ভিজ্যুয়াল সেল স্ট্রাকচার পরীক্ষা করুন:</p>
+          
+          <div class="simulator-card">
+            <div class="sim-top-bar">
+              <span class="sim-status"></span>
+              <span class="sim-filename">Admission_Log_Database - Google Sheets</span>
+            </div>
+            
+            <div class="sheet-tabs-container">
+              <button class="sheet-tab-btn active" onclick="switchTab(this, 'dashboard')">📊 Dashboard</button>
+              <button class="sheet-tab-btn" onclick="switchTab(this, 'masterList')">👥 Candidate_Master_List</button>
+              <button class="sheet-tab-btn" onclick="switchTab(this, 'paymentLog')">💳 Payment_Verification_Log</button>
+              <button class="sheet-tab-btn" onclick="switchTab(this, 'results')">🏆 Results</button>
+              <button class="sheet-tab-btn" onclick="switchTab(this, 'config')">⚙️ _Configuration</button>
+            </div>
+            
+            <div class="sheet-viewport" id="sheetContentContainer">
+              <!-- Content rendered dynamically by script.js -->
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 3: SETUP BLUEPRINT (TIMELINE) -->
+        <section id="setup" class="section">
+          <h2 class="section-title">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 12 12 8 12"></polyline><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            সিস্টেম ইনিশিয়ালাইজেশন ও সেটআপ গাইড
+          </h2>
+          
+          <div class="timeline">
+            
+            <div class="timeline-step" data-step="১">
+              <div class="timeline-step-badge">১</div>
+              <h3 class="timeline-step-title">নতুন স্প্রেডশিট ও ইনিশিয়ালাইজেশন</h3>
+              <p>আপনার গুগল ড্রাইভে একটি নতুন <strong>Spreadsheet</strong> তৈরি করুন। স্প্রেডশিটের ফাইলে কোন ডাটা কলাম বা ট্যাব ম্যানুয়ালি তৈরি করার প্রয়োজন নেই। কোড এডিটরে ব্যাকএন্ড কোড সেভ করার পর গুগল শীটের রিবনে <strong>অটোমেশন</strong> নামক নতুন মেনু যুক্ত হবে। সেখান থেকে <strong>নতুন ডাটাবেজ প্রস্তুত করুন (Initialize System)</strong> এ ক্লিক করুন; এটি কলাম হেডার, ফিজিক্যাল থিম ও ড্যাশবোর্ড সেল কার্ড স্ট্রাকচার তৈরি করবে।</p>
+            </div>
+
+            <div class="timeline-step" data-step="২">
+              <div class="timeline-step-badge">২</div>
+              <h3 class="timeline-step-title">অ্যাডমিট কার্ড টেমপ্লেট ও ড্রাইভ ফোল্ডার লিংক</h3>
+              <p>গুগল ড্রাইভে একটি নতুন <strong>Google Doc</strong> প্রবেশপত্র ডিজাইন করুন এবং পিডিএফ ফাইলগুলো জেনারেট হয়ে যেখানে জমা হবে তার জন্য ড্রাইভে একটি ফোল্ডার করুন। গুগলের ডক আইডি এবং ফোল্ডার আইডি কপি করে স্প্রেডশিটের <code>_Configuration</code> ট্যাবের <code>admitCardTemplateId</code> এবং <code>admitCardFolderId</code> রো-তে ভ্যালু হিসেবে পেস্ট করে দিন।</p>
+            </div>
+
+            <div class="timeline-step" data-step="৩">
+              <div class="timeline-step-badge">৩</div>
+              <h3 class="timeline-step-title">গুগল অ্যাপস স্ক্রিপ্ট কোড সেভ</h3>
+              <p>গুগল স্প্রেডশিটে থাকা অবস্থায় <strong>Extensions > Apps Script</strong>-এ যান। স্ক্রিপ্ট এডিটরে <code>Code.gs</code> এর পূর্ববর্তী কোড মুছে দিন ও নিচের ৪টি কোড ফাইল এবং ৪টি HTML ফাইল তৈরি করুন (কোড রেফারেন্স সেকশন থেকে কপি করতে পারেন):</p>
+              <ul>
+                <li><code>Config.gs</code>, <code>Code.gs</code>, <code>PaymentForm.gs</code>, <code>ResultChecker.gs</code></li>
+                <li><code>Index.html</code>, <code>PaymentView.html</code>, <code>ResultView.html</code>, <code>StatusCheckView.html</code></li>
+              </ul>
+            </div>
+
+            <div class="timeline-step" data-step="৪">
+              <div class="timeline-step-badge">৪</div>
+              <h3 class="timeline-step-title">অন-এডিট ট্রিগার অ্যাকশন ও ওয়েব অ্যাপ পাবলিশ</h3>
+              <p>পেমেন্ট অনুমোদন প্রক্রিয়াটি স্বয়ংক্রিয় করতে স্প্রেডশিট মেনু থেকে <strong>অটোমেশন > অটো-অ্যাকশন চালু করুন (Enable Trigger)</strong> এ ক্লিক করুন। এরপর স্ক্রিপ্ট এডিটরের উপরে ডানে থাকা <strong>Deploy > New deployment</strong> এ গিয়ে Deployment type হিসেবে <em>Web app</em> সিলেক্ট করে Deploy এ ক্লিক করে Authorization দিন। প্রাপ্ত URL-টি হলো আপনার মূল ভর্তি পোর্টাল লিংক।</p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- SECTION 4: CODE REFERENCE (LIVE LOADER) -->
+        <section id="code-ref" class="section">
+          <h2 class="section-title">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            অ্যাপস স্ক্রিপ্ট সোর্স কোড রেফারেন্স
+          </h2>
+          <p>আপনার স্ক্রিপ্ট এডিটর ফাইলের সোর্স কোডগুলো পেতে নিচের ট্যাবগুলোতে ক্লিক করুন। ডানদিকের <strong>Copy Code</strong> বাটনটি দিয়ে সরাসরি ফাইল কপি করতে পারেন:</p>
+          
+          <div class="code-panel-card">
+            <div class="code-panel-tabs">
+              <button class="code-tab-btn active" onclick="loadCodeTab(this, 'Config.gs')">Config.gs</button>
+              <button class="code-tab-btn" onclick="loadCodeTab(this, 'Code.gs')">Code.gs</button>
+              <button class="code-tab-btn" onclick="loadCodeTab(this, 'PaymentForm.gs')">PaymentForm.gs</button>
+              <button class="code-tab-btn" onclick="loadCodeTab(this, 'ResultChecker.gs')">ResultChecker.gs</button>
+            </div>
+            
+            <div class="code-panel-content">
+              <button class="code-copy-btn" onclick="copyCodeContent()">Copy Code</button>
+              <pre class="code-pre-box"><code id="codeViewer">Loading code...</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 5: RESETS & MAINTENANCE -->
+        <section id="reset" class="section">
+          <h2 class="section-title">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+            ডাটা ক্লিয়ারিং ও নতুন ব্যাচের রিসেট গাইড
+          </h2>
+          <p>নতুন ব্যাচের ভর্তি কার্যক্রম শুরু করার সময় নিচের নিয়ম মেনে ডাটাবেজ রিসেট করুন:</p>
+          <ol style="padding-left: 20px; font-size: 0.95rem; line-height: 1.8;">
+            <li style="margin-bottom: 8px;"><strong>ডাটা ব্যাকআপ:</strong> স্প্রেডশিটের <code>File > Download > Microsoft Excel (.xlsx)</code> অপশন থেকে পূর্ববর্তী ব্যাচের ডাটা ডাউনলোড করে ড্রাইভে ব্যাকআপ হিসেবে সেভ করুন।</li>
+            <li style="margin-bottom: 8px;"><strong>শীট ক্লিয়ার করা:</strong> স্প্রেডশিটের <code>Candidate_Master_List</code>, <code>Payment_Verification_Log</code>, ও <code>Results</code> শীটগুলোর ২ নম্বর রো থেকে নিচের সব ডাটা ডিলিট করে দিন (১ নম্বর রো-এর হেডার অক্ষত রাখবেন)।</li>
+            <li style="margin-bottom: 8px;"><strong>অটো হেডার রিকভারি:</strong> যদি ভুলবশত কোনো শীটের হেডার বা সম্পূর্ণ শীট ডিলিট হয়ে যায়, স্প্রেডশিটের <strong>অটোমেশন > নতুন ডাটাবেজ প্রস্তুত করুন (Initialize System)</strong> এ ক্লিক করুন। স্ক্রিপ্টটি পূর্ববর্তী ডাটা নষ্ট না করে স্বয়ংক্রিয়ভাবে কলাম হেডারগুলো পুনর্নির্মাণ করে দেবে।</li>
+            <li style="margin-bottom: 8px;"><strong>নতুন ডাটা ইনপুট:</strong> নতুন পরীক্ষার্থীদের তালিকা <code>Candidate_Master_List</code>-এ এবং রেজাল্ট শিট <code>Results</code>-এ ইনপুট করুন। ড্যাশবোর্ড আপডেট করতে মেনু থেকে <strong>ড্যাশবোর্ড রিফ্রেশ করুন</strong> ক্লিক করুন।</li>
+          </ol>
+        </section>
+
+        <!-- SECTION 6: INTERFACE GALLERY -->
+        <section id="gallery" class="section">
+          <h2 class="section-title">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            পোর্টাল স্ক্রিনশট ও ড্যাশবোর্ড ইন্টারফেস গ্যালারি
+          </h2>
+          <p>ভর্তি পোর্টাল ও অটোমেটেড ড্যাশবোর্ডের মূল ভিজ্যুয়ালসমূহ নিচে দেওয়া হলো:</p>
+          
+          <div class="gallery-grid">
+            <div class="gallery-item">
+              <div class="gallery-img-wrapper">
+                <a href="assets/portal_dashboard_mockup.png" target="_blank">
+                  <img src="assets/portal_dashboard_mockup.png" alt="Dashboard View">
+                </a>
+              </div>
+              <div class="gallery-caption">মেম্বার ও পেমেন্ট আপডেট ড্যাশবোর্ড</div>
+            </div>
+            
+            <div class="gallery-item">
+              <div class="gallery-img-wrapper">
+                <a href="assets/dashboard_overview_ui.png" target="_blank">
+                  <img src="assets/dashboard_overview_ui.png" alt="Dashboard Cards">
+                </a>
+              </div>
+              <div class="gallery-caption">ড্যাশবোর্ড গ্রিড ভিউ ও ৪ কার্ড লেআউট</div>
+            </div>
+
+            <div class="gallery-item">
+              <div class="gallery-img-wrapper">
+                <a href="assets/portal_view_1.png" target="_blank">
+                  <img src="assets/portal_view_1.png" alt="Payment View">
+                </a>
+              </div>
+              <div class="gallery-caption">ভর্তি পোর্টাল (পেমেন্ট ভিউ)</div>
+            </div>
+
+            <div class="gallery-item">
+              <div class="gallery-img-wrapper">
+                <a href="assets/portal_view_2.png" target="_blank">
+                  <img src="assets/portal_view_2.png" alt="Result View">
+                </a>
+              </div>
+              <div class="gallery-caption">মোবাইল ফলাফল অনুসন্ধান ভিউ</div>
+            </div>
+          </div>
+        </section>
+
       </div>
-    </section>
+    </div>
 
-    <!-- PORTAL SCREENSHOTS / VISUALS GALLERY -->
-    <section class="section">
-      <h2 class="section-title">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-        অ্যাপ্লিকেশন স্ক্রিনশট ও ইন্টারফেস গ্যালারি
-      </h2>
-      <p>ভর্তি পোর্টাল ও অটোমেটেড ড্যাশবোর্ডের মূল ভিজ্যুয়ালসমূহ নিচে দেওয়া হলো:</p>
-      
-      <div class="gallery">
-        <div class="gallery-card">
-          <a href="assets/portal_dashboard_mockup.png" target="_blank">
-            <img src="assets/portal_dashboard_mockup.png" alt="Dashboard KPI View">
-          </a>
-          <p>মেম্বার ও পেমেন্ট আপডেট ড্যাশবোর্ড</p>
-        </div>
-        <div class="gallery-card">
-          <a href="assets/dashboard_overview_ui.png" target="_blank">
-            <img src="assets/dashboard_overview_ui.png" alt="KPI Card Design">
-          </a>
-          <p>ড্যাশবোর্ড গ্রিড ভিউ ও ৪ কার্ড লেআউট</p>
-        </div>
-        <div class="gallery-card">
-          <a href="assets/portal_view_1.png" target="_blank">
-            <img src="assets/portal_view_1.png" alt="Payment View Mobile">
-          </a>
-          <p>পোর্টাল মোবাইল ইন্টারফেস (পেমেন্ট ভিউ)</p>
-        </div>
-        <div class="gallery-card">
-          <a href="assets/portal_view_2.png" target="_blank">
-            <img src="assets/portal_view_2.png" alt="Result Checker Mobile">
-          </a>
-          <p>মোবাইল ফলাফল অনুসন্ধান ও ভিউ কার্ড</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- A-TO-Z SETUP GUIDE -->
-    <section class="section">
-      <h2 class="section-title">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 12 12 8 12"></polyline><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        ভর্তি ডাটাবেজ সিস্টেম সেটআপ গাইডলাইনস (A-Z)
-      </h2>
-      <p style="margin-bottom: 20px;">আপনার ইনস্টিটিউটের জন্য সম্পূর্ণ ভর্তি সিস্টেমটি গুগল ড্রাইভে সেটআপ করতে নিচের ৪টি ধাপ অনুসরণ করুন:</p>
-
-      <!-- Step 1 -->
-      <div class="setup-step" data-step="১">
-        <h3>স্প্রেডশিট ডাটাবেজ ও ওয়ান-ক্লিক ইনিশিয়েলাইজেশন</h3>
-        <p>প্রথমে আপনার গুগল ড্রাইভে একটি ফোল্ডার করুন ও ফোল্ডারে একটি নতুন <strong>Google Spreadsheet</strong> তৈরি করুন।</p>
-        <p>স্প্রেডশিটে ম্যানুয়ালি কোনো শীট বা কলাম তৈরি করতে হবে না! আপনি কোডটি অ্যাপস স্ক্রিপ্টে পেস্ট করার পর স্প্রেডশিটের মেনু বারে একটি নতুন মেনু অপশন পাবেন: <strong>অটোমেশন > নতুন ডাটাবেজ প্রস্তুত করুন (Initialize System)</strong>। এই অপশনটিতে ক্লিক করলে স্ক্রিপ্ট স্বয়ংক্রিয়ভাবে সবগুলো শীট, সঠিক কলাম ও ড্যাশবোর্ড তৈরি করে দেবে।</p>
-      </div>
-
-      <!-- Step 2 -->
-      <div class="setup-step" data-step="২">
-        <h3>অ্যাডমিট কার্ড টেমপ্লেট ও ড্রাইভ ফোল্ডার তৈরি</h3>
-        <p>আপনার প্রবেশপত্রের ডিজাইনের জন্য ড্রাইভে একটি নতুন <strong>Google Doc</strong> তৈরি করুন। প্রবেশপত্রে পরীক্ষার্থীর তথ্যের জায়গায় নিচের প্লেসহোল্ডারগুলো ব্যবহার করুন:</p>
-        <ul>
-          <li><code>{{FullName}}</code> — পরীক্ষার্থীর পূর্ণ নাম</li>
-          <li><code>{{SerialNumber}}</code> — রোল নম্বর</li>
-          <li><code>{{District}}</code> — জেলা</li>
-          <li><code>{{PhoneNumber}}</code> — মোবাইল নম্বর</li>
-          <li><code>{{ExamDate}}</code>, <code>{{ExamTime}}</code>, <code>{{ExamVenue}}</code> — পরীক্ষার শিডিউল</li>
-        </ul>
-        <p>প্রবেশপত্রের পিডিএফ ফাইলগুলো জেনারেট করে জমা রাখার জন্য ড্রাইভে একটি খালি <strong>Google Drive Folder</strong> তৈরি করুন। এরপর গুগলের ডক আইডি এবং ফোল্ডার আইডি কপি করে স্প্রেডশিটের <code>_Configuration</code> শীটের যথাক্রমে <strong><code>admitCardTemplateId</code></strong> এবং <strong><code>admitCardFolderId</code></strong> কলামে পেস্ট করে দিন।</p>
-      </div>
-
-      <!-- Step 3 -->
-      <div class="setup-step" data-step="৩">
-        <h3>গুগল অ্যাপস স্ক্রিপ্ট কোড স্থাপন</h3>
-        <p>আপনার তৈরি করা গুগল স্প্রেডশিটটি ওপেন করুন। <strong>Extensions > Apps Script</strong>-এ যান। স্ক্রিপ্ট এডিটরে <code>Code.gs</code> এর পূর্ববর্তী কোড মুছে দিন ও নিচের ৪টি ফাইল তৈরি করুন:</p>
-        <ul>
-          <li><code>Config.gs</code> — গ্লোবাল কনফিগারেশন ফাইল</li>
-          <li><code>Code.gs</code> — মূল রাউটিং ও কন্ট্রোলার</li>
-          <li><code>PaymentForm.gs</code> — পেমেন্ট ও প্রবেশপত্র জেনারেটর</li>
-          <li><code>ResultChecker.gs</code> — রেজাল্ট মেলাবার ব্যাকএন্ড</li>
-        </ul>
-        <p>পাশাপাশি ৩টি HTML ফাইল (<code>Index.html</code>, <code>PaymentView.html</code>, <code>ResultView.html</code>, <code>StatusCheckView.html</code>) তৈরি করে প্রজেক্টের সোর্স কোডগুলো পেস্ট করে সেভ করুন।</p>
-      </div>
-
-      <!-- Step 4 -->
-      <div class="setup-step" data-step="৪">
-        <h3>অটো-ট্রিগার চালু ও ওয়েব অ্যাপ স্থাপন</h3>
-        <p>সিস্টেম চালুর জন্য দুটি জরুরি পদক্ষেপ:</p>
-        <p><strong>ক. অটো-অ্যাকশন ট্রিগার চালু:</strong> স্প্রেডশিট মেনু থেকে <strong>অটোমেশন > অটো-অ্যাকশন চালু করুন (Enable Trigger)</strong> এ ক্লিক করুন। এটি ব্যাকএন্ডে অন-এডিট ট্রিগার চালু করে দেবে।</p>
-        <p><strong>খ. ওয়েব অ্যাপ পাবলিশ:</strong> স্ক্রিপ্ট এডিটরের উপরে ডানে <strong>Deploy > New deployment</strong> এ ক্লিক করুন। Deployment type হিসেবে <strong>Web app</strong> সিলেক্ট করে <em>Execute as: Me</em> এবং <em>Who has access: Anyone</em> সিলেক্ট করে Deploy এ ক্লিক করে Authorization দিন। প্রাপ্ত URL-টি হলো আপনার মূল ভর্তি পোর্টাল লিংক।</p>
-      </div>
-    </section>
-
-    <!-- RESET & MAINTENANCE -->
-    <section class="section">
-      <h2 class="section-title">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
-        ডাটাবেজ রিসেট ও ব্যাচ পরিবর্তন গাইড
-      </h2>
-      <p>প্রতি ৩ মাস পর পর নতুন ব্যাচ বা কোর্সের ভর্তি কার্যক্রম শুরু করার সময় নিচের ধাপগুলো মেনে ডাটাবেজ রিসেট করুন:</p>
-      <ol style="padding-left: 20px; font-size: 0.95rem;">
-        <li style="margin-bottom: 8px;"><strong>ডাটা ব্যাকআপ:</strong> স্প্রেডশিটের <code>File > Download > Microsoft Excel (.xlsx)</code> অপশন থেকে পূর্ববর্তী ব্যাচের ডাটা ডাউনলোড করে সংরক্ষণ করুন।</li>
-        <li style="margin-bottom: 8px;"><strong>শীট ক্লিয়ার করা:</strong> স্প্রেডশিটের <code>Candidate_Master_List</code>, <code>Payment_Verification_Log</code>, ও <code>Results</code> শীটগুলোর ২ নম্বর রো থেকে নিচের সব ডাটা ডিলিট করে দিন (১ নম্বর রো-এর হেডার অক্ষত রাখবেন)।</li>
-        <li style="margin-bottom: 8px;"><strong>হেডার রিকভারি:</strong> যদি ভুলবশত কোনো শীটের হেডার বা সম্পূর্ণ শীট ডিলিট হয়ে যায়, ঘাবড়াবেন না! স্প্রেডশিটের <strong>অটোমেশন > নতুন ডাটাবেজ প্রস্তুত করুন (Initialize System)</strong> এ ক্লিক করুন। স্ক্রিপ্টটি পূর্ববর্তী ডাটা নষ্ট না করে স্বয়ংক্রিয়ভাবে কলাম হেডারগুলো পুনর্নির্মাণ করে দেবে।</li>
-        <li style="margin-bottom: 8px;"><strong>নতুন ডাটা ইনপুট:</strong> নতুন পরীক্ষার্থীদের তালিকা <code>Candidate_Master_List</code>-এ এবং রেজাল্ট শিট <code>Results</code>-এ ইনপুট করুন। ড্যাশবোর্ড আপডেট করতে মেনু থেকে <strong>ড্যাশবোর্ড রিফ্রেশ করুন</strong> ক্লিক করুন।</li>
-      </ol>
-    </section>
-
-    <!-- DEVELOPER INFO -->
+    <!-- FOOTER -->
     <footer class="footer">
       <p>&copy; 2026 আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট। সর্বস্বত্ব সংরক্ষিত।</p>
       <p>সিস্টেম ও ডিজাইন ডেভেলপমেন্ট: <a href="mailto:zihad.connects@gmail.com">Zihad Hasan</a> | কোডবেজ হোস্ট করা হয়েছে <a href="https://github.com/zihaaaad/admission" target="_blank">GitHub Repository</a>-তে।</p>
     </footer>
 
-  </main>
+  </div>
 
   <!-- Script Simulator logic -->
   <script src="script.js"></script>

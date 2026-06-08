@@ -1,5 +1,5 @@
 // =================================================================
-//      INTERACTIVE GOOGLE SHEETS SIMULATOR CODE
+//      INTERACTIVE GOOGLE SHEETS SIMULATOR & PORTAL DOCS JS
 // =================================================================
 
 const SHEET_DATA = {
@@ -24,9 +24,9 @@ const SHEET_DATA = {
     rows: [
       ["08/06/2026 09:12:05", "01712345678", "মোহাম্মদ আব্দুল্লাহ", "1001", "ঢাকা", "bKash (Personal)", "01711112222", "TRX99882211", "Approved", "Success", "https://docs.google.com/viewer?url=admit_card_1001.pdf", ""],
       ["08/06/2026 09:15:30", "01812345679", "মোসাম্মৎ ফাতিমা", "1002", "চট্টগ্রাম", "Nagad (Personal)", "01822223333", "TXID88776655", "Approved", "Success", "https://docs.google.com/viewer?url=admit_card_1002.pdf", ""],
-      ["08/06/2026 09:18:45", "01912345680", "আহমেদ হাসান", "1003", "সিলেট", "bKash (Personal)", "01933334444", "TRX55443322", "Pending", "প্রসেসিং চলছে...", "", ""],
+      ["08/06/2026 09:18:45", "01912345680", "আহমেদ হাসান", "1003", "সিলেট", "bKash (Personal)", "01933334444", "Pending", "প্রসেসিং চলছে...", "", ""],
       ["08/06/2026 09:22:10", "01512345681", "খাদিজা আক্তার", "1004", "রাজশাহী", "Nagad (Personal)", "01544445555", "WRONGTRXID", "Rejected", "Rejected", "", "পেমেন্ট তথ্য যাচাইয়ে অসংগতি (মোবাইল নম্বর ও TrxID ম্যাচ করেনি)"],
-      ["08/06/2026 09:25:00", "01312345682", "মো: আরিফ রহমান", "1005", "খুলনা", "bKash (Personal)", "01355556666", "TRX11223344", "Pending", "Pending", "", ""]
+      ["08/06/2026 09:25:00", "01312345682", "মো: আরিফ রহমান", "1005", "খুলনা", "bKash (Personal)", "01355556666", "Pending", "Pending", "", ""]
     ]
   },
   results: {
@@ -65,13 +65,11 @@ const SHEET_DATA = {
   }
 };
 
-// Toggle active tab function
+// Toggle active tab function for sheets simulator
 function switchTab(element, tabId) {
-  // Update sheet tabs active styles
-  document.querySelectorAll('.sheet-tab').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.sheet-tab-btn').forEach(tab => tab.classList.remove('active'));
   element.classList.add('active');
 
-  // Render sheet
   const displayContainer = document.getElementById('sheetContentContainer');
   
   if (tabId === 'dashboard') {
@@ -84,20 +82,18 @@ function switchTab(element, tabId) {
 // Render standard Google Sheets grids
 function renderStandardSheet(container, sheet) {
   let html = `<div class="sheet-grid-wrapper">
-    <table class="sheet-grid-table">
+    <table class="excel-table">
       <thead>
-        <!-- Excel Column Headers (A, B, C...) -->
         <tr class="excel-column-row">
-          <th class="row-num-col"></th>`;
+          <th class="excel-row-num"></th>`;
   
   sheet.headers.forEach(h => {
     html += `<th>${h}</th>`;
   });
   
   html += `</tr>
-        <!-- Row 1: Spreadsheet Column Header Names -->
-        <tr class="header-name-row">
-          <td class="row-num">1</td>`;
+        <tr class="excel-header-row">
+          <td class="excel-row-num">1</td>`;
   
   sheet.subHeaders.forEach(sh => {
     html += `<td>${sh}</td>`;
@@ -107,17 +103,15 @@ function renderStandardSheet(container, sheet) {
       </thead>
       <tbody>`;
 
-  // Row contents
   sheet.rows.forEach((row, rowIndex) => {
-    const rowNum = rowIndex + 2; // Rows are 1-based, first row is header, so start from 2
+    const rowNum = rowIndex + 2; 
     html += `<tr>
-      <td class="row-num">${rowNum}</td>`;
+      <td class="excel-row-num">${rowNum}</td>`;
     
-    row.forEach((cell, cellIndex) => {
+    row.forEach(cell => {
       let cellClass = "";
-      
-      // Formatting specific cell values for visualization
       const cellStr = String(cell);
+      
       if (cellStr === "Approved" || cellStr === "Success" || cellStr === "Finally Selected") {
         cellClass = "status-cell-approved";
       } else if (cellStr === "Rejected" || cellStr === "Not Selected") {
@@ -139,58 +133,50 @@ function renderStandardSheet(container, sheet) {
   container.innerHTML = html;
 }
 
-// Render Dashboard Grid representation (representing merged cells, cards, KPI)
+// Render Dashboard Grid representation
 function renderDashboard(container) {
-  // Let's render a styled representations of the KPI dashboard cells
   let html = `<div class="sheet-grid-wrapper">
     <div class="dashboard-instruction-badge">
       অটোমেশন ড্যাশবোর্ড (KPI view) - গ্রিডলাইনবিহীন শীট লেআউট
     </div>
     
-    <div class="mock-dashboard-wrapper">
-      <!-- Title banner representing A1:H2 -->
+    <div class="mock-dashboard-card">
       <div class="mock-dash-banner">
         <h2>ভর্তি ও পেমেন্ট প্রসেসিং ড্যাশবোর্ড</h2>
-        <p>আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট | সর্বশেষ আপডেট: আজ ১২:০০ টা</p>
+        <p>আস-সুন্নাহ স্কিল ডেভেলপমেন্ট ইনস্টিটিউট | রিয়েল-টাইম ডাটা আপডেট</p>
       </div>
 
-      <!-- KPI cards section representing rows 4 to 6 -->
-      <div class="mock-dash-cards-grid">
-        <!-- Card 1: Total -->
-        <div class="mock-dash-card card-total">
-          <div class="card-label">মোট পেমেন্ট আবেদন</div>
-          <div class="card-value">২৪৫</div>
-          <div class="card-subtext">মোট প্রাপ্ত সাবমিশন</div>
+      <div class="dash-kpis-grid">
+        <div class="dash-kpi-card kpi-total">
+          <div class="kpi-title">মোট পেমেন্ট আবেদন</div>
+          <div class="kpi-number">২৪৫</div>
+          <div class="kpi-desc">মোট প্রাপ্ত ফি সাবমিশন</div>
         </div>
 
-        <!-- Card 2: Pending -->
-        <div class="mock-dash-card card-pending">
-          <div class="card-label">যাচাই চলছে</div>
-          <div class="card-value">১২</div>
-          <div class="card-subtext">অপেক্ষমান ট্রানজেকশন</div>
+        <div class="dash-kpi-card kpi-pending">
+          <div class="kpi-title">যাচাই চলছে</div>
+          <div class="kpi-number">১২</div>
+          <div class="kpi-desc">অপেক্ষমান ট্রানজেকশন</div>
         </div>
 
-        <!-- Card 3: Approved -->
-        <div class="mock-dash-card card-approved">
-          <div class="card-label">অনুমোদিত পেমেন্ট</div>
-          <div class="card-value">২২৩</div>
-          <div class="card-subtext">প্রবেশপত্র পাঠানো সম্পন্ন</div>
+        <div class="dash-kpi-card kpi-approved">
+          <div class="kpi-title">অনুমোদিত পেমেন্ট</div>
+          <div class="kpi-number">২২৩</div>
+          <div class="kpi-desc">প্রবেশপত্র পাঠানো সম্পন্ন</div>
         </div>
 
-        <!-- Card 4: Rejected -->
-        <div class="mock-dash-card card-rejected">
-          <div class="card-label">বাতিল করা হয়েছে</div>
-          <div class="card-value">১০</div>
-          <div class="card-subtext">রিজেক্টেড ট্রানজেকশন</div>
+        <div class="dash-kpi-card kpi-rejected">
+          <div class="kpi-title">বাতিল করা হয়েছে</div>
+          <div class="kpi-number">১০</div>
+          <div class="kpi-desc">রিজেক্টেড ট্রানজেকশন</div>
         </div>
       </div>
 
-      <!-- Helper instructions panel representing rows 8 to 11 -->
-      <div class="mock-dash-instructions">
-        <h3>ড্যাশবোর্ড অটোমেশন তথ্য:</h3>
+      <div class="dash-instructions-panel">
+        <h4>ড্যাশবোর্ড অটোমেশন তথ্য:</h4>
         <ul>
           <li><strong>অন-এডিট অ্যাকশন:</strong> পেমেন্ট লগে <code>ApprovalStatus</code> পরিবর্তন করলে ড্যাশবোর্ড স্বয়ংক্রিয়ভাবে কার্ডের হিসাব আপডেট করে।</li>
-          <li><strong>গ্রিডলাইনস:</strong> এই শিটের স্ট্যান্ডার্ড গ্রিডলাইন বন্ধ করা রয়েছে যাতে ড্যাশবোর্ডটি একটি ডেডিকেটেড অ্যাপ্লিকেশনের মতো দেখায়।</li>
+          <li><strong>গ্রিডলাইনস:</strong> এই শীটের স্ট্যান্ডার্ড গ্রিডলাইন বন্ধ করা রয়েছে যাতে ড্যাশবোর্ডটি একটি ডেডিকেটেড অ্যাপ্লিকেশনের মতো দেখায়।</li>
           <li><strong>ম্যানুয়াল রিফ্রেশ:</strong> স্প্রেডশিটের <code>অটোমেশন > ড্যাশবোর্ড রিফ্রেশ করুন</code> অপশনটি থেকে সরাসরি কার্ডের মানসমূহ রিলোড করা যায়।</li>
         </ul>
       </div>
@@ -200,10 +186,103 @@ function renderDashboard(container) {
   container.innerHTML = html;
 }
 
-// Initial render
+// =================================================================
+//      LIVE SOURCE CODE LOADER PANELS
+// =================================================================
+
+let currentCodeContent = "";
+
+function loadCodeTab(buttonElement, filename) {
+  document.querySelectorAll('.code-tab-btn').forEach(btn => btn.classList.remove('active'));
+  buttonElement.classList.add('active');
+
+  const viewer = document.getElementById('codeViewer');
+  viewer.innerText = "Loading code from repository...";
+  
+  // Try fetching the raw source code from parent workspace level
+  fetch('../' + filename)
+    .then(response => {
+       if (!response.ok) throw new Error("File not found");
+       return response.text();
+    })
+    .then(text => {
+       currentCodeContent = text;
+       viewer.innerText = text;
+    })
+    .catch(err => {
+       // Fallback message for local filesystem viewing
+       const fallbackText = `// Local File Access Warning
+// Browser security policies block loading files dynamically when opened directly from the filesystem (via file://).
+//
+// When deployed on GitHub Pages, the actual source code of ${filename} will be loaded dynamically here.
+//
+// You can view the source file directly in the repository at root level:
+// github.com/zihaaaad/admission/blob/master/${filename}`;
+       
+       currentCodeContent = fallbackText;
+       viewer.innerText = fallbackText;
+    });
+}
+
+// Copy to clipboard function
+function copyCodeContent() {
+  const btn = document.querySelector('.code-copy-btn');
+  const originalText = btn.innerText;
+
+  navigator.clipboard.writeText(currentCodeContent)
+    .then(() => {
+       btn.innerText = "Copied!";
+       btn.style.backgroundColor = "#10B981"; // success green
+       btn.style.color = "#FFFFFF";
+       
+       setTimeout(() => {
+         btn.innerText = originalText;
+         btn.style.backgroundColor = "";
+         btn.style.color = "";
+       }, 2000);
+    })
+    .catch(err => {
+       alert("Failed to copy code: " + err.toString());
+    });
+}
+
+// =================================================================
+//      STICKY SIDEBAR SCROLL SPY
+// =================================================================
+
+window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('section');
+  const navItems = document.querySelectorAll('.sidebar-item');
+  
+  let currentActive = "";
+  
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    // Offset threshold
+    if (window.pageYOffset >= (sectionTop - 180)) {
+      currentActive = section.getAttribute('id');
+    }
+  });
+
+  navItems.forEach(item => {
+    item.classList.remove('active');
+    if (item.getAttribute('id') === `menu-${currentActive}`) {
+      item.classList.add('active');
+    }
+  });
+});
+
+// INITIAL LOADS
 document.addEventListener('DOMContentLoaded', () => {
-  const initialTab = document.querySelector('.sheet-tab.active');
+  // Load initial simulator sheet (Dashboard)
+  const initialTab = document.querySelector('.sheet-tab-btn.active');
   if (initialTab) {
     switchTab(initialTab, 'dashboard');
+  }
+
+  // Load initial code file (Config.gs)
+  const initialCodeTab = document.querySelector('.code-tab-btn.active');
+  if (initialCodeTab) {
+    loadCodeTab(initialCodeTab, 'Config.gs');
   }
 });
