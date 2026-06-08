@@ -20,7 +20,8 @@
   --border-radius-sm: 4px;
   --border-radius-md: 8px;
   --border-radius-lg: 20px;
-  --font-sans: "Outfit", "Noto Sans Bengali", "Google Sans", "Google Sans Text", system-ui, sans-serif;
+  --font-headline: "Hind Siliguri", "Google Sans", "Google Sans Text", "Outfit", sans-serif;
+  --font-body: "Outfit", "Noto Sans Bengali", system-ui, sans-serif;
   --font-mono: "Fira Code", Consolas, Monaco, monospace;
 }
 
@@ -37,12 +38,33 @@ html {
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   background-color: var(--bg-color);
   color: var(--text-main);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6,
+.brand-name,
+.brand-badge,
+.hero-pill,
+.section-tag,
+.sidebar-section-title,
+.sidebar-item span,
+.toc-title,
+.toc-link,
+.step-badge,
+.step-info h3,
+.kpi-title,
+.faq-question,
+.code-tab,
+.excel-header-row td,
+.excel-column-row th,
+.dashboard-instruction-badge,
+.mock-dash-banner h3 {
+  font-family: var(--font-headline);
 }
 
 /* Custom Scrollbar */
@@ -164,7 +186,7 @@ body {
   border: 1px solid transparent;
   border-radius: var(--border-radius-lg);
   padding: 0 16px 0 42px;
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: 0.9rem;
   color: var(--text-main);
   outline: none;
@@ -259,7 +281,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 9px 20px;
-  font-family: var(--font-sans);
+  font-family: var(--font-headline);
   font-size: 0.86rem;
   font-weight: 600;
   border-radius: var(--border-radius-lg);
@@ -635,7 +657,7 @@ body {
 
 .sheet-tab {
   padding: 12px 20px;
-  font-family: var(--font-sans);
+  font-family: var(--font-headline);
   font-size: 0.84rem;
   font-weight: 600;
   color: var(--text-muted);
